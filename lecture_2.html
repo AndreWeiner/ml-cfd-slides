@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+		<title>Machine learning in computational fluid dynamics</title>
 
 		<meta name="description" content="Machine learning in computational fluid dynamics">
 		<meta name="author" content="Andre Weiner">
@@ -21,6 +21,23 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
+	<style>
+		.reveal .slide-number {
+		position: absolute;
+		display: block;
+		left: 8px;
+		bottom: 8px;
+		height: 55px;
+		width: 100px;
+		z-index: 31;
+		font-family: Helvetica, sans-serif;
+		font-size: 32px;
+		line-height: 1;
+		color: #000000;
+		background-color: rgba(0, 0, 0, 0);
+		padding: 5px;
+		}
+	</style>
 
 	<body>
 
@@ -76,7 +93,7 @@
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9997;</td>
 										<td style="border: 0; padding-right: 20px;"><a
-												href="https://myheutagogy.com/">Blog</a></td>
+												href="https://ml-cfd.com/">Blog</a></td>
 										<td style="border: 0; padding-right: 5px;">&#10026;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://github.com/AndreWeiner">Github</a></td>
@@ -86,9 +103,504 @@
 						</div>
 					</div>
 				</section>
-	
+
+				<section>
+					<h2>Last lecture</h2>
+					<ul>
+						<li>course overview</li>
+						<li>technology stack</li>
+						<li>CFD produces data and requires data</li>
+						<li>types of problems that ML solves</li>
+						<li>interaction between CFD, data, and ML</li>
+						<li>PINNs and advanced network architectures</li>
+					</ul>
+					<h2><span style="color: red;">questions?</span></h2>
+				</section>
+					
 				<section>
 					<h2>Outline</h2>
+					<p>The finite volume method in a nutshell</p>
+					<ul>
+						<li>Mathematical model</li>
+						<li>Domain discretization (meshing)</li>
+						<li>Equation discretization</li>
+						<li>Solving the linear system of equations</li>
+						<li>Post-processing</li>
+					</ul>
+				</section>
+				<section>
+					<section>
+						<h2>Mathematical model</h2>
+					</section>
+					<section>
+						<h3>generic transport equation without source</h3>
+						$$
+							\frac{\partial \Psi}{\partial t} + \underbrace{\nabla\cdot\left(\mathbf{u}\Psi\right)}_{convection} -
+							\underbrace{\nabla\cdot\left(\Gamma\nabla\Psi\right)}_{diffusion} = 0
+						$$
+						<div class="row_logo">
+							<div class="column_logo">
+								<div class="content_logo">
+									<ul>
+										<li>$\mathbf{u}$ - velocity vector</li>
+										<li>$\Psi$ - generic variable</li>
+										<li>$\Gamma$ - diffusivity</li>
+									</ul>
+								</div>
+							</div>
+							<div class="column_logo">
+								<div class="content_logo">
+									<ul>
+										<li>$t$ - time</li>
+										<li>$\nabla$ - Nabla operator</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>What would $\Psi$ be in the momentum equation?</h3>
+					</section>
+					<section>
+						<h3>What would $\Gamma$ be in a transport equation for temperature?</h3>
+					</section>
+					<section>
+						<h3>Are we ready to start solving the equations?</h3>
+						<ol>
+							<li style="list-style-type: upper-latin;">no</li>
+							<li style="list-style-type: upper-latin;">yes</li>
+						</ol>
+					</section>
+					<section>
+						<img src="images/fvm_mathematical_model.svg" alt="model"
+							style="background:none; border:none; box-shadow:none; height: 550px">
+						<p>Mathematical problem considered in this lecture.</p>
+					</section>
+					<section>
+						<p>Simplification for the presentation:</p>
+						<ul>
+							<li>stationary</li>
+							<li>diffusion only</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Domain discretization (meshing)</h2>
+					</section>
+					<section>
+						<h3>Discretization</h3>
+						<ol>
+							<li>sub-divide domain in small elements</li>
+							<li>approximate transport terms for each element</li>
+						</ol>
+						<p>Conventions for lecture:</p>
+						<ul>
+							<li>structured, Cartesian mesh</li>
+							<li>cell-centered variable arrangement</li>
+						</ul>
+					</section>
+					<section>
+						<pre class="python"><code>
+class Mesh(object):
+	def __init__(self, L_x, L_y, N_x, N_y, grad_x, grad_y):
+		# snip
+		self.dx = self._compute_cell_width(L_x, N_x, grad_x)
+		self.dy = self._compute_cell_width(L_y, N_y, grad_y)
+		self.x = pt.cumsum(self.dx, 0) - self.dx * 0.5
+		self.y = pt.cumsum(self.dy, 0) - self.dy * 0.5
+	def _compute_cell_width(self, L, N, grad):
+		if grad == 1.0:
+			delta = L / N
+			return pt.ones(N) * delta
+		else:
+			cell_widths = pt.linspace(1.0, grad, N)
+			width_0 = L / cell_widths.sum()
+			return cell_widths * width_0
+	def cell_id(self, i, j) -> int:
+		return self.N_x * j + i
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/5x5_mesh.svg" alt="mesh"
+							style="background:none; border:none; box-shadow:none; height: 550px">
+						<p>5x5 mesh with grading in $x$.</p>
+					</section>
+					<section>
+						<p>Python intermezzo: unit testing</p>
+						<pre class="python"><code>
+mesh = Mesh(1.0, 1.0, 5, 5, 1.0, 1.0)
+assert pt.allclose(mesh.xf, pt.linspace(0.0, 1.0, 6))
+assert pt.allclose(mesh.x, pt.linspace(0.1, 0.9, 5))
+mesh = Mesh(1.0, 1.0, 5, 5, 2.0, 1.0)
+assert pt.isclose(2.0*mesh.dx[0], mesh.dx[-1])
+						</code></pre>
+					</section>
+					<section>
+						<p>A class to store fields and boundary conditions</p>
+						<pre class="python"><code>
+class VolScalarField(object):
+	def __init__(self, mesh, name, value, bc):
+		# snip	
+	def visualize(self):
+		# snip
+	def __equal__(self, other):
+		return self is other
+					</code></pre>
+					</section>
+					<section>
+						<p>Python intermezzo: equality</p>
+						<pre class="python"><code>
+# test one
+a = [1, 2, 3]
+b = a
+print(a is b, a == b)
+# output?
+...
+# test two
+b = a[:]
+print(a is b, a == b)
+# output?
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Equation discretization</h2>
+					</section>
+					<section>
+						<h3>Gauss theorem</h3>
+						$$
+						\int\limits_V \nabla\cdot\left(\mathbf{u}T\right) \mathrm{d}v = \int\limits_{\partial V} \left(\mathbf{u}T\right)\cdot \mathbf{n} \mathrm{d}o
+						$$
+						$$
+						\int\limits_V \nabla\cdot\left(\lambda\nabla T\right) \mathrm{d}v = \int\limits_{\partial V} \left(\lambda\nabla T\right)\cdot \mathbf{n} \mathrm{d}o
+						$$
+						<p>$\mathbf{n}$ - vector normal to control volume surface</p>
+					</section>
+					<section>
+						<img src="images/stencil.svg" alt="stencil"
+							style="background:none; border:none; box-shadow:none; height: 300px">
+						<small>
+						$$
+							\int\limits_{\Delta x_i \Delta y_j} \partial_x \left(\lambda\partial_x T\right)\mathrm{d}v =
+							\int\limits_{\Delta y_j}\lambda\left[\partial_x T|_e - \partial_x T|_w\right]\mathrm{d}x + 
+							\int\limits_{\Delta x_i}\lambda\left[\partial_y T|_n - \partial_y T|_s\right]\mathrm{d}y\\
+						$$
+					</small>
+					<p>Balance for cell $(i,j)$.</p>
+					</section>
+					<section>
+						<img src="images/stencil.svg" alt="stencil"
+							style="background:none; border:none; box-shadow:none; height: 300px">
+						
+						$$
+						  \begin{align}
+						  & e:\quad \partial_x T|e \approx (T_{i+1,j}-T_{i,j})\frac{2}{\Delta x_{i+1}+\Delta x_i}\\
+						  & w:\quad \partial_x T|w \approx (T_{i,j}-T_{i-1,j})\frac{2}{\Delta x_{i}+\Delta x_{i-1}}\\
+						  \end{align}
+						$$
+					</section>
+					<section>
+						<p>Compute coefficients:</p>
+						<ol>
+							<li>substitute flux approximation in balance equation</li>
+							<li>factor out $T_{i,j}$, $T_{i+1,j}$, ...</li>
+							<li>add coefficients to global matrix for all cells</li>
+							<li>add boundary conditions to source term</li>
+						</ol>
+					</section>
+					<section>
+						<h3>What is the size of the coefficient matrix for a 5x5 mesh?</h3>
+					</section>
+					<section>
+						<h3>What is the size of the source vector for a 5x5 mesh?</h3>
+					</section>
+					<section>
+						<pre class="python"><code>
+class FVMatrix(object):
+	def __init__(self, matrix, source, field):
+		self.matrix = matrix
+		self.source = source
+		self.field = field	
+	def __add__(self, other):
+		assert self.field == other.field
+		return FVMatrix(self.matrix + other.matrix,
+						self.source + other.source,
+						self.field)
+						</code></pre>
+						<p>A class to store the linear system of equations.</p>
+					</section>
+					<section>
+						<img src="images/diff_fv_matrix.svg" alt="matrix"
+							style="background:none; border:none; box-shadow:none; height: 500px">
+						<p>Coefficient matrix and source vector; blue coeff. are negative; coeff. scaled by absolute value.</p>
+					</section>
+					<section>
+						<p>The terms in a PDE are additive.</p>
+						<pre class="python"><code>
+def fvm_laplace(diffusivity, field) -> FVMatrix:
+    # snip
+
+def fvm_div(phi, field) -> FVMatrix:
+    # snip
+pde = fvm_div(u,T) - fvm_laplace(conductivity,T)
+pde.solve()
+						</code></pre>
+					</section>
+					
+				</section>
+				<section>
+					<section>
+						<h2>Solving a sparse linear system of equations</h2>
+					</section>
+					<section>
+						<p>Linear system with two equations and two unknowns</p>
+						$$
+							\begin{align}
+							-1x-2y &= 2 \\
+							-2x-7y &= -5
+							\end{align}
+						$$
+						<p>high school (direct) solution</p>
+						$$
+							\begin{align}
+							& 1)\quad x= (2 +2y)/(-1) = -2-2y\\
+							& 2)\quad (-2)(-2-2y)-7y = -5 \\
+							& 3)\quad y = -9/(-3) = 3\\
+							& 4)\quad x = (-2-2\times 3) = -8
+							\end{align}
+						$$
+					</section>
+					<section>
+						<p>problem: does not scale to large systems of equations</p>
+						<p>alternative: (iteratively) guessing the solution</p>
+						<pre class="python"><code>
+x, y = 0, 0
+x_true, y_true = -8, 3
+TOL = 1e-3
+res_jacobi = []
+for i in range(50):
+    x_new = (2 + 2*y) / (-1)
+    y_new = (-5 + 2*x) / (-7)
+    x, y = x_new, y_new
+    res_jacobi.append(abs(x-x_true) + abs(y-y_true))
+    if res_jacobi[-1] < TOL:
+        print(f"Converged after {i+1} iterations.")
+        break
+# output
+Converged after 34 iterations.
+						</code></pre>
+					</section>
+					<section>
+						<p>more effective updates</p>
+						<pre class="python"><code>
+x, y = 0, 0
+res_gauss_seidel = []
+for i in range(50):
+	x = (2 + 2*y) / (-1)
+	y = (-5 + 2*x) / (-7)
+	res_gauss_seidel.append(abs(x-x_true) + abs(y-y_true))
+	if res_gauss_seidel[-1] < TOL:
+		print(f"Converged after {i+1} iterations.")
+		break
+# output
+Converged after 17 iterations.
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/jacobi_vs_gauss_seidel.svg" alt="iterative"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Gauss-Seidel vs. Jacobi method.</p>
+					</section>
+					<section>
+						<p>Formalizing the Gauss-Seidel algorithm</p>
+						$$
+						  \phi_i^n = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=0}^{i-1}a_{ij}\phi_j^n - \sum\limits_{j=i+1}^{N-1} a_{ij}\phi_j^{n-1}\right)
+						$$
+						<div class="row_logo">
+							<div class="column_logo">
+								<div class="content_logo">
+									<ul>
+										<li>$i$ - cell id</li>
+										<li>$n$ - iteration count</li>
+										<li>$N$ - number of cells</li>
+									</ul>
+								</div>
+							</div>
+							<div class="column_logo">
+								<div class="content_logo">
+									<ul>
+										<li>$\phi_i$ - solution variable</li>
+										<li>$a_{ii}$ - diagonal coefficient</li>
+										<li>$b_i$ - source term</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<p>Avoiding to store zeros: sparse matrices/tensors</p>
+						<ol>
+							<li>store non-zero value in a 1D array</li>
+							<li>store row id non-zero value in a 1D array</li>
+							<li>store column id non-zero value in a 1D array</li>
+						</ol>
+						<pre class="python"><code>
+# sparse tensor in PyTorch
+i = [[0, 1, 1],
+     [2, 0, 2]]
+v =  [3, 4, 5]
+s = torch.sparse_coo_tensor(i, v, (2, 3))
+s.to_dense()
+# output
+tensor([[0, 0, 3],
+        [4, 0, 5]])
+
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/dense_vs_sparse.svg" alt="dense"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Memory requirement of dense and sparse matrices.</p>
+					</section>
+					<section>
+						<pre class="python"><code>
+def gauss_seidel(A, b, x, tol=1.0e-6, max_iter=1000):
+    for it in range(max_iter):
+        for i in range(x.shape[0]):
+    	    row_sum = 0.0
+    	    for row, col in zip(*A._indices()):
+    		    if row == i and col != i:
+    			    row_sum += (A[row, col] * x[col]).item()
+    	    x[i] = (b[i] - row_sum) / A[i, i]
+    	res = pt.linalg.norm(b - A.mv(x))
+    	if res < tol:
+    		# snip	
+						</code></pre>
+						<p>Implementation of a simple Gauss-Seidel solver.</p>
+					</section>
+					<section>
+						<p>Putting it all together</p>
+						<pre class="python"><code>
+mesh = Mesh(1.0, 1.0, 5, 5, 1.0, 1.0)
+bc = {
+	"left" : ("fixedValue", 2.0),
+	"right" : ("fixedGradient", 0.0),
+	"top" : ("fixedValue", 0.0),
+	"bottom" : ("fixedGradient", 1.0),
+}
+T = VolScalarField(mesh, "T", 0.0, bc)
+matrix = fvm_laplace(0.1, T)
+
+Tsol = gauss_seidel(matrix.matrix, matrix.source, matrix.field.internal_field.flatten(), tol=1.0e-2)
+T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/5x5_solution.svg" alt="sol"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+						<p>Cell-centered solution.</p>
+					</section>
+					<section>
+						<img src="images/9x9_solution.svg" alt="sol"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+						<p>Refined cell-centered solution.</p>
+					</section>
+					<section>
+						<h3>Linear solvers in CFD are typically iterative</h3>
+						<p>advantages of iterative solvers</p>
+						<ul>
+							<li>low memory usage</li>
+							<li>low computational cost</li>
+						</ul>
+						<p>disadvantages: <b>less robust</b></p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Post-processing</h2>
+					</section>
+					<section>
+						<h3>Why do we do Post-processing?</h3>
+						<ul>
+							<li>verify mathematical and numerical model</li>
+							<li>validate the verified model</li>
+							<li>visualize flow features (critical points)</li>
+							<li>animate flow dynamics</li>
+						</ul>
+					</section>
+					<section>
+						<h3>verification vs. validation</h3>
+						<ul>
+							<li><b>verification:</b> do we solve the model correctly?</li>
+							<li><b>validation:</b> do we solve the right model?</li>
+						</ul>
+					</section>
+					<section>
+						<h3>What is unit testing?</h3>
+						<ol>
+							<li style="list-style-type: upper-latin;">verification</li>
+							<li style="list-style-type: upper-latin;">validation</li>
+						</ol>
+					</section>
+					<section>
+						<h3>If we compare against exp. data, we do ...</h3>
+						<ol>
+							<li style="list-style-type: upper-latin;">verification</li>
+							<li style="list-style-type: upper-latin;">validation</li>
+						</ol>
+					</section>
+					<section>
+						<h3>If we compare RANS against DNS data, we do ...</h3>
+						<ol>
+							<li style="list-style-type: upper-latin;">verification</li>
+							<li style="list-style-type: upper-latin;">validation</li>
+						</ol>
+						<p>RANS - Reynolds averaged Navier Stokes</p>
+						<p>DNS - direct numerical simulation</p>
+					</section>
+					<section>
+						<h3>What to we post-process</h3>
+						<ul>
+							<li>field data (pressure, velocity)</li>
+							<li>target quantities (drag/lift coefficients)</li>
+							<li>residuals (continuity, fields)</li>
+							<li>point sources (e.g., for frequency analysis)</li>
+							<li>...</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Filled contour plots</h3>
+						<img src="images/naca_filled_contour.png" alt="contour"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<h3>Iso lines/surfaces</h3>
+						<img src="images/naca_contour.png" alt="contour"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<h3>Streamlines</h3>
+						<img src="images/naca_streamlines.png" alt="stream"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<h3>Vector arrows</h3>
+						<img src="images/naca_glyph.png" alt="glyph"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<h3>Line integral convolution (LIC)</h3>
+						<img src="images/naca_lic.png" alt="lic"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<h3>Animations</h3>
+						<video height="500" controls muted loop>
+							<source src="images/cylinder_short.mp4">
+						</video>
+					</section>
 				</section>
 			</div>
 
@@ -100,6 +612,7 @@
 		<script src="plugin/search/search.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script>
 
 			// Also available as an ES module, see:
@@ -111,8 +624,9 @@
 				hash: true,
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
 			});
+			Reveal.configure({ slideNumber: true });
 
 		</script>
 

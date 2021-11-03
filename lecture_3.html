@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+		<title>Machine learning in computational fluid dynamics</title>
 
 		<meta name="description" content="Machine learning in computational fluid dynamics">
 		<meta name="author" content="Andre Weiner">
@@ -21,6 +21,24 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
+
+	<style>
+		.reveal .slide-number {
+		position: absolute;
+		display: block;
+		left: 8px;
+		bottom: 8px;
+		height: 55px;
+		width: 100px;
+		z-index: 31;
+		font-family: Helvetica, sans-serif;
+		font-size: 32px;
+		line-height: 1;
+		color: #000000;
+		background-color: rgba(0, 0, 0, 0);
+		padding: 5px;
+		}
+	</style>
 
 	<body>
 
@@ -76,7 +94,7 @@
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9997;</td>
 										<td style="border: 0; padding-right: 20px;"><a
-												href="https://myheutagogy.com/">Blog</a></td>
+												href="https://ml-cfd.com/">Blog</a></td>
 										<td style="border: 0; padding-right: 5px;">&#10026;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://github.com/AndreWeiner">Github</a></td>
@@ -100,6 +118,7 @@
 		<script src="plugin/search/search.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script>
 
 			// Also available as an ES module, see:
@@ -111,8 +130,9 @@
 				hash: true,
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
 			});
+			Reveal.configure({ slideNumber: true });
 
 		</script>
 
