@@ -306,7 +306,8 @@ for b in [10**i for i in range(-1, -11, -1)]:
 						<p>Combining advantages: latin hypercube sampling (LHS)</p>
 						<ul>
 							<li>segment parameter space in equally sized junks (hypercubes)</li>
-							<li>randomly draw one sample in each hypercube</li>
+							<li>randomly draw one sample in each segment of each parameter</li>
+							<li>shuffle and combine samples</li>
 						</ul>
 					</section>
 					<section>
@@ -562,7 +563,7 @@ with pool:
 										<td style="color:blue">...</td>
 									</tr>
 									<tr>
-										<th style="color: green">$N$</th>
+										<th style="color: green">$N_s$</th>
 										<td style="color:red">1.0</td>
 										<td style="color:red">...</td>
 										<td style="color:red">0.7</td>
@@ -600,11 +601,11 @@ with pool:
 					<section>
 						<p>ML model and prediction</p>
 						<p>
-							$$ f_\mathrm{w}(\mathbf{x}) : \mathbb{R}^{N_f} \rightarrow \mathbb{R}^{N_l} $$
-							$f_\mathrm{w}$ - ML model with weights $\mathrm{w}$ mapping from the feature space
+							$$ f_\mathbf{p}(\mathbf{x}) : \mathbb{R}^{N_f} \rightarrow \mathbb{R}^{N_l} $$
+							$f_\mathbf{p}$ - ML model with weights $\mathbf{p}$ mapping from the feature space
 							$\mathbb{R}^{N_f}$ to the label space
 							$\mathbb{R}^{N_l}$
-							$$ \hat{\mathrm{y}_i} = f_\mathrm{w}(\mathbf{x}_i) $$
+							$$ \hat{\mathrm{y}_i} = f_\mathbf{p}(\mathbf{x}_i) $$
 							$\hat{\mathrm{y}}_i$ - (model) prediction
 						</p>
 					</section>
@@ -688,9 +689,9 @@ with pool:
 							  \mathbf{a}^l = \left[ a_1^l, a_2^l,..., a_{N_{neu}}^l \right]
 							$$
 							$$
-							f_m(\mathbf{x}) = \mathbf{a}^{N_l} \circ \mathbf{a}^{N_{l-1}} \circ \dots \circ \mathbf{a}^1\left( \mathbf{x} \right)
+							f_\mathbf{p}(\mathbf{x}) = \mathbf{a}^{N_L} \circ \mathbf{a}^{N_{L-1}} \circ \dots \circ \mathbf{a}^1\left( \mathbf{x} \right)
 							$$
-							<p>$N_l$ - number of layers</p>
+							<p>$N_L$ - number of layers</p>
 						</section>
 						<section>
 							<p>Attributes of good activation functions:</p>
@@ -751,7 +752,7 @@ class SimpleNN(pt.nn.Module):
 							</ul>
 							<p>Goal: model for streamwise velocity</p>
 							$$
-							U_{m,x} = f(y, Re)
+							U_{x} = f_{\mathbf{p}}(y, Re)
 							$$
 						</section>
 						<section>
@@ -771,10 +772,10 @@ class SimpleNN(pt.nn.Module):
 						<section>
 							<p>Validation using Spalding's function</p>
 							$$
-								u_\tau = \sqrt{\nu \partial_y U_x/\rho},\quad y^+ = y\nu/u_\tau,\quad u^+=U_x/u_\tau
+								u_\tau = \sqrt{\nu \partial_y U_x/\rho},\quad y^+ = yu_\tau/\nu,\quad u^+=U_x/u_\tau
 							$$
 							$$
-								y^+= u^+ + \left[e^{u^+\kappa} -1 - u^+\kappa (1+u^+\kappa)/2 - (u^+\kappa)^3/6\right]/E
+								y^+= u^+ + \left[e^{u^+\kappa} -1 - u^+\kappa (1+u^+\kappa/2) - (u^+\kappa)^3/6\right]/E
 							$$
 							<p>$\kappa$, $E$ - constants</p>
 						</section>
@@ -861,7 +862,7 @@ assert pt.allclose(train_data, scaler.rescale(train_data_norm))
 							<h3>Optimizing the weights</h3>
 							<p>Mean squared error loss function:</p>
 							$$
-								L(\mathbf{x,w}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s}\left(U_{x,i} - U_m(\mathbf{x}_i)\right)^2
+								L(\mathbf{p}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s}\left(U_{x,i} - U_x(\mathbf{x}_i)\right)^2
 							$$
 						</section>
 						<section>
