@@ -38,6 +38,18 @@
 		background-color: rgba(0, 0, 0, 0);
 		padding: 5px;
 		}
+		.row_img {
+				display: table;
+			}
+			.column_img {
+				display: table-cell;
+				vertical-align: middle;
+				text-align: center;
+				width: 50%;
+			}
+			.content_img {
+				display: inline-block;
+			}
 	</style>
 
 	<body>
@@ -104,9 +116,751 @@
 						</div>
 					</div>
 				</section>
-	
+
+				<section>
+					<h2>Last lecture</h2>
+					<p>Introduction to selected ML concepts</p>
+					<ul>
+						<li>Floating point numbers</li>
+						<li>Exploring parameter spaces</li>
+						<li>Generating data with simulations</li>
+						<li>Normalizing data</li>
+						<li>Feature selection and design</li>
+						<li>Deep learning</li>
+					</ul>
+				</section>
 				<section>
 					<h2>Outline</h2>
+					<p>Predicting the stability regime of rising bubbles</p>
+					<ul>
+						<li>Motivation</li>
+						<li>Forces acting on rising bubbles</li>
+						<li>Loading, inspecting, and preparing the data</li>
+						<li>Binary classification</li>
+						<li>Multi-class classification</li>
+					</ul>
+				</section>
+	
+				<section>
+					<section>
+						<h2>Motivation</h2>
+					</section>
+					<section>
+						<h3>Gas-liquid reactors</h3>
+						<div class=row_img>
+							<div class=column_img style="width:20%">
+								<div class=content_img>
+									<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400" style="background:none; border:none; box-shadow:none;">
+									<p>
+										<small>
+												<b>micro reactor</b><br>
+												size: millimeter<br>
+												source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
+										</small>
+									</p>
+								</div>
+							</div>
+							<div class=column_img style="width:35%">
+								<p>
+									<b>prediction</b> of
+								</p>
+									<ul>
+										<li>mass transfer</li>
+										<li>enhancement</li>
+										<li>mixing</li>
+										<li>conversion</li>
+										<li>selectivity</li>
+										<li>yield</li>
+										<li>...</li>
+									</ul>
+							</div>
+							<div class=column_img style="width:25%">
+								<div class=content_img>
+									<img src="images/eni_fischer_tropsch.png" alt="bubble_column" height="400" style="background:none; border:none; box-shadow:none;">
+									<p>
+										<small>
+											<b>bubble column reactor</b><br>
+											size: meter<br>
+											source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M. Raimundo, ENI</a>
+										</small>
+									</p>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<p>Scale-up modeling approach for bubble columns:</p>
+						<ul>
+							<li>below continuum scale ...</li>
+							<li>boundary layers at bubbles ($\mu m$)</li>
+							<li>resolved individual bubbles ($mm$)</li>
+							<li>bubbles as point particles ($cm$)</li>
+							<li>gas-liquid mixture ($m$)</li>
+						</ul>
+						<p>How to transfer information between scales?</p>
+					</section>
+					<section>
+						<style>
+							.row_video {
+								display: table;
+								width: 100%;
+							}
+	
+							.column_video {
+								display: table-cell;
+								text-align: center;
+								width: 50%;
+							}
+	
+							.content_video {
+								display: inline-block;
+							}
+						</style>
+						<div class="row_video">
+							<div class="column_video">
+								<div class="content_video">
+									<small>water/air: $d_{eq}=3~mm$</small>
+									<video height="500" controls mute autoplay loop>
+										<source src="videos/b8_mesh_plic.ogv">
+									</video>
+								</div>
+							</div>
+							<div class="column_video">
+								<div class="content_video">
+									<small>water/air: $d_{eq}=5~mm$</small>
+									<video height="500" controls mute autoplay loop>
+										<source src="videos/b10_mesh_plic.ogv">
+									</video>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<img src="images/path_regimes.png" alt="path_regimes" width="700"
+							style="background:none; border:none; box-shadow:none;">
+						<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
+							figure 1.</p>
+					</section>
+					<section>
+						<p>Potential issues with the image representation:</p>
+						<ul>
+							<li>What is the criterion for the boundaries?</li>
+							<li>How to use the information on a larger scale?</li>
+							<li>How to the map to higher dimensions?</li>
+							<li>...</li>
+						</ul>
+					</section>
+					<section>
+						<p>Potential solution: supervised learning - classification</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Forces acting on a rising bubble</h2>
+					</section>
+					<section>
+						<p>Why does a bubble rise?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">surface tension forces</li>
+							<li style="list-style-type: upper-latin;">viscous forces</li>
+							<li style="list-style-type: upper-latin;">buoyancy forces</li>
+							<li style="list-style-type: upper-latin;">inertia forces</li>
+							<li style="list-style-type: upper-latin;">more than one force</li>
+						</ol>
+					</section>
+					<section>
+						<p>What limits the rise velocity?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">surface tension forces</li>
+							<li style="list-style-type: upper-latin;">viscous forces</li>
+							<li style="list-style-type: upper-latin;">buoyancy forces</li>
+							<li style="list-style-type: upper-latin;">inertia forces</li>
+							<li style="list-style-type: upper-latin;">more than one force</li>
+						</ol>
+					</section>
+					<section>
+						<p>Why are small bubbles spherical/ellipsoidal?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">surface tension forces</li>
+							<li style="list-style-type: upper-latin;">viscous forces</li>
+							<li style="list-style-type: upper-latin;">buoyancy forces</li>
+							<li style="list-style-type: upper-latin;">inertia forces</li>
+							<li style="list-style-type: upper-latin;">more than one force</li>
+						</ol>
+					</section>
+					<section>
+						<h3>Eötvös or Bond number</h3>
+						<p>
+							$$
+							  Eo = \frac{\text{buoyancy force}}{\text{surface tension force}} = \frac{g\rho_l d_b^2}{\sigma}
+							$$
+						</p>
+						<p>$\rho_l$ - density liquid, $g$ - gravity, $d_b$ - diameter, $\sigma$ - surface tension</p>
+						<p>Tells us how strong the deformation is going to be.</p>
+					</section>
+					<section>
+						<h3>Galilei number</h3>
+						<p>
+							$$
+							  Ga = \frac{\text{inertia force}}{\text{viscous force}}\times\sqrt{\frac{\text{buoyancy force}}{\text{inertia force}}}
+							  = \frac{\sqrt{gd_b^3}}{\nu_l}
+							$$
+						</p>
+						<p>$\nu_l$ - kinematic liquid viscosity</p>
+						<p>Tells us how stable/unstable the rise is going to be.</p>
+					</section>
+					<section>
+						<img src="images/path_regimes.png" alt="path_regimes" width="700"
+							style="background:none; border:none; box-shadow:none;">
+						<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
+							figure 1.</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Loading, inspecting, and preparing the data</h2>
+					</section>
+					<section>
+						<img src="images/path_regimes.png" alt="path_regimes" width="700"
+							style="background:none; border:none; box-shadow:none;">
+						<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
+							figure 1.</p>
+					</section>
+					<section>
+						<p>Data extraction with <a href="http://markummitchell.github.io/engauge-digitizer/">Engauge Digitizer</a></p>
+						<ul>
+							<li>take screenshot of graph/figure</li>
+							<li>load screenshot in digitizer</li>
+							<li>set origin, axes, and scale</li>
+							<li>select markers or lines</li>
+							<li>extract to (csv) file</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Publish your data (if you can)!</h3>
+					</section>
+					<section>
+						<p>Loading and processing the data.</p>
+						<pre class="python"><code>
+data_path = "../datasets/path_shape_regimes/"
+regimes = ["I", "II", "III", "IV", "V"]
+raw_data_files = [f"regime_{regime}.csv" for regime in regimes]
+files = [pd.read_csv(data_path + file_name, header=0, names=["Ga", "Eo"]) for file_name in raw_data_files]
+for data, regime in zip(files, regimes):
+    data["regime"] = regime
+data = pd.concat(files, ignore_index=True)
+data.sample(5)
+# output
+Ga	Eo	regime
+22.6060	40.557	III
+50.0910	39.896	V
+6.9836	51.882	III
+518.2900	19.694	V
+101.0630	19.373	IV
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/ga_eo_data_raw.svg" alt="raw"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Raw extracted data.</p>
+					</section>
+					<section>
+						<img src="images/ga_eo_raw_histogram.svg" alt="raw_hist"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>$Ga$ and $Eo$ histograms of raw data.</p>
+					</section>
+					<section>
+						<img src="images/ga_eo_log.svg" alt="log_data"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Data transformed using logarithm.</p>
+					</section>
+					<section>
+						<img src="images/ga_eo_log_histogram.svg" alt="log_hist"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>$Ga^\prime$ and $Eo^\prime$ histograms of transformed data.</p>
+					</section>
+					<section>
+						<h3>Should we min-max-normalize the data?</h3>
+					</section>
+					<section>
+						<p>Adding an ordinal label representation.</p>
+						<pre class="python"><code>
+# copied for convenience
+regimes = ["I", "II", "III", "IV", "V"]
+logData = data[["Ga", "Eo"]].apply(np.log10)
+logData["regime"] = data["regime"].copy()
+# creating an ordinal representation
+logData["ordinal"] = 0.0
+for i, r in enumerate(regimes):
+    logData.ordinal.mask(logData.regime == r, float(i), inplace=True)
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Binary classification</h2>
+					</section>
+					<section>
+						<img src="images/ga_eo_log.svg" alt="log_data"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Goal: distinguish between region I and II.</p>
+					</section>
+					<section>
+						<h3>Only regions I and II</h3>
+						<p>$ Ga^\prime = log(Ga) $, $ Eo^\prime = log(Eo) $</p>
+						<p>$$ z(Ga^\prime, Eo^\prime) = w_1Ga^\prime + w_2Eo^\prime + b $$</p>
+						<p>
+							$$
+							H(z (Ga^\prime, Eo^\prime)) = \left\{\begin{array}{lr}
+							0, & \text{if } z \leq 0\\
+							1, & \text{if } z \gt 0
+							\end{array}\right.
+							$$
+						</p>
+					</section>
+					<section>
+						<img src="images/weighted_sum_ga_var.svg" alt="gavar"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+						<p>Variation of weight for $Ga^\prime$.</p>
+					</section>
+					<section>
+						<img src="images/weighted_sum_ga_var.svg" alt="eovar"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+						<p>Variation of weight for $Eo^\prime$.</p>
+					</section>
+					<section>
+						<img src="images/weighted_sum_bias_var.svg" alt="bvar"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+						<p>Variation of weight for bias $b$.</p>
+					</section>
+					<section>
+						<img src="images/heaviside_prediction.svg" alt="H"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+						<p>Heaviside function applied to $z(Ga^\prime , Eo^\prime)$.</p>
+					</section>
+					<section>
+						<h3>Compact notation</h3>
+						<p>Linearly weighted inputs
+							$$
+							z_i=z(\mathrm{x}_i)=\sum\limits_{j=1}^{N_f}w_jx_{ij}
+							$$
+						</p>
+						<p>with
+							$$
+							\mathbf{x}_i = \left[ Ga^\prime_i, Eo^\prime_i, 1 \right],\quad \mathbf{w} = \left[ w_1, w_2, b
+							\right]^T
+							$$
+						</p>
+					</section>
+					<section>
+						<h3>Binary encoding</h3>
+						<p>True label:
+							$$
+							y_i = \left\{\begin{array}{lr}
+							0, & \text{for region I }\\
+							1, & \text{for region II}
+							\end{array}\right.
+							$$
+						</p>
+						<p>Predicted label:
+							$$
+							\hat{y}_i = H(z_i) = \left\{\begin{array}{lr}
+							0, & \text{if } z_i \leq 0\\
+							1, & \text{if } z_i \gt 0
+							\end{array}\right.
+							$$
+						</p>
+					</section>
+					<section>
+						<h3>Loss function</h3>
+							$$
+							L(\mathbf{w}) = \frac{1}{2}\sum\limits_{i=1}^N \left(y_i - \hat{y}_i\right)^2
+							$$
+						</p>
+						<p>The term in parenthesis can take on the values<br>$1$, $0$, or $-1$.</p>
+					</section>
+					<section>
+						<h3>Gradient decent</h3>
+						<p>Simple update rule for the weights <small>
+								$$
+								\mathbf{w}^{n+1} = \mathbf{w}^n - l_r \frac{\partial L(\mathbf{w})}{\partial \mathbf{w}} =
+								\begin{pmatrix}w_1^n\\
+								w_2^n\\
+								b^n
+								\end{pmatrix} + l_r
+								\sum\limits_{i=1}^N \left(y_i - \hat{y}_i^n \right)
+								\begin{pmatrix}Ga^\prime_i\\
+								Eo^\prime_i\\
+								1
+								\end{pmatrix}
+								$$</small>
+						</p>
+						<p>$n$ - current iteration, $l_r$ - learning rate</p>
+					</section>
+					<section>
+						<p>Implementation of the perceptron algorithm.</p>
+						<pre class="python"><code>
+class Perceptron(object):
+    def __init__(self, n_weights: int):
+        self._p = pt.rand(n_weights)*2.0 - 1.0
+
+    def _loss(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
+        return 0.5 * pt.sum((y - self.predict(X))**2)
+
+    def _loss_gradient(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
+        delta = y - self.predict(X)
+        return -pt.cat((X, pt.ones(X.shape[0]).unsqueeze(-1)), dim=-1).T.mv(delta)
+
+    def train(self, X: pt.Tensor, y: pt.Tensor, epochs: int=500,
+              lr: float=0.01, tol: float=1.0e-6) -> List[float]:
+        loss = []
+        for e in range(epochs):
+            self._p -= lr*self._loss_gradient(X, y)
+            loss.append(self._loss(X, y).item())
+            if loss[-1] < tol:
+                print(f"Converged after {e+1} epochs.")
+                return loss
+        print(f"Training did not converge within {epochs} epochs")
+        print(f"Final loss: {loss[-1]:2.3f}")
+        return loss
+
+    def predict(self, X: pt.Tensor):
+        weighted_sum = X.mv(self._p[:-1]) + self._p[-1]
+        return pt.heaviside(weighted_sum, pt.tensor(0.0))
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/perceptron_loss.svg" alt="perceptron_loss"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Perceptron learning rule - loss over epochs.</p>
+					</section>
+					<section>
+						<img src="images/perceptron_prediction.svg" alt="perceptron_pred"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Perceptron algorithm - weighted sum of inputs and prediction.</p>
+					</section>
+					<section>
+						<p>Guaranteed convergence (zero loss)?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">yes</li>
+							<li style="list-style-type: upper-latin;">no</li>
+							<li style="list-style-type: upper-latin;">data dependent</li>
+						</ol>
+					</section>
+					<section>
+						<h3>Conditional probabilities</h3>
+						$$ p(y=1 | \mathrm{x}) $$
+						<p>speak: probability $p$ of the event $y=1$ given $\mathrm{x}$</p>
+						$$ \hat{y} = f_{\mathbf{w}}(\mathrm{x}) = p(y=1 | \mathrm{x})$$
+						<p>model predicts <span style="color: red">class probability</span> instead of class!</p>
+					</section>
+					<section>
+						<p>What is the expected value of $p(y=1 | \mathrm{x})$ for points far in <span
+								style="color: red">region II</span>?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">close to zero</li>
+							<li style="list-style-type: upper-latin;">about 0.5</li>
+							<li style="list-style-type: upper-latin;">close to one</li>
+						</ol>
+					</section>
+					<section>
+						<p>What is the expected value of $p(y=1 | \mathrm{x})$ for points far in <span
+								style="color: red">region I</span>?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">close to zero</li>
+							<li style="list-style-type: upper-latin;">about 0.5</li>
+							<li style="list-style-type: upper-latin;">close to one</li>
+						</ol>
+					</section>
+					<section>
+						<p>What is the expected value of $p(y=1 | \mathrm{x})$ for points close to the decision boundary?
+						</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">close to zero</li>
+							<li style="list-style-type: upper-latin;">about 0.5</li>
+							<li style="list-style-type: upper-latin;">close to one</li>
+						</ol>
+					</section>
+					<section>
+						<p>What is the expected value of <span style="color: red">$p(y=0 | \mathrm{x})$</span> for points
+							far in region I</span>?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">close to zero</li>
+							<li style="list-style-type: upper-latin;">about 0.5</li>
+							<li style="list-style-type: upper-latin;">close to one</li>
+						</ol>
+					</section>
+					<section>
+						<p>How to convert $z(\mathrm{x})$ to a probability?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">sinus: $\mathrm{sin}(z)$</li>
+							<li style="list-style-type: upper-latin;">hyperbolic tangents: $\mathrm{tanh}(z)$</li>
+							<li style="list-style-type: upper-latin;">sigmoid: $\sigma(z)$</li>
+						</ol>
+					</section>
+					<section>
+						<img src="images/sigmoid_prob.svg" alt="sigmoid"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Sigmoid function $\sigma = 1 / (1+\mathrm{exp}(-z))$.</p>
+					</section>
+					<section>
+						<img src="images/binary_proabilities.svg" alt="probs"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Probabilities $p(II|Ga^\prime,Eo^\prime) = \sigma (z(Ga^\prime,Eo^\prime))$.</p>
+					</section>
+					<section>
+						<h3>Joint probabilities - likelihood function</h3>
+						$$ l(\mathbf{w}) = \prod\limits_i^{N_s} p_i(y_i | \mathbf{x}_i) $$
+						<p>principle of maximum likelihood</p>
+						$$ \mathbf{w}^* = \underset{\mathbf{w}}{\mathrm{argmax}}\ l(\mathbf{w}). $$
+					</section>
+					<section>
+						<p>Which of the following is equivalent to $l(\mathbf{w}) = \prod\limits_i^{N_s} p_i(y_i |
+							\mathbf{x}_i)$?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$$ \prod\limits_i^{N_s} \left[ y_i^{\hat{y}_i}
+								(1-y_i)^{(1-\hat{y}_i)}\right] $$</li>
+							<li style="list-style-type: upper-latin;">$$ \prod\limits_i^{N_s} \left[ \hat{y}_i^{y_i}
+								(1-\hat{y}_i)^{(1-y_i)}\right] $$</li>
+						</ol>
+					</section>
+					<section>
+						<h3>Log-likelihood and binary cross entropy</h3>
+	
+						<p>
+							$$
+							\mathrm{ln}(l(\mathbf{w})) = \sum\limits_{i=1}^{N_s} y_i \mathrm{ln}(\hat{y}_i) + (1-y_i)
+							\mathrm{ln}(1-\hat{y}_i)
+							$$
+						</p>
+						<p>
+							$$
+							L(\mathbf{w}) = -\frac{1}{N_s}\sum\limits_{i=1}^{N_s} y_i \mathrm{ln}(\hat{y}_i) + (1-y_i)
+							\mathrm{ln}(1-\hat{y}_i)
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Implementation of logistic regression.</p>
+						<pre class="python"><code>
+class LogisticRegression(object):
+    def __init__(self, n_weights):
+        self._p = pt.rand(n_weights)*2.0 - 1.0
+
+    def _joint_probability(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
+        probs = self.probability(X)
+        joint = pt.pow(probs, y) * pt.pow(1.0-probs, 1-y)
+        return pt.prod(joint)
+
+    def _loss(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
+        probs = self.probability(X)
+        entropy = y*pt.log(probs+1.0e-6) + (1-y)*pt.log(1.0-probs+1.0e-6)
+        return -entropy.mean()
+
+    def _loss_gradient(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
+        delta = y - self.probability(X)
+        grad = pt.cat((X, pt.ones(X.shape[0]).unsqueeze(-1)), dim=-1) * delta.unsqueeze(-1)
+        return -grad.mean(dim=0)
+
+    def train(self, X: pt.Tensor, y: pt.Tensor, epochs: int=10000,
+        # snip - see perceptron
+
+    def probability(self, X: pt.Tensor) -> pt.Tensor:
+        weighted_sum = X.mv(self._p[:-1]) + self._p[-1]
+        return pt.sigmoid(weighted_sum)
+
+    def predict(self, X: pt.Tensor) -> pt.Tensor:
+        return pt.heaviside(self.probability(X)-0.5, pt.tensor(0.0))
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/log_regression_loss.svg" alt="log_loss"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Binary cross entropy vs. epochs.</p>
+					</section>
+					<section>
+						<img src="images/entropy_loss_landscape.svg" alt="entropy"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Landscape around the optima of binary cross entropy and joint probability.</p>
+					</section>
+					<section>
+						<img src="images/log_regression_prediction.svg" alt="logreg"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Probability and prediction with logistic regression.</p>
+					</section>
+					<section>
+						<img src="images/ga_eo_log.svg" alt="log_data"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>New goal: separate regime I from II and III.</p>
+					</section>
+					<section>
+						<p>Training of two logistic regressors.</p>
+						<pre class="python"><code>
+# preparing the training data
+one_two = (logData.regime == "I") | (logData.regime == "II")
+one_three = (logData.regime == "I") | (logData.regime == "III")
+features_I_II = pt.tensor(logData[one_two][["Ga", "Eo"]].values).type(pt.float32)
+features_I_III = pt.tensor(logData[one_three][["Ga", "Eo"]].values).type(pt.float32)
+label_I_II = pt.tensor(logData.ordinal[one_two].values).type(pt.float32)
+label_I_III = pt.tensor(logData.ordinal[one_three].values).type(pt.float32)
+label_I_III.clamp_(0.0, 1.0)
+# training the models
+model_I_II = LogisticRegression(3)
+model_I_III = LogisticRegression(3)
+_ = model_I_II.train(features_I_II, label_I_II)
+_ = model_I_III.train(features_I_III, label_I_III)
+print("Weights model I-II: ", model_I_II._p)
+print("Weights model I-III: ", model_I_III._p)
+# output
+Converged after 3022 epochs.
+Converged after 891 epochs.
+Weights model I-II:  tensor([ 14.3539,   1.3520, -21.3898])
+Weights model I-III:  tensor([  1.7470,   6.6995, -10.4676])
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/log_regression_I_II_II.svg" alt="logcomb"
+							style="background:none; border:none; box-shadow:none; width: 70%">
+						<p>Logistic regression classifiers separating regions I-II and I-III.</p>
+					</section>
+					<section>
+						<p>Training of two logistic regressors.</p>
+						<pre class="python"><code>
+	combined_prob = pt.sigmoid(
+	  0.9*model_I_II.probability(pt.stack((xx.flatten(), yy.flatten())).T)
+	+ 0.9*model_I_III.probability(pt.stack((xx.flatten(), yy.flatten())).T)
+	- 0.5
+	)
+	combined_prediction = pt.heaviside(combined_prob - 0.5, pt.tensor(0.0))
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/log_combined_prob.svg" alt="logcomb"
+							style="background:none; border:none; box-shadow:none; width: 70%">
+						<p>Combination of two logistic regression classifiers.</p>
+					</section>
+					<section>
+						<img src="images/example_nn.png" alt="nn_example"
+							style="background:none; border:none; box-shadow:none; width: 50%">
+						<p>Generic neural network with fully connected layers.</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Multi-class classification</h2>
+					</section>
+					<section>
+						<img src="images/one_hot_encoding.png" alt="encoding"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>One hot encoding of path regimes.</p>
+					</section>
+					<section>
+						<p>What is the length of the label vector if we have 10 classes (regimes)?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">1</li>
+							<li style="list-style-type: upper-latin;">2</li>
+							<li style="list-style-type: upper-latin;">5</li>
+							<li style="list-style-type: upper-latin;">10</li>
+						</ol>
+					</section>
+					<section>
+						<p>What does the label vector look like if we have 4 classes and the true label is class 3 / regime 3?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
+							<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 0, 0, 1, 0 \right]^T$</li>
+							<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 1, 0, 1, 0 \right]^T$</li>
+							<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
+						</ol>
+					</section>
+					<section>
+						<p><b>Softmax function</b> and <b>categorical cross entropy</b> for $K$ classes:</p>
+						<p>
+							$$ p(y_{j}=1 | \mathbf{x}) = \frac{e^{z_{j}}}{\sum_{j=0}^{K-1} e^{z_{j}}} $$
+						</p>
+						<p>
+							$$ L(\mathbf{w}) = -\frac{1}{N} \sum\limits_{i=1}^{N_s}\sum\limits_{j=0}^{K-1} y_{ij} \mathrm{ln}\left( \hat{y}_{ij} \right) $$
+						</p>
+					</section>
+					<section>
+						<p>What is a likely/possible prediction if the true class is 2?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0.1, 0, 0.9, 0.1 \right]^T$</li>
+							<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
+							<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0.02, 0.9, 0.03 \right]^T$</li>
+							<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
+						</ol>
+					</section>
+					<section>
+						<p>Neural network classification model.</p>
+						<pre class="python"><code>
+class NetworkClassifier(pt.nn.Module):
+    def __init__(self, n_features=2, n_classes=5, n_neurons=60, activation=pt.sigmoid):
+        super().__init__()
+        self._activation = activation
+        self._layer_1 = pt.nn.Linear(n_features, n_neurons)
+        self._layer_2 = pt.nn.Linear(n_neurons, n_neurons)
+        self._layer_3 = pt.nn.Linear(n_neurons, n_classes)
+        
+    def forward(self, x: pt.Tensor) -> pt.Tensor:
+        x = self._activation(self._layer_1(x))
+        x = self._activation(self._layer_2(x))
+        return pt.nn.functional.log_softmax(self._layer_3(x), dim=1)
+						</code></pre>
+					</section>
+					<section>
+						<p>Training loop definition.</p>
+						<pre class="python"><code>
+regime_model = NetworkClassifier()
+# categorial cross entropy (negative logarithmic likelihood)
+# expects logarithmic probabilities
+criterion = pt.nn.NLLLoss()
+optimizer = pt.optim.Adam(regime_model.parameters(), lr=0.005)
+epochs = 2000
+losses = []
+features = pt.tensor(logData[["Ga", "Eo"]].values, dtype=pt.float32)
+labels = pt.tensor(logData.ordinal.values, dtype=pt.int64)
+
+for e in range(1, epochs):
+    optimizer.zero_grad()
+    # run forward pass through the network
+    log_prob = regime_model(features)
+    # compute cross entropy
+    loss = criterion(log_prob, labels)
+    # compute gradient of the loss function w.r.t. to the model weights
+    loss.backward()
+    # update weights
+    optimizer.step()
+    # keep track and print progress
+    losses.append(loss.item())
+    print("\r", "Training loss epoch {:5d}: {:10.5e}".format(
+            e, losses[-1]), end="")
+    if losses[-1] < 5.0E-3:
+        print(f"\nTraining converged after {e+1} epochs")
+        break
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/network_classification_loss.svg" alt="network_loss"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Categorical cross entropy vs. epochs.</p>
+					</section>
+					<section>
+						<img src="images/network_multiclass_prediction.svg" alt="multi"
+							style="background:none; border:none; box-shadow:none; width: 80%">
+						<p>Prediction of classification network.</p>
+					</section>
+					<section>
+						<p>Points for improvement:</p>
+						<ul>
+							<li>train/validation/test split</li>
+							<li>regularization</li>
+							<li>normalization</li>
+						</ul>
+						<p>More data? $\rightarrow$ exercise session</p>
+					</section>
 				</section>
 			</div>
 
