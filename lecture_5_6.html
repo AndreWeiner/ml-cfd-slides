@@ -22,6 +22,7 @@
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
 
+
 	<style>
 		.reveal .slide-number {
 		position: absolute;
@@ -38,6 +39,18 @@
 		background-color: rgba(0, 0, 0, 0);
 		padding: 5px;
 		}
+		.row_img {
+				display: table;
+			}
+			.column_img {
+				display: table-cell;
+				vertical-align: middle;
+				text-align: center;
+				width: 50%;
+			}
+			.content_img {
+				display: inline-block;
+			}
 	</style>
 
 	<body>
@@ -104,10 +117,426 @@
 						</div>
 					</div>
 				</section>
-	
+
+
+				<section>
+					<h2>Last lecture</h2>
+					<p>Predicting the stability regime of rising bubbles</p>
+					<ul>
+						<li>Motivation</li>
+						<li>Forces acting on rising bubbles</li>
+						<li>Loading, inspecting, and preparing the data</li>
+						<li>Binary classification</li>
+						<li>Multi-class classification</li>
+					</ul>
+				</section>
 				<section>
 					<h2>Outline</h2>
+					<p>Computing highly accurate mass transfer at rising bubbles</p>
+					<ul>
+						<li>The high Schmidt number problem</li>
+						<li>Decoupling two-phase flow and species transport</li>
+						<hr>
+						<li>Data processing and visualization</li>
+						<li>Creating models for deformation and velocity</li>
+						<li>Single-phase simulations with mass transfer</li>
+						<li>Analyzing the results</li>
+					</ul>
 				</section>
+
+				<section>
+					<h3>Applying ML in CFD (or any other field) requires <span style="color: red;">domain knowledge</span></h3>
+				</section>
+
+				<section>
+					<section>
+						<h2>High Schmidt number problem</h2>
+					</section>
+					<section>
+						<h3>Gas-liquid reactors</h3>
+						<div class=row_img>
+							<div class=column_img style="width:20%">
+								<div class=content_img>
+									<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400" style="background:none; border:none; box-shadow:none;">
+									<p>
+										<small>
+												<b>micro reactor</b><br>
+												size: millimeter<br>
+												source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
+										</small>
+									</p>
+								</div>
+							</div>
+							<div class=column_img style="width:35%">
+								<p>
+									<b>prediction</b> of
+								</p>
+									<ul>
+										<li>mass transfer</li>
+										<li>enhancement</li>
+										<li>mixing</li>
+										<li>conversion</li>
+										<li>selectivity</li>
+										<li>yield</li>
+										<li>...</li>
+									</ul>
+							</div>
+							<div class=column_img style="width:25%">
+								<div class=content_img>
+									<img src="images/eni_fischer_tropsch.png" alt="bubble_column" height="400" style="background:none; border:none; box-shadow:none;">
+									<p>
+										<small>
+											<b>bubble column reactor</b><br>
+											size: meter<br>
+											source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M. Raimundo, ENI</a>
+										</small>
+									</p>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<img src="images/kueck_bl_bubble.png" alt="bl" width="100%"
+							style="background:none; border:none; box-shadow:none;">
+						<p>Source: <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/cite.200900034">U. D. Kück et al. 2009</a></p>
+					</section>
+					<section>
+						<img src="images/g14168.png" alt="scale" width="100%"
+							style="background:none; border:none; box-shadow:none;">
+						<p>The bigger picture: scale-up strategy.</p>
+					</section>
+					<section>
+						<h3>Reynolds number</h3>
+						<p>
+							$$ Re = \frac{\text{inertia force}}{\text{viscous force}} = \frac{d_b U_b}{\nu_l} $$
+						</p>
+						<p>$d_b$ - sphere-equivalent bubble diameter, $U_b$ - bubble speed (terminal velocity), $\nu_l$ - kinematic liquid viscosity</p>
+					</section>
+					<section>
+						<h3>Schmidt number</h3>
+						<p>
+							$$ Sc = \frac{\text{diffusive trans. of momentum}}{\text{diffusive trans. of species}} = \frac{\nu_l}{D_l} $$
+						</p>
+						<p>$D_l$ - molecular diffusivity of species dissolved in liquid, $\nu_l$ - kinematic liquid viscosity</p>
+					</section>
+					<section>
+						<h3>Péclet number</h3>
+						<p>
+							$$ Pe = \frac{\text{convective trans. of species}}{\text{diffusive trans. of species}} = \frac{d_bU_b}{D_l} = ReSc $$
+						</p>
+						<p>$\rightarrow$ determines boundary layer thickness</p>
+					</section>
+					<section>
+						<p>
+							specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - rise velocity?
+						</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$U_b\approx 0.025 m/s$</li>
+							<li style="list-style-type: upper-latin;">$U_b\approx 0.25 m/s$</li>
+							<li style="list-style-type: upper-latin;">$U_b\approx 2.5 m/s$</li>
+							<li style="list-style-type: upper-latin;">$U_b\approx 25 m/s$</li>
+						</ol>
+					</section>
+					<section>
+						<img src="images/ub_vs_db_water.png" alt="bl" width="100%"
+							style="background:none; border:none; box-shadow:none;">
+						<p>Rise velocity of air bubbles in water.</p>
+					</section>
+					<section>
+						<p>
+							specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - kinematic viscosity water?
+						</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-3} m^2/s$</li>
+							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-4} m^2/s$</li>
+							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-5} m^2/s$</li>
+							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-6} m^2/s$</li>
+						</ol>
+					</section>
+					<section>
+						<p>
+							specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - molecular diffusivity oxygen in water?
+						</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-7} m^2/s$</li>
+							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-8} m^2/s$</li>
+							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-9} m^2/s$</li>
+							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-10} m^2/s$</li>
+						</ol>
+					</section>
+					<section>
+						<p>Estimating the velocity boundary layer's thickness:</p>
+						<p>
+							$$ Re = \frac{d_b U_b}{\nu_l} = \frac{0.25\times 10^{-3}}{10^{-6}} = 250 $$
+						</p>
+						<p>
+							$$ \frac{d_b}{\delta_h} \approx \sqrt{2Re} \approx 22 \rightarrow \delta_h\approx 45\mu m$$
+						</p>
+						<p>Reference: <a href="https://tuprints.ulb.tu-darmstadt.de/11405/">A. Weiner 2019</a>, p. 3, table 1.</p>
+					</section>
+					<section>
+						<p>Estimating the species boundary layer's thickness:</p>
+						<p>
+							$$ Sc = \frac{\nu_l}{D_{O_2}} = \frac{10^{-6}}{2\times 10^{-9}} = 500 $$
+						</p>
+						<p>
+							$$ \frac{\delta_h}{\delta_c} \approx \frac{1}{\sqrt{Sc}} \sqrt{\pi/2} \approx 18 \rightarrow \delta_c\approx 2.5\mu m$$
+						</p>
+						<p>Reference: <a href="https://www.researchgate.net/profile/Andre-Weiner/publication/318124144_Advanced_subgrid-scale_modeling_for_convection-dominated_species_transport_at_fluid_interfaces_with_application_to_mass_transfer_from_rising_bubbles/links/5bea90af92851c6b27ba6b54/Advanced-subgrid-scale-modeling-for-convection-dominated-species-transport-at-fluid-interfaces-with-application-to-mass-transfer-from-rising-bubbles.pdf">A. Weiner et al. 2017</a>, p. 3.</p>
+					</section>
+					<section>
+						<p>
+							Summing up:
+						</p>
+						<ul>
+							<li>
+								$Pe = Sc\ Re = \nu_l / D_{O_2} \cdot U_b d_b/\nu_l \approx 10^5 $
+							</li>
+							<li>
+								$$ Re\approx 250;\quad \delta_h/d_b \propto Re^{-1/2};\quad\delta_h\approx 45~\mu m $$
+							</li>
+							<li>
+								$$ Sc\approx 500;\quad \delta_c/\delta_h \propto Sc^{-1/2};\quad\delta_c\approx 2.5~\mu m $$
+							</li>
+						</ul>
+						<p>
+							$\delta_h/\delta_c$ typically <b style="color:red;">10 ... 100</b>
+						</p>
+						<p>
+							feasible simulations up to $Pe\approx 1000$ (3D, HPC)
+						</p>
+					</section>
+					<section>
+						<p>Practical solution to overcome the high Schmidt/Péclet number problem:<br> <b>boundary layer models</b></p>
+						<ul>
+							<li>solve simplified boundary layer substitute problem</li>
+							<li>fit substitute solution locally in interface cells</li>
+							<li>correct simulation based on reconstructed profile</li>
+						</ul>
+						<p>Data-driven solutions possible, <a href="https://tuprints.ulb.tu-darmstadt.de/11405/">reference</a>.</p>
+					</section>
+					<section>
+						<video width="100%" controls mute autoplay loop>
+							<source src="videos/local_marangoni_forces.mp4">
+						</video>
+						<p>Source: <a href="https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/computational-analysis-of-single-rising-bubbles-influenced-by-soluble-surfactant/74FFCE053782E4E0901EFD77CDAF4518">C. Pesci et al. 2018</a></p>
+					</section>
+					<section>
+						<div class=row_img style="width:100%">
+							<div class=column_img style="width:45%">
+								<small>Experiment vs. Simulation</small>
+								<img src="images/experiment_vs_simulation_crop.png" alt="oxygen_wake" width="60%" style="background:none; border:none; box-shadow:none;">
+							</div>
+							<div class=column_img style="width:55%">
+								<img src="images/local_sh_number.png" alt="local_sh" width="100%" style="background:none; border:none; box-shadow:none;">
+								<small>Local Sherwood number for clean (left) and contaminated (right) interfaces.</small>
+							</div>
+						</div>
+						<p>Source: <a href="https://www.sciencedirect.com/science/article/pii/S2590140019300140">A. Weiner et al. 2019</a></p>
+					</section>
+					<section>
+						<h3>New problems</h3>
+						<ul>
+							<li>How to validate boundary layer models?</li>
+							<li>How to generate data for data-driven boundary layer models?</li>
+						</ul>
+						<p>Solution: decoupling of two-phase flow problem and species transport by means of regression.</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Decoupling two-phase flow and species transport</h2>
+					</section>
+					<section>
+						<img src="images/two_phase_model.png" alt="two-phase" width="100%" style="background:none; border:none; box-shadow:none;">
+						<small>
+						<p><b>Sharp interface model:</b> $t$ - time, $\Omega^+$ - liquid domain, $\Omega^-$ - gas domain, $\Sigma$ - interface,
+							$V$ - control volume, $S$ - control surface, $\mathbf{n}_\Sigma$ - unit vector normal to $\Sigma$, $\partial S$ - boundary of $S$,
+							$\mathbf{m}$ - unit vector normal to $\partial S$
+						</p>
+					</small>
+					</section>
+					<section>
+						<p>Mass conservation:</p>
+						<p>
+							$$
+							\frac{\partial \rho}{\partial t} + \nabla \cdot \left( \rho\mathbf{u} \right) = 0
+							$$
+						</p>
+						<p>in $\Omega^\pm (t)$ - two equations!</p>
+					</section>
+					<section>
+						<p>Conservation of momentum:</p>
+						<p>
+							$$
+							\frac{\partial \rho \mathbf{u}}{\partial t} + \nabla \cdot \left( \rho \mathbf{u} \otimes \mathbf{u} \right) = -\nabla p + \nabla \cdot \left( \eta \left( \nabla \mathbf{u} + \nabla \mathbf{u}^\mathsf{T} \right) \right) + \rho\mathbf{b}
+							$$
+						</p>
+						<p>in $\Omega^\pm (t)$ - two equations!</p>
+					</section>
+					<section>
+						<p>What happens at the interface? Definition of <b>jump brackets</b> for a generic variable $\varphi$:</p>
+						<p>
+							$$
+							 [\![ \varphi  (t,\mathbf{x}) ]\!] = \lim_{h\to+0}\left(\varphi^+ (t,\mathbf{x} + h\mathbf{n}_\Sigma) - \varphi^- (t,\mathbf{x} - h\mathbf{n}_\Sigma)\right)
+							$$
+						</p>
+						<p>
+							for $\mathbf{x}\in \Sigma (t)$
+						</p>
+					</section>
+					<section>
+						<p>Which quantity jumps at $\Sigma$ due to surface tension?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">interface normal velocity</li>
+							<li style="list-style-type: upper-latin;">interface tangential velocity</li>
+							<li style="list-style-type: upper-latin;">pressure</li>
+							<li style="list-style-type: upper-latin;">shear stress</li>
+						</ol>
+					</section>
+					<section>
+						<p>Which quantity jumps at $\Sigma$ due to mass transfer?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">interface normal velocity</li>
+							<li style="list-style-type: upper-latin;">interface tangential velocity</li>
+							<li style="list-style-type: upper-latin;">pressure</li>
+							<li style="list-style-type: upper-latin;">shear stress</li>
+						</ol>
+					</section>
+					<section>
+						<p>mass jump condition:</p>
+						<p>
+							$$
+							[\![ \rho \left( \mathbf{u} - \mathbf{u}^\Sigma \right) ]\!] \cdot \mathbf{n}_\Sigma = 0\quad \text{on}\quad \Sigma (t)
+							$$
+						</p>
+						<p>
+							$$
+							\left[ \rho^+ \left( \mathbf{u}^+ - \mathbf{u}^\Sigma \right) - \rho^- \left( \mathbf{u}^- - \mathbf{u}^\Sigma \right)\right] \cdot \mathbf{n}_\Sigma = 0\quad \text{on}\quad \Sigma (t)
+							$$
+						</p>
+						<p>
+							$$
+							\dot{m}^+ - \dot{m}^- = 0\quad \text{on}\quad \Sigma (t)
+							$$
+						</p>
+						<p>$\mathbf{u}^\Sigma$ - interface velocity</p>
+					</section>
+					<section>
+						<p>neglecting mass transfer:</p>
+						<p>
+							$$ \dot{m}^+ = \dot{m}^- = 0\quad \text{on}\quad \Sigma (t) $$
+						</p>
+						<p>$\mathbf{u}^+\cdot \mathbf{n}_\Sigma = \mathbf{u}^\Sigma\cdot \mathbf{n}_\Sigma$ and $\mathbf{u}^-\cdot \mathbf{n}_\Sigma = \mathbf{u}^\Sigma\cdot \mathbf{n}_\Sigma$</p>
+					</section>
+					<section>
+						<p>typical assumption for tangential velocity component (not a consequence of mass conservation):</p>
+						<p>
+							$$
+							[\![ \mathbf{u} ]\!]  \cdot \mathbf{t}_\Sigma = 0
+							$$
+						</p>
+						<p>$$\mathbf{u}^+\cdot \mathbf{t}_\Sigma = \mathbf{u}^-\cdot \mathbf{t}_\Sigma$$</p>
+						<p>
+							$\mathbf{t}_\Sigma$ - unit vector tangential to interface
+						</p>
+					</section>
+					<section>
+						<p>momentum jump conditions ...</p>
+					</section>
+					<section>
+						<img src="images/mesh_b.png" alt="two-phase" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Closest numerical approach to sharp interface model: <b>interface tracking</b></p>
+					</section>
+					<section>
+						<p>Advantages and disadvantages of interface tracking:</p>
+						<ul>
+							<li>possibility to combine physical phenomena</li>
+							<li>interface-aligned meshes</li>
+							<li>very good accuracy at the interface</li>
+							<li>extremely high complexity</li>
+							<li>very slow</li>
+							<li>stability issues</li>
+						</ul>
+					</section>
+					<section>
+						<p>A one-field approach to two-phase flow simulations: the <b>volume of fluid method</b></p>
+						<img src="images/basilisk_volume_fraction_mesh_plic.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
+					</section>
+					<section>
+						<p>Advantages and disadvantages of volume of fluid solvers:</p>
+						<ul>
+							<li>Computationally efficient and robust</li>
+							<li>Relatively easy to implement</li>
+							<li>fields are phase-averaged</li>
+							<li>bad accuracy close to the interface</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Idea</h3>
+						<p>combine computational efficiency of volume of fluid and the accuracy of surface-aligned meshes</p>
+					</section>
+					<section>
+						<div class=row_img style="width:100%">
+							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+								<img src="images/snap_shot_vof.png" alt="vof_sol" height="400px" style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>1. Two-phase flow simulation (Volume-of-Fluid)</small>
+								</p>
+							</div>
+							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+								<img src="images/snap_shot_shape.png" alt="shape" height="400px" style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>2. Parametrization of shape and interfacial velocity</small>
+								</p>
+							</div>
+							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+								<img src="images/snap_shot_stl_clean.png" alt="stl" height="400px" style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>3. Geometry generation and export (STL format)</small>
+								</p>
+							</div>
+						</div>
+					</section>
+					<section>
+						<div class=row_img style="width:100%">
+							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+								<img src="images/snap_shot_mesh_clean.png" alt="mesh" height="400px" style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>4. Single phase mesh</small>
+								</p>
+							</div>
+							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+								<img src="images/snap_shot_hydro.png" alt="flow" height="400px" style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>5. Flow solution</small>
+								</p>
+							</div>
+							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+								<img src="images/snap_shot_transport.png" alt="species" height="400px" style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>6. Species transport</small>
+								</p>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Problem</h3>
+						<p>Missing boundary conditions for</p>
+						<ul>
+							<li>velocity at the interface</li>
+							<li>shape/mesh deformation</li>
+							<li>rise/inlet velocity</li>
+						</ul>
+					</section>
+					<section>
+						<img src="images/hybrid_overview.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
+					</section>
+					<section>
+						<img src="images/hybrid_approach.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
+					</section>
+				</section>
+
 			</div>
 
 		</div>
