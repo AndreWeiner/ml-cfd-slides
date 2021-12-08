@@ -536,6 +536,439 @@
 						<img src="images/hybrid_approach.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
 					</section>
 				</section>
+				<section>
+					<section>
+						<h2>Data-processing and visualization</h2>
+					</section>
+					<section>
+						<video height="500" controls mute autoplay loop>
+							<source src="images/ellipsoidal_bubble.mp4">
+						</video>
+						<p>Tow-phase flow simulation providing the data.</p>
+					</section>
+					<section>
+						<p>Overview of the available data:</p>
+						<ul>
+							<li>log file with center of mass information</li>
+							<li>individual snapshots of interface data</li>
+						</ul>
+					</section>
+					<section>
+						<p>Problem: spurious rows in log file</p>
+						<pre class="python"><code>
+# print the first 15 rows to the terminal
+head -n 15 log.solver
+# output
+[[30921,1],1]: A high-performance Open MPI point-to-point messaging module
+was unable to find any relevant network interfaces:
+
+Module: OpenFabrics (openib)
+  Host: andre-XP1511
+
+Another transport will be used instead, although this may result in
+lower performance.
+--------------------------------------------------------------------------
+0.00000000 0.08331549 3.50000000 0.29449718 0.00000000 0.00000000 0.00000000 0.00000000 1.57065375 
+0.00104471 0.08330800 3.50001092 0.29247771 0.00000000 0.00298628 0.00011339 0.00000000 1.57210201 
+sh: 1: gnuplot: not found
+0.00247720 0.08330640 3.50000837 0.29245794 0.00000000 0.00511770 -0.00010853 0.00000000 1.57182925 
+0.00404440 0.08330699 3.50001471 0.29215884 0.00000000 0.00856596 -0.00001476 0.00000000 1.57162112 
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/bubble_position.svg" alt="position" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Bubble center of mass over time - $x$-component.</p>
+					</section>
+					<section>
+						<img src="images/bubble_speed.svg" alt="speed" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Bubble center of mass velocity over time - $x$-component.</p>
+					</section>
+					<section>
+						<img src="images/shape_over_time.svg" alt="position" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Bubble shape in a moving reference frame; Cartesian and polar coordinates.</p>
+					</section>
+					<section>
+						<img src="images/velocity_projected_over_time.svg" alt="position" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Projected interface velocity in a moving reference frame.</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Creating models for deformation and velocity</h2>
+					</section>
+					<section>
+						<p>Inlet boundary condition - first model:</p>
+						<p>
+							$$
+							  \mathbf{u}_{in} = -\tilde{U}_b\mathbf{e}_y
+							$$
+						</p>
+						<p>
+							$$
+							  \tilde{U}_b = f(\tilde{t})
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Baseline fully connected neural network.</p>
+						<pre class="python"><code>
+class BaseNN(pt.nn.Module):
+    """Simple fully-connected neural network.
+    """
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.n_inputs = kwargs.get("n_inputs", 1)
+        self.n_outputs = kwargs.get("n_outputs", 1)
+        self.n_layers = kwargs.get("n_layers", 1)
+        self.n_neurons = kwargs.get("n_neurons", 10)
+        self.activation = kwargs.get("activation", pt.sigmoid)
+        self.layers = pt.nn.ModuleList()
+        # input layer to first hidden layer
+        self.layers.append(pt.nn.Linear(self.n_inputs, self.n_neurons))
+        # add more hidden layers if specified
+        if self.n_layers > 1:
+            for hidden in range(self.n_layers-1):
+                self.layers.append(pt.nn.Linear(
+                    self.n_neurons, self.n_neurons))
+        # last hidden layer to output layer
+        self.layers.append(pt.nn.Linear(self.n_neurons, self.n_outputs))
+
+    def forward(self, x):
+        for i_layer in range(len(self.layers)-1):
+            x = self.activation(self.layers[i_layer](x))
+        return self.layers[-1](x)
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/rise_loss.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Training loss for the rise velocity.</p>
+					</section>
+					<section>
+						<img src="images/rise_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Comparison of model prediction and reference data for the rise velocity.</p>
+					</section>
+					<section>
+						<p>Interface velocity boundary condition - second model:</p>
+						<p>
+							$$
+							  \mathbf{u}_s = \tilde{u}_t\mathbf{t}
+							$$
+						</p>
+						<p>
+							$$
+							  \tilde{u}_t = f(\tilde{t}, \vartheta)
+							$$
+						</p>
+					</section>
+					<section>
+						<p>What applies to the tangential interface velocity?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">line symmetry rise axis</li>
+							<li style="list-style-type: upper-latin;">point symmetry $\vartheta = 0$, $\vartheta = \pi$</li>
+							<li style="list-style-type: upper-latin;">no symmetry</li>
+						</ol>
+					</section>
+					<section>
+						<img src="images/sin_symmetry.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Sin and cosine functions with vertical lines at $0$ and $\pi$.</p>
+					</section>
+					<section>
+						<pre class="python"><code>
+class VelocityModel(BaseNN):
+    """Velocity NN with modified forward pass.
+    """
+    def __init__(self, **kwargs):
+        super(VelocityModel, self).__init__(**kwargs)
+
+    def forward(self, x):
+        sin = pt.sin(x[:, 0]).unsqueeze(-1)
+        x = pt.stack((pt.cos(x[:, 0]), x[:, 1])).T
+        for i_layer in range(len(self.layers)-1):
+            x = self.activation(self.layers[i_layer](x))
+        return self.layers[-1](x)*sin
+						</code></pre>
+					</section>
+					<section>
+						<p>Creating training and validation data.</p>
+						<pre class="python"><code>
+def split_train_test(feature: List[pt.Tensor], label: List[pt.Tensor],
+                     times: pt.Tensor, train_ratio: float
+                    ) -> Tuple[pt.Tensor, pt.Tensor, pt.Tensor, pt.Tensor]:
+    n_train = int(len(feature)*train_ratio)
+    probs = pt.ones_like(times)
+    train_idx = pt.multinomial(probs, n_train)
+    probs[train_idx] = 0.0
+	# snip
+    total_train = sum([len(feature[i]) for i in train_idx])
+    f_train, l_train = pt.zeros((total_train, 2)), pt.zeros(total_train)
+    start = 0
+    for i in train_idx:
+        end = start+len(feature[i])
+        f_train[start:end, 0] = feature[i]
+        f_train[start:end, 1] = times[i]
+        l_train[start:end] = label[i]
+        start = end
+    start = 0
+    # snip
+    return f_train, l_train, f_test, l_test
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/vt_loss.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Training and validation loss for the interface velocity.</p>
+					</section>
+					<section>
+						<img src="images/vt_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Comparison of model prediction and reference data for the interface velocity.</p>
+					</section>
+					<section>
+						<p>Interface deformation - third model:</p>
+						<p>
+							$$
+							  \Delta \mathbf{x} = (\tilde{r} - r_0)\mathbf{e}_r
+							$$
+						</p>
+						<p>
+							$$
+							  \tilde{r} = f(\tilde{t}, \vartheta)
+							$$
+						</p>
+					</section>
+					<section>
+						<p>What applies to the radius?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">line symmetry rise axis</li>
+							<li style="list-style-type: upper-latin;">point symmetry $\vartheta = 0$, $\vartheta = \pi$</li>
+							<li style="list-style-type: upper-latin;">no symmetry</li>
+						</ol>
+					</section>
+					<section>
+						<pre class="python"><code>
+class RadiusModel(BaseNN):
+    """Radius NN with modified forward pass.
+    """
+    def __init__(self, **kwargs):
+        super(RadiusModel, self).__init__(**kwargs)
+
+    def forward(self, x):
+        x = pt.stack((pt.cos(x[:, 0]), x[:, 1])).T
+        for i_layer in range(len(self.layers)-1):
+            x = self.activation(self.layers[i_layer](x))
+        return self.layers[-1](x)
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/rad_loss.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Training and validation loss for the interface velocity.</p>
+					</section>
+					<section>
+						<img src="images/rad_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden" style="background:none; border:none; box-shadow:none;">
+						<p>Comparison of model prediction and reference data for the bubble radius.</p>
+					</section>
+					<section>
+						<p>Simple tracing example</p>
+						<pre class="python"><code>
+def add(a, b):
+    return a + b
+
+a, b = pt.ones(3)*4, pt.ones(3)*2
+trace = pt.jit.trace(add, (a, b))
+print(trace.graph)
+# output
+graph(%a : Double(3, strides=[1], requires_grad=0, device=cpu),
+      %b : Double(3, strides=[1], requires_grad=0, device=cpu)):
+      %2 : int = prim::Constant[value=1]() # <ipython-input-56-0277e3bdb226>:2:0
+      %3 : Double(3, strides=[1], requires_grad=0, device=cpu) = aten::add(%a, %b, %2) # <ipython-input-56-0277e3bdb226>:2:0
+  	  return (%3)
+						</code></pre>
+					</section>
+					<section>
+						<p>Tracing the models - interface velocity</p>
+						<pre class="python"><code>
+traced_vel = pt.jit.trace(vel_model, pt.rand((1,2)))
+traced_vel.save(f"{output}velocity_model.pt")
+						</code></pre>
+					</section>
+					<section>
+						<p>Practical tips - combining models/modules</p>
+					</section>
+					<section>
+						<p>Building scaling into the model:</p>
+						<pre class="python"><code>
+class WrapperModel(pt.nn.Module):
+    def __init__(self, model, xmin, xmax):
+        super(WrapperModel, self).__init__()
+        self._model = model
+        self._xmin = xmin
+        self._xmax = xmax
+        self._range = xmax - xmin
+    
+    def scale(self, x):
+        return (x-self._xmin) / self._range
+
+    def inverse_scale(self, x):
+        return x*self._range + self._xmin
+
+    def forward(self, x):
+        x = self.scale(x)
+        x = self._model(x)
+        print(x)
+        return self.inverse_scale(x)
+
+class IdentityModel(pt.nn.Module):
+    def __init__(self):
+        super(IdentityModel, self).__init__()
+    def forward(self, x):
+        return x
+
+model = IdentityModel()
+wrapper = WrapperModel(model, 0, 5)
+wrapper(5)
+# output
+1.0
+5.0
+						</code></pre>
+					</section>
+					<section>
+						<p>Combining multiple models:</p>
+						<pre class="python"><code>
+class CombinedModel(pt.nn.Module):
+    def __init__(self, model1, model2):
+        super(CombinedModel, self).__init__()
+        self._model1 = model1
+        self._model2 = model2
+
+    def forward(self, x):
+        x = self._model1(x)
+        x = self._model2(x)
+        return x
+
+cmodel = CombinedModel(model, wrapper)
+cmodel(5)
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Single-phase simulations with mass transfer</h2>
+					</section>
+					<section>
+						<p>Implementation in OpenFOAM:</p>
+						<ul>
+							<li>ptBoundaryDisplacement</li>
+							<li>ptInletVelocity</li>
+							<li>ptSurfaceVelocity</li>
+						</ul>
+					</section>
+					<section>
+						<p>Boundary condition definition in 0/U.</p>
+						<pre class="cpp"><code>
+    bubble
+    {
+       type            ptSurfaceVelocity;
+        origin          (0 0 0);
+        axis            (0 1 0);
+        normal          (0 0 1);
+        modelName       "tv_CB1.ts";
+    }
+						</code></pre>
+					</section>
+					<section>
+						<p>Surface velocity constructor.</p>
+						<pre class="cpp"><code>
+Foam::ptSurfaceVelocityFvPatchVectorField::
+ptSurfaceVelocityFvPatchVectorField
+(
+    const fvPatch& p,
+    const DimensionedField<vector, volMesh>& iF,
+    const dictionary& dict
+)
+:
+    fixedValueFvPatchField<vector>(p, iF, dict, false),
+    origin_(dict.lookup("origin")),
+    axis_(dict.lookup("axis")),
+    normal_(dict.lookup("normal")),
+    model_name_(dict.lookup("modelName"))
+{
+    velocity_model_ = torch::jit::load(model_name_);
+    if (!dict.found("value"))
+    {
+      updateCoeffs();
+    }
+}
+						</code></pre>
+					</section>
+					<section>
+						<p>Update of the coefficients (source vector).</p>
+						<pre class="cpp"><code>
+void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
+{
+    // compute tangent vector
+    const vectorField n(patch().nf());
+    const vectorField tau(n ^ (-normal_));
+
+    // face center position vectors
+    const vectorField Cf(patch().Cf() - origin_);
+
+    torch::Tensor features = torch::ones({Cf.size(), 2}, torch::kFloat64);
+    const vector xy = vector{1, 1, 1} - normal_;
+    const vector unit_x = xy - axis_;
+
+    forAll(Cf, i)
+    {
+        vector x = (Cf[i] & unit_x) * unit_x + (Cf[i] & axis_) * axis_  - origin_;
+        scalar r = sqrt(x & x);
+        scalar theta = acos((x & axis_) / r);
+        features[i][0] = this->db().time().value();
+        features[i][1] = theta;
+    }
+
+    // run forward pass to compute tangential velocity
+    std::vector<torch::jit::IValue> modelFeatures{features};
+    torch::Tensor uTensor = velocity_model_.forward(modelFeatures).toTensor();
+    auto uAccessor = uTensor.accessor<double,1>();
+
+    vectorField surfaceVelocity(Cf.size(), Zero);
+    forAll(surfaceVelocity, faceI)
+    {
+	    surfaceVelocity[faceI] = tau[faceI] * uAccessor[faceI];
+    }
+
+    vectorField::operator=(surfaceVelocity);
+    fixedValueFvPatchVectorField::updateCoeffs();
+}
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Analyzing the results</h2>
+					</section>
+					<section>
+						<video height="500" controls mute autoplay loop>
+							<source src="images/all_cases_sc100.ogv">
+						</video>
+						<p>Results for four different $Eo$ numbers; $Sc=100$.</p>
+					</section>
+					<section>
+						<video height="500" controls mute autoplay loop>
+							<source src="images/mesh_zoom_bl.ogv">
+						</video>
+						<p>Mesh deformation and boundary layer zoom view.</p>
+					</section>
+					<section>
+						<img src="images/glob_sh_cb4.png" alt="position" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Dimensionless global mass transfer - Sherwood number $Sh$.</p>
+					</section>
+					<section>
+						<img src="images/sh_loc_comparison.png" alt="position" width="80%" style="background:none; border:none; box-shadow:none;">
+						<p>Dimensionless local mass transfer - slip vs. ML.</p>
+					</section>
+					<section>
+						<img src="images/wake_slip_comparison.png" alt="position" width="80%" style="background:none; border:none; box-shadow:none;">
+						<p>Wake concentration - slip vs. ML.</p>
+					</section>
+				</section>
 
 			</div>
 
