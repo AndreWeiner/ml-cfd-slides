@@ -104,9 +104,499 @@
 						</div>
 					</div>
 				</section>
+
+				<section>
+					<h2>Last lecture</h2>
+					<p>Computing highly accurate mass transfer at rising bubbles</p>
+					<ul>
+						<li>The high Schmidt number problem</li>
+						<li>Decoupling two-phase flow and species transport</li>
+						<hr>
+						<li>Data processing and visualization</li>
+						<li>Creating models for deformation and velocity</li>
+						<li>Single-phase simulations with mass transfer</li>
+						<li>Analyzing the results</li>
+					</ul>
+				</section>
 	
 				<section>
 					<h2>Outline</h2>
+					<p>Analyzing coherent structures in flows displaying transonic shock buffets</p>
+					<ul>
+						<li>transonic shock buffets</li>
+						<li>principal component analysis (PCA)</li>
+						<li>ways to compute the PCA</li>
+						<li>PCA applied to the flow around an airfoil</li>
+						<hr>
+						<li>dynamic mode decomposition (DMD)</li>
+						<li>DMD applied to the flow around an airfoil</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Transonic shock buffets</h2>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Principal component analysis (PCA)</h2>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Ways to compute the PCA</h2>
+					</section>
+					<section>
+						<p>Preliminaries - singular value decomposition (SVD):</p>
+						<p>
+							$$
+							  \mathbf{X} = \mathbf{U\Sigma V}^T
+							$$
+						</p>
+						<ul>
+							<li>$\mathbf{U}$ - left singular vectors</li>
+							<li>$\mathbf{\Sigma}$ - singular values</li>
+							<li>$\mathbf{V}$ - right singular vectors</li>
+							<li>$\mathbf{U}$ and $\mathbf{V}$ are orthonormal</li>
+							<li>non-zero $\sigma_{ij}$ on diagonal of $\mathbf{\Sigma}$</li>
+						</ul>
+					</section>
+					<section>
+						<p>What applies to an orthonormal matrix?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$\mathbf{UU}^T = \mathbf{I}$</li>
+							<li style="list-style-type: upper-latin;">$\mathbf{U}^T \mathbf{U} = \mathbf{I}$</li>
+							<li style="list-style-type: upper-latin;">$\mathbf{U}^T = \mathbf{U}^{-1}$</li>
+							<li style="list-style-type: upper-latin;">all of the above</li>
+						</ol>
+					</section>
+					<section>
+						<p>Economy SVD:</p>
+						<ul>
+							<li>$\mathbf{U}\in \mathbf{R}^{M\times N}$</li>
+							<li>$\mathbf{\Sigma}\in \mathbf{R}^{N\times N}$</li>
+							<li>$\mathbf{V}\in \mathbf{R}^{N\times N}$</li>
+							<li>$\mathbf{U}^T\mathbf{U}=\mathbf{I}$, but $\mathbf{U}\mathbf{U}^T\neq\mathbf{I}$</li>
+						</ul>
+					</section>
+					<section>
+						<p>Preliminaries - matrix inversion by SVD:</p>
+						<p>
+							$$
+							  \mathbf{X} = \mathbf{U\Sigma V}^T
+							$$
+						</p>
+						<p>
+							$$
+							  \mathbf{X}^{-1} = (\mathbf{U\Sigma V}^T)^{-1} = \mathbf{V}(\mathbf{U\Sigma})^{-1} = \mathbf{V}\mathbf{\Sigma}^{-1}\mathbf{U}^T
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Data and covariance matrix:</p>
+						<p>
+							$$
+							\mathbf{X} = \left[
+							\begin{array}{cccc}
+						  |            & |            &     & | \\
+						  \mathbf{x}_1 & \mathbf{x}_2 & ... & \mathbf{x}_{N} \\
+						  |            & |            &     & | \\
+						  \end{array}\right]
+							$$
+						</p>
+						<p>
+							$$
+  								\mathbf{C} = \frac{1}{N-1} \mathbf{XX}^T
+							$$
+						</p>
+						<p>$\mathbf{x}_i$ - $i$th snapshot, $N$ - number of snapshots</p>
+					</section>
+					<section>
+						<p>Direct PCA:</p>
+						<p>
+							$$
+							  \mathbf{C} = \mathbf{\Phi \Lambda \Phi}^{-1}
+							$$
+						</p>
+						<ul>
+							<li>$\mathbf{\Phi} \in \mathbb{R}^{M\times N}$ ($M$ - number of spatial points)</li>
+							<li>$\mathbf{\Lambda} \in \mathbb{R}^{N\times N}$, diagonal</li>
+							<li>column vectors $\mathbf{\phi}_j$ are called principal component or proper orthogonal decomposition (POD) modes</li>
+							<li>$\mathbf{\Phi}$ is orthonormal, $\mathbf{\phi}_j$ form an orthonormal basis</li>
+							<li>eigenvalues $\lambda_j$ are the variance along $\mathbf{\phi}_j$</li>
+						</ul>
+					</section>
+					<section>
+						<p>Mode coefficients:</p>
+						<p>
+							$$
+								\mathbf{A} = \mathbf{\Phi}^T \mathbf{X} \rightarrow \mathbf{X} = \mathbf{\Phi A}
+							$$
+						</p>
+						<ul>
+							<li>$\mathbf{A}$ - mode coefficient matrix</li>
+							<li>$\mathbf{x}_i = \sum\limits_{j=1}^N a_{ji} \mathbf{\phi}_j$</li>
+							<li>temporal behavior in row vectors of $\mathbf{A}$</li>
+						</ul>
+					</section>
+					<section>
+						<p>Connection between direct PCA and SVD:</p>
+						<p><small>
+							$$
+  \mathbf{C} = \frac{1}{N-1}\mathbf{XX}^T = \frac{1}{N-1} \mathbf{U\Sigma V}^T\mathbf{V\Sigma}^T\mathbf{U}^T =  \frac{1}{N-1} \mathbf{U\Sigma}^2\mathbf{U}^T = \mathbf{\Phi\Lambda\Phi}^T
+							$$
+						</small></p>
+						<ul>
+							<li>$\mathbf{U}=\mathbf{\Phi}$</li>
+							<li>$\mathbf{\Lambda} = \frac{\mathbf{\Sigma}^2}{N-1}$ (not for economy SVD)</li>
+							<li>$\mathbf{A}=\mathbf{\Phi}^T \mathbf{X} = \mathbf{U}^T\mathbf{U\Sigma V}^T = \mathbf{\Sigma V}^T$</li>
+						</ul>
+					</section>
+					<section>
+						<p>Snapshot PCA:</p>
+						<p>
+							$$
+							\mathbf{C}_s = \frac{1}{N-1} \mathbf{X}^T\mathbf{X} = \mathbf{\Phi}_s\mathbf{\Lambda}_s\mathbf{\Phi}_s^T
+							$$
+						    $$
+							\mathbf{C}_s = \frac{1}{N-1} \mathbf{V\Sigma}^T\mathbf{U}^T\mathbf{U\Sigma V}^T = \frac{1}{N-1} \mathbf{V\Sigma}^2\mathbf{V}^T
+							$$
+						</p>
+						<ul>
+							<li>$\mathbf{C}$ and $\mathbf{C}_s$ have the same non-zero eigenvalues</li>
+							<li>$\mathbf{\Phi}_s = \mathbf{V}$</li>
+						</ul>
+					</section>
+					<section>
+						<p>Snapshot PCA - modes and coefficients:</p>
+						<p>
+							$$
+							\mathbf{\Sigma} = \sqrt{\mathbf{\Lambda}_s (N-1)}
+							$$
+						</p>
+						<p>
+							$$
+							\mathbf{A} = \mathbf{\Sigma} \mathbf{V}^T = (\mathbf{\Lambda}_s (N-1))^{1/2} \mathbf{\Phi}_s
+							$$
+						</p>
+						<p>
+$$
+  \mathbf{X\Phi}_s = \mathbf{U\Sigma V}^T\mathbf{\Phi}_s = \mathbf{U\Sigma V}^T\mathbf{V} = \mathbf{U\Sigma}
+$$
+
+$$
+  \mathbf{\Phi} = \mathbf{U} = \mathbf{X\Phi}_s\mathbf{\Sigma}^{-1} = \mathbf{X\Phi}_s (\mathbf{\Lambda}_s(N-1))^{-1/2}
+$$
+						</p>
+						<p>assumption: economy SVD</p>
+					</section>
+					<section>
+						<p>More variants available specialized for:</p>
+						<ul>
+							<li>distributed parallel systems</li>
+							<li>large datasets</li>
+							<li>datasets with noise</li>
+							<li>streaming datasets</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>PCA applied to the flow around an airfoil</h2>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Dynamic mode decomposition (DMD)</h2>
+					</section>
+					<section>
+						<p>Core idea:</p>
+						<p>
+							$$
+							  \mathbf{x}_{n+1} = \mathbf{Ax}_n
+							$$
+						</p>
+						<p>$\mathbf{A}\in \mathbb{C}^{M\times M}$ - best-fit linear operator</p>
+					</section>
+					<section>
+						<p>How to compute $\mathbf{A}$?</p>
+						<p>
+							$$
+                              \underbrace{[\mathbf{x}_2, ..., \mathbf{x}_N]}_{\mathbf{X}^\prime} = A \underbrace{[\mathbf{x}_1, ..., \mathbf{x}_{N-1}]}_{\mathbf{X}}
+							$$
+						</p>
+						<p>
+							$$
+							  \mathbf{X}^\prime = \mathbf{AX} \rightarrow A\approx \mathbf{X}^\prime\mathbf{X}^{-1} = \mathbf{X}^\prime\mathbf{V\Sigma}^{-1}\mathbf{U}^T
+							$$
+						</p>
+						<p>best-fit (least squares) linear operator</p>
+					</section>
+					<section>
+						<img src="images/cylinder_Ux_var_markers.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Probe locations for velocity fluctuations.</p>
+					</section>
+					<section>
+						<p>Computing $\mathbf{A}$ in PyTorch:</p>
+						<pre class="python"><code>
+X = pt.stack((Up_p1, Up_p2))
+U, s, VT = pt.linalg.svd(X[:, :-1], full_matrices=False)
+A = X[:, 1:] @ VT.T @ pt.diag(1/s) @ U.T
+A
+# output
+tensor([[ 0.4526, -0.4412],
+        [ 0.0749,  0.9579]])
+# testing the operator
+Xpred = A @ X[:, :-1]
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/dmd_probes_prediction.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Probe locations for velocity fluctuations.</p>
+					</section>
+					<section>
+						<p>Can we predict the time series using only $\mathbf{x}_1$?</p>
+						<p>
+							$$
+							  \mathbf{x}_2 = \mathbf{Ax}_1
+							$$
+							$$
+							  \mathbf{x}_3 = \mathbf{Ax}_2 = \mathbf{AAx}_1 = \mathbf{A}^2\mathbf{x}_1
+							$$
+							$$
+							  \mathbf{x}_N = \mathbf{A}^{N-1}\mathbf{x}_1
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Step-by-step prediction:</p>
+						<pre class="python"><code>
+Xpred[:, 0] = A @ X[:, 0]
+for n in range(1, X.shape[1]-1):
+    Xpred[:, n] = A @ Xpred[:, n-1]
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/dmd_probes_prediction_steps.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Probe locations for velocity fluctuations.</p>
+					</section>
+					<section>
+						<p>What happened? The eigen decomp. of $\mathbf{A}$ can help:</p>
+						<p>
+							$$
+							  \mathbf{A} = \mathbf{\Phi\Lambda\Phi}^{-1}
+							$$
+							$$
+							  \mathbf{x}_2 = \mathbf{Ax}_1 = \mathbf{\Phi\Lambda\Phi}^{-1} \mathbf{x}_1
+							$$
+							$$
+							  \mathbf{x}_3 = \mathbf{AAx}_1 = \mathbf{\Phi\Lambda\Phi}^{-1}\mathbf{\Phi\Lambda\Phi}^{-1} \mathbf{x}_1 = \mathbf{\Phi\Lambda}^{2}\mathbf{\Phi}^{-1} \mathbf{x}_1
+							$$
+							$$
+							  \mathbf{x}_N = \mathbf{\Phi\Lambda}^{N-1}\mathbf{\Phi}^{-1} \mathbf{x}_1
+							$$
+						</p>
+						<p>Only the $\mathbf{\Lambda}$ term changes!</p>
+					</section>
+					<section>
+						<p>Reconstruction and terminology:</p>
+						<p>
+							$$
+							\mathbf{x}_n = \sum\limits_{j=1}^{N}\mathbf{\phi}_j \lambda_j^{n-1} b_j
+							$$
+						</p>
+						<ul>
+							<li>DMD modes - column vectors $\mathbf{\phi}_j$</li>
+							<li>DMD modes are unit vectors</li>
+							<li>mode amplitudes - $\mathbf{b} = \mathbf{\Phi}^{-1}\mathbf{x}_1$</li>
+							<li>eigenvalues describe time dynamics</li>
+						</ul>
+					</section>
+					<section>
+						<pre class="python"><code>
+vals, vecs = pt.linalg.eig(A)
+vals
+# output
+tensor([0.5298+0.j, 0.8807+0.j])
+						</code></pre>
+						<ul>
+							<li>mode contribution vanishes if $|\lambda_i| \lt 1$</li>
+							<li>solution vanishes because $|\lambda_i| \lt 1 \forall i$</li>
+							<li>problem: state vectors too small</li>
+						</ul>
+					</section>
+					<section>
+						<img src="images/cylinder_eigvals_direct.svg" alt="probes" width="60%" style="background:none; border:none; box-shadow:none;">
+						<p>Eigenvalues of $\mathbf{A}$ using all points.</p>
+					</section>
+					<section>
+						<p>What is the meaning of complex eigenvalues? Time-continuous formulation:</p>
+						<p>
+							$$
+							\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = \mathbf{\mathcal{A}x}
+							$$
+						</p>
+						<p>
+							Analytical solution by diagonalization of $\mathbf{\mathcal{A}}$:
+						</p>
+						<p>
+							$$
+							\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = \mathbf{\Phi}\tilde{\mathbf{\Lambda}}\mathbf{\Phi}^{-1}\mathbf{x}
+							$$
+						</p>
+					</section>
+					<section>
+						<p>
+							$$
+							\mathbf{\Phi}^{-1}\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = \tilde{\mathbf{\Lambda}}\mathbf{\Phi}^{-1}\mathbf{x}
+							$$
+						</p>
+						<p>substitution $\mathbf{y} = \mathbf{\Phi}^{-1}\mathbf{x}$</p>
+						<p>
+							$$
+							\frac{\mathrm{d}\mathbf{y}}{\mathrm{d}t} = \tilde{\mathbf{\Lambda}}\mathbf{y}
+							$$
+						</p>
+						<p>
+							$$
+							  y_1 = e^{\lambda_1 t} y_1(t=0),\ y_2=...
+							$$
+						</p>
+						<p>
+							$$
+							  \mathbf{y}(t) = \mathrm{exp}(\mathbf{\Lambda}t)\mathbf{y}_0
+							$$
+						</p>
+					</section>
+					<section>
+						<p>
+							$$
+							  \mathbf{y}(t) = \mathrm{exp}(\mathbf{\Lambda}t)\mathbf{y}_0
+							$$
+						</p>
+						<p>back-substitution $\mathbf{y} = \mathbf{\Phi}^{-1}\mathbf{x}$</p>
+						<p>
+							$$
+							  \mathbf{x}(t) = \mathbf{\Phi}^{-1}\mathrm{exp}(\mathbf{\Lambda}t)\underbrace{\mathbf{\Phi}^{-1}\mathbf{x}_0}_{\mathbf{b}}
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Back to the meaning of complex eigenvalues:</p>
+						<p>
+							$$
+							\begin{align}
+							\tilde{\lambda}_j &= a_i + b_i j \\
+							\mathrm{exp}\left(\tilde{\lambda}_i t\right) &= \mathrm{exp}\left((a_i+b_i j) t\right)\\
+							&= \mathrm{exp}\left(a_i t\right)\mathrm{exp}\left(b_i j t\right) \\
+							&= \mathrm{exp}\left(a_i t\right) \left(\mathrm{cos}\left(b_i t\right)+j\mathrm{sin}\left(b_i t\right)\right),
+						  \end{align}
+							$$
+						</p>
+						<ul>
+							<li>
+								$Re(\tilde{\lambda}_i)$ - growth/decay rate
+							</li>
+							<li> $Im(\tilde{\lambda}_i) = 2\pi f_i$ - frequency</li>
+						</ul>
+					</section>
+					<section>
+						<p>What is the connection between $\mathbf{A}$ and $\mathbf{\mathcal{A}}$</p>
+						<p>
+							\begin{align}
+  \mathbf{x}(t=n\Delta t) &= \mathrm{exp}\left(\mathbf{\mathcal{A}}n\Delta t\right)\mathbf{x}_0 \\
+  \mathbf{x}(t=(n+1)\Delta t) &= \mathrm{exp}\left(\mathbf{\mathcal{A}}(n+1)\Delta t\right)\mathbf{x}_0 \\
+  &= \mathrm{exp}\left(\mathbf{\mathcal{A}}\Delta t\right) \mathrm{exp}\left(\mathbf{\mathcal{A}}n \Delta t\right) \mathbf{x}_0\\
+  \mathbf{x}_{n+1} &= \underbrace{\mathrm{exp}\left(\mathbf{\mathcal{A}}\Delta t\right)}_{\mathbf{A}}\mathbf{x}_n \\
+  \mathbf{x}_{n+1} &= \mathbf{Ax}_n
+\end{align}
+						</p>
+					</section>
+					<section>
+						<p>Wrapping up:</p>
+						<ul>
+							<li>eigenvectors and amplitudes are identical</li>
+							<li>$\mathbf{\Lambda} = \mathrm{exp}(\tilde{\mathbf{\Lambda}}\Delta t)$</li>
+						</ul>
+					</section>
+					<section>
+						<p>Problems with the current approach:</p>
+						<ul>
+							<li>linear operator $\mathbf{A}$ is huge</li>
+							<li>How to deal with larger datasets?</li>
+							<li>How to deal with rank-deficiency?</li>
+						</ul>
+					</section>
+					<section>
+						<p>The DMD algorithm:</p>
+						<ol>
+							<li>$\mathbf{X} = \mathbf{U\Sigma V}^\dagger$</li>
+							<li>$\tilde{\mathbf{A}} = \mathbf{U}_r^\dagger \mathbf{AU}_r$,<br> assumption: $\mathbf{A}$ and $\tilde{\mathbf{A}}$ are similar</li>
+							<li>$\tilde{\mathbf{A}} = \mathbf{U}_r^\dagger\mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}\mathbf{U}_r^\dagger\mathbf{U}_r = \mathbf{U}_r^\dagger\mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}$</li>
+							<li>$\tilde{\mathbf{A}}\mathbf{W} =\mathbf{W\Lambda}$</li>
+							<li>$\mathbf{\Phi} = \mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}\mathbf{W}$</li>
+						</ol>
+					</section>
+					<section>
+						<p>Where does step 5 come from?</p>
+						<p>
+							$$
+							\begin{align}
+  \tilde{\mathbf{A}}\mathbf{W} &= \mathbf{W\Lambda} \\
+  \mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1} \underbrace{\mathbf{U}_r^\dagger\mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}}_{\tilde{\mathbf{A}}} \mathbf{W}&= \mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}\mathbf{W\Lambda} \\
+  \mathbf{A}\mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}\mathbf{W}&= \mathbf{X}^\prime\mathbf{V}_r\mathbf{\Sigma}_r^{-1}\mathbf{W\Lambda} \\
+  \mathbf{A\Phi} &= \mathbf{\Phi\Lambda}
+\end{align}
+							$$
+						</p>
+					</section>
+
+					<section>
+						<p>Differences between SVD/PCA/POD and DMD</p>
+						<ul>
+							<li>DMD allows making predictions</li>
+							<li>each DMD mode is associated with only one frequency/amplitude/growth rate</li>
+							<li>DMD modes are not sorted and do not form an orthonormal basis</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>DMD applied to the flow around an airfoil</h2>
+					</section>
+					<section>
+						<video height="500" controls muted loop>
+							<source src="images/naca0012_ma_3D.mp4">
+						</video>
+						<p>Slice of local Mach number $Ma$, <b>3D</b>, $\alpha=4^\circ$.</p>
+					</section>
+					<section>
+						<img src="images/dmd_freq_2D_3D.svg" alt="sigma"
+							style="background:none; border:none; box-shadow:none; width: 90%">
+						<p>DMD spectrum for 2D and 3D datasets/simulations;<br> $\bar{f}=2\pi c f/U_\infty$.</p>
+					</section>
+					<section>
+						<img src="images/dmd_modes_3D_pres_1.png" alt="sigma"
+							style="background:none; border:none; box-shadow:none; width: 70%">
+						<p>Real parts of DMD buffet mode and first harmonic; $u$ and $v$ are the velocity components.</p>
+					</section>
+					<section>
+						<img src="images/dmd_modes_3D_pres_2.png" alt="sigma"
+							style="background:none; border:none; box-shadow:none; width: 70%">
+						<p>Real parts of DMD of second harmonic and higher freq. mode; $u$ and $v$ are the velocity components.</p>
+					</section>
+					<section>
+						<video height="500" controls muted loop>
+							<source src="images/dmd_3D_mode_10_u.mp4">
+						</video>
+						<p>DMD mode at approx. $20f_{buffet}$, $u$-component.</p>
+					</section>
 				</section>
 			</div>
 
