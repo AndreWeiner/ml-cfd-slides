@@ -104,10 +104,437 @@
 						</div>
 					</div>
 				</section>
+
+				<section>
+					<h2>Last lecture(s)</h2>
+					<p>Analyzing coherent structures in flows displaying transonic shock buffets</p>
+					<ul>
+						<li>transonic shock buffets</li>
+						<li>principal component analysis (PCA)</li>
+						<li>ways to compute the PCA</li>
+						<li>PCA applied to the flow around an airfoil</li>
+						<hr>
+						<li>dynamic mode decomposition (DMD)</li>
+						<li>DMD applied to the flow around an airfoil</li>
+					</ul>
+				</section>
 	
 				<section>
 					<h2>Outline</h2>
+					<p>Reduced-order modeling of the flow past a cylinder</p>
+					<ul>
+						<li>evaluation and exam</li>
+						<hr>
+						<li>Reduced-order models of dynamical systems</li>
+						<li>Grouping similar data points</li>
+						<li>Modeling the transition between clusters</li>
+						<li>Dealing with high-dimensional data</li>
+					</ul>
 				</section>
+
+				<section>
+					<section>
+						<h3>Course evaluation</h3>
+						<p>Please, take some time for feedback:</p>
+						<ul>
+							<li>link to poll on StudIp - announcements</li>
+							<li>poll open until 7th of Feb</li>
+							<li>poll is anonymous</li>
+							<li>your feedback matters!</li>
+							<li>be fair and constructive</li>
+						</ul>
+						<p>Externals: if you like, send me an email!</p>
+					</section>
+					<section>
+						<h3>Course exam</h3>
+						<ul>
+							<li>most likely oral exam, online</li>
+							<li>poll to decide on date</li>
+						</ul>
+					</section>
+					<section>
+						<p>Participation in the exam?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">yes</li>
+							<li style="list-style-type: upper-latin;">no</li>
+							<li style="list-style-type: upper-latin;">undecided</li>
+						</ol>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Reduced-order models of dynamical systems</h2>
+					</section>
+					<section>
+						<p>What is a reduced-order model (ROM)?</p>
+						<ul>
+							<li>mathematical model with reduced
+								<ul>
+									<li>computational complexity</li>
+									<li>dimensionality</li>
+								</ul>
+							</li>
+							<li>typically a ROM
+								<ul>
+									<li>is an approximation</li>
+									<li>works with a reduced state</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<p>ROMs for dynamical systems</p>
+						<p>
+							$$
+								\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = F(\mathbf{x}(t), t, ...)
+							$$
+						</p>
+						<p>Definition of ROMs in this lecture:</p>
+						<ol>
+							<li>encoding: $\tilde{\mathbf{x}} = E(\mathbf{x})$</li>
+							<li>evolution: $\tilde{\mathbf{x}}(t) \approx f(\tilde{\mathbf{x}}, t)$</li>
+							<li>decoding: $\hat{\mathbf{x}} = E^{-1}(\tilde{\mathbf{x}})$</li>
+						</ol>
+						<p>$\mathbf{x}$ - full state, $\tilde{\mathbf{x}}$ - reduced state, $\hat{\mathbf{x}}$ - full state prediction</p>
+					</section>
+					<section>
+						<p>Data-driven ROMs:<br> ML for encoding/decoding and/or temporal evolution.</p>
+						<p>Criteria for good ROMs:</p>
+						<ul>
+							<li>computationally efficient</li>
+							<li>interpretable states and dynamics</li>
+							<li>long-term stability (extrapolation)</li>
+						</ul>
+					</section>
+					<section>
+						<img src="images/dmd_eigvals_noisy_testset.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>DMD eigenvalues computed on datasets with and without noise.</p>
+					</section>
+					<section>
+						<p>Potential issue when using DMD as ROM?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">solution vanishes/explodes</li>
+							<li style="list-style-type: upper-latin;">not interpretable</li>
+							<li style="list-style-type: upper-latin;">not efficient</li>
+						</ol>
+					</section>
+					<section>
+						<p>Cluster-based ROMs</p>
+						<img src="images/cnm_overview.png" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Concept of cluster-based network modeling (CNM); D. Fernex et al., <a href="https://www.science.org/doi/10.1126/sciadv.abf5006">source</a>.</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Grouping similar data points</h2>
+					</section>
+					<section>
+						<img src="images/clustering_test_data.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Test data for clustering.</p>
+					</section>
+					<section>
+						<img src="images/clustering_test_data_no_labels.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Test data for clustering without labels.</p>
+					</section>
+					<section>
+						<img src="images/random_initial_centroids.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Randomly chosen initial centroids.</p>
+					</section>
+					<section>
+						<img src="images/intial_cluster_labels.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Randomly chosen initial centroids and cluster association.</p>
+					</section>
+					<section>
+						<img src="images/updated_cluster_labels.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>K-means update of centroids.</p>
+					</section>
+					<section>
+						<img src="images/kmeans_iterations.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Consecutive iterations of the k-means algorithm.</p>
+					</section>
+					<section>
+						<p>Recap of k-means steps:</p>
+						<ol>
+							<li>randomly select $k$ data points at initial centroids</li>
+							<li>compute the distance between data points and centroids</li>
+							<li>select the cluster id for each data point based on the closest centroid</li>
+							<li>update each centroid based on the mean of all data points in the cluster</li>
+							<li>repeat steps 2-4 until a stopping criterion is reached</li>
+						</ol>
+					</section>
+					<section>
+						<img src="images/bad_intial_centroids.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Unfavorable selection of initial centroids.</p>
+					</section>
+					<section>
+						<img src="images/bad_intial_centroids_final.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Final centroids and cluster association with bad initialization.</p>
+					</section>
+					<section>
+						<p>Measuring the quality of the clustering - inertia:</p>
+						<p>
+							$$
+							  I = \sum\limits_{i=1}^N \underset{\mu_j}{\mathrm{min}}\left(||\mathbf{x}_i-\mu_j||^2\right)
+							$$
+						</p>
+						<p>$N$ - number of data points, $\mu_j$ - centroid/mean of all data points in cluster $j$</p>
+					</section>
+					<section>
+						<p>Influence of bad initialization on inertia:</p>
+						<pre class="python"><code>
+def compute_cluster_inertia(centroids: pt.Tensor, data: pt.Tensor) -> float:
+    """Compute sum of squared distances over all clusters.
+    """
+    labels = find_nearest_centroid(centroids, data)
+    inertia = 0.0
+    for i in range(data.shape[1]):
+        inertia += pt.linalg.norm(data[labels==i]-centroids[i], dim=1).square().sum()
+    return inertia
+# test
+# Inertia for random initialization: 110.1418
+# Inertia for bad initialization: 540.7017
+						</code></pre>
+					</section>
+					<section>
+						<p>Improved initialization - k-means++:</p>
+						<ol>
+							<li>select first centroid randomly</li>
+							<li>compute distance between data points and centroid(s)</li>
+							<li>select the minimum distance for each data point</li>
+							<li>chose the next centroid randomly with probability proportional to the minimum squared distance</li>
+							<li>repeat steps 2-4 until $k$ centroids are chosen</li>
+						</ol>
+					</section>
+					<section>
+						<img src="images/improved_initial_centroids.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>K-means++ - improved centroid initialization.</p>
+					</section>
+					<section>
+						<img src="images/random_vs_improved.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Comparison of random and k-means++ initialization over 100 runs.</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Modeling the transition between clusters</h2>
+					</section>
+					<section>
+						<img src="images/periodic_dataset_raw_time.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Time series of data (state) with two features.</p>
+					</section>
+					<section>
+						<img src="images/periodic_dataset_clustering.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Clustering of time series data using 10 centroids.</p>
+					</section>
+					<section>
+						<p>Modeling of the transition time:</p>
+						<ol>
+							<li>determine sequence of visited centroids</li>
+							<li>count consecutive occurrence</li>
+							<li>remove consecutive duplicates</li>
+							<li>compute residence time</li>
+							<li>compute transition time as average between residence times</li>
+						</ol>
+						<p>assumption: constant time step</p>
+					</section>
+					<section>
+						<p>Transition time example:</p>
+						<pre class="python"><code>
+transition_times = compute_transition_time(cluster_ids, 2.0*np.pi/100, True)
+# output
+# sequence:  [5 5 2 2 2 2 2 2 2 2 2 4 4 4 4 4 4 4 4 4 4 8 8 ...]
+# centroid sequence:  [5 2 4 8 0 9 7 3 6 1 5]
+# sequential duplicates:  [ 2  9 10  8  9  9 10 10 11 11 11]
+transition_times
+#{'5,2': 0.3455751918948773,
+# '2,4': 0.5969026041820608,
+# '4,8': 0.5654866776461628,
+# '8,0': 0.5340707511102649,
+# '0,9': 0.5654866776461628,
+# '9,7': 0.5969026041820608,
+# '7,3': 0.6283185307179586,
+# '3,6': 0.6597344572538566,
+# '6,1': 0.6911503837897546,
+# '1,5': 0.6911503837897546}
+						</code></pre>
+						<p>Note: transition time $\approx 2\pi/k$.</p>
+					</section>
+					<section>
+						<p>Times series prediction:</p>
+						<pre class="python"><code>
+def simulate(centroids: np.ndarray, transition_times: Dict[str, float],
+             start_id: int, end_time) -> Tuple[np.ndarray, np.ndarray]:
+    visited_centroids, time = [start_id], [0.0]
+    while time[-1] < end_time:
+        visited_centroids.append(get_next_cluster(visited_centroids[-1], transition_times.keys()))
+        transition = "{:d},{:d}".format(*visited_centroids[-2:])
+        time.append(time[-1] + transition_times[transition])
+        if time[-1] > end_time:
+            break
+    visited = np.zeros((len(time), centroids.shape[1]))
+    for i, ci in enumerate(visited_centroids):
+        visited[i] = centroids[ci]
+    return visited, np.array(time)
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/periodic_dataset_simulated.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Time series prediction of network with 10 clusters.</p>
+					</section>
+					<section>
+						<img src="images/periodic_dataset_clustering_refined.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Clustering of time series data using 20 centroids.</p>
+					</section>
+					<section>
+						<p>Problem: how to deal with uncertainty?</p>
+						<pre class="python"><code>
+transition_times = compute_transition_time(cluster_ids, 2.0*np.pi/100)
+transition_times
+# output
+# {'18,13': 0.25132741228718347,
+# ...
+#  '10,4': 0.06283185307179587,
+#  '10,8': 0.3141592653589793,
+#  '8,18': 0.21991148575128555}
+						</code></pre>
+					</section>
+					<section>
+						<p>Modeling of transition probabilities:</p>
+						<ol>
+							<li>find all possible transitions</li>
+							<li>count occurrences of transitions</li>
+							<li>compute transition probability based on count</li>
+						</ol>
+						<p>Prediction: <b>sample next cluster randomly</b></p>
+					</section>
+					<section>
+						<p>Transition probability example:</p>
+						<pre class="python"><code>
+# Possible next clusters:  {... '4': [10, 10], '10': [4, 8], '8': [18]})
+# transition probabilities
+# {'18': array([[13.,  1.]]),
+# ...
+# '4': array([[10.,  1.]]),
+# '10': array([[4. , 0.5],
+#              [8. , 0.5]]),
+# '8': array([[18.,  1.]])})
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/periodic_dataset_simulated_refined.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Time series prediction of network with 20 clusters.</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Dealing with high-dimensional data</h2>
+					</section>
+					<section>
+						<p>General workflow:</p>
+						<ol>
+							<li>encode:<br> map full state to reduced state</li>
+							<li>evolve:<br> predict time evolution of reduced state</li>
+							<li>decode:<br> reconstruct full state</li>
+						</ol>
+					</section>
+					<section>
+						<p>ROM based on CNM and POD</p>
+						<ol>
+							<li>encode:<br> project time series data onto POD modes</li>
+							<li>evolve:<br> predict mode coefficients with CNM</li>
+							<li>decode:<br> inner product of modes and coefficients</li>
+						</ol>
+					</section>
+					<section>
+						<p>Encoding with POD/SVD:</p>
+						<pre class="python"><code>
+def encode(data_matrix: pt.Tensor, rank: int) -> Tuple[pt.Tensor, pt.Tensor]:
+    U, s, VH = pt.linalg.svd(data_matrix, full_matrices=False)
+    return U[:, :rank], pt.diag(s[:rank]) @ VH[:rank, :]
+
+# the data matrix consists of 241 snapshots of the vorticity field
+modes, coeff = encode(data_matrix, rank=20)
+print("Mode matrix shape: ", modes.shape)
+print("Coeff. matrix shape: ", coeff.shape)
+						</code></pre>
+					</section>
+					<section>
+						<p>Shape of mode matrix if $m$ points per snapshot, $n$ snapshots, and rank $r$ truncation?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$m\times m$</li>
+							<li style="list-style-type: upper-latin;">$m\times n$</li>
+							<li style="list-style-type: upper-latin;">$m\times r$</li>
+							<li style="list-style-type: upper-latin;">$n\times r$</li>
+							<li style="list-style-type: upper-latin;">$r\times m$</li>
+						</ol>
+					</section>
+					<section>
+						<p>Shape of mode coefficient matrix if $m$ points per snapshot, $n$ snapshots, and rank $r$ truncation?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$n\times n$</li>
+							<li style="list-style-type: upper-latin;">$n\times m$</li>
+							<li style="list-style-type: upper-latin;">$m\times n$</li>
+							<li style="list-style-type: upper-latin;">$n\times r$</li>
+							<li style="list-style-type: upper-latin;">$r\times n$</li>
+						</ol>
+					</section>
+					<section>
+						<p>Clustering of the mode coefficients:</p>
+						<pre class="python"><code>
+clustering = KMeans(n_clusters=40, random_state=0)
+clustering.fit(coeff.T.numpy())
+centroids = clustering.cluster_centers_
+print(centroids.shape)
+						</code></pre>
+					</section>
+					<section>
+						<p>Of how many entries/elements consists a single centroid?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">$n$</li>
+							<li style="list-style-type: upper-latin;">$m$</li>
+							<li style="list-style-type: upper-latin;">$r$</li>
+							<li style="list-style-type: upper-latin;">$40$</li>
+						</ol>
+					</section>
+					<section>
+						<p>Time evolution with CNM</p>
+						<pre class="python"><code>
+# transition times
+transition_times = compute_transition_time(clustering.labels_, dt)
+# transition probabilities
+centroid_sequence = remove_sequential_duplicates(clustering.labels_)
+transition_probs = compute_transition_probabilities(centroid_sequence)
+# time evolution
+prediction, times_sim = simulate_probablisticly(
+	centroids, transition_probs, transition_times, clustering.labels_[0], 10)
+						</code></pre>
+					</section>
+					<section>
+						<img src="images/cylinder_coeff_prediction_cnm.svg" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<p>CNM prediction of POD mode coefficients.</p>
+					</section>
+					<section>
+						<p>Reconstruction of the vorticity field:</p>
+						<pre class="python"><code>
+def decode(modes: pt.Tensor, coeff: pt.Tensor) -> pt.Tensor:
+    """Compute inner product of POD modes and coefficients.
+	"""
+    return modes @ coeff
+
+# reconstruct full state
+reconstruction = decode(modes, pt.from_numpy(prediction).T.type(pt.float32))
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="images/cylinder_full_prediction_cnm.svg" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<p>Reconstructed CNM prediction of vorticity field.</p>
+					</section>
+				</section>
+
 			</div>
 
 		</div>
