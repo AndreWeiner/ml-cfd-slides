@@ -106,8 +106,525 @@
 				</section>
 	
 				<section>
-					<h2>Outline</h2>
+					<h2>Last lecture</h2>
+					<p>Reduced-order modeling of the flow past a cylinder</p>
+					<ul>
+						<li>evaluation and exam</li>
+						<hr>
+						<li>Reduced-order models of dynamical systems</li>
+						<li>Grouping similar data points</li>
+						<li>Modeling the transition between clusters</li>
+						<li>Dealing with high-dimensional data</li>
+					</ul>
 				</section>
+	
+				<section>
+					<h2>Outline</h2>
+					<p>Controlling the flow past a cylinder</p>
+					<ul>
+						<li>evaluation and exam</li>
+						<hr>
+						<li>Active flow control</li>
+						<li>Elements of reinforcement learning</li>
+						<li>Q-learning</li>
+						<hr>
+						<li>Elements of deep reinforcement learning</li>
+						<li>Proximal policy optimization</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h3>Course evaluation</h3>
+						<p>Please, take some time for feedback:</p>
+						<ul>
+							<li>link to poll on StudIp - announcements</li>
+							<li>poll open until 7th of Feb</li>
+							<li>poll is anonymous</li>
+							<li>your feedback matters!</li>
+							<li>be fair and constructive</li>
+						</ul>
+						<p>Externals: if you like, send me an email!</p>
+					</section>
+					<section>
+						<h3>Course exam</h3>
+						<ul>
+							<li>most likely oral exam, online</li>
+							<li>poll to decide on date</li>
+						</ul>
+						<p><span style="color: red;">Please check your StudIp messages!</span></p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Active flow control</h2>
+					</section>
+					<section>
+						<p>Goals of flow control:</p>
+						<ul>
+							<li>drag reduction</li>
+							<li>load reduction</li>
+							<li>process intensification</li>
+							<li>noise reduction</li>
+							<li>...</li>
+						</ul>
+					</section>
+					<section>
+						<p>Categories of flow control:</p>
+						<ol>
+							<li><b>passive:</b> modification of geometry, topology, fluid, ...</li>
+							<li><b>active:</b> flow actuation through moving parts, blowing/suction, heating/cooling, ...</li>
+						</ol>
+						<p>Active flow control can be more effective but requires <span style="color: red;">energy</span>.</p>
+					</section>
+					<section>
+						<p>Categories of active flow control:</p>
+						<ol>
+							<li><b>open-loop:</b> actuation fixed; constant or periodic motion, blowing, heating, ...</li>
+							<li><b>closed-loop:</b> actuation based on sensor input</li>
+						</ol>
+						<p>Closed-loop flow control can be more effective but defining the control law is extremely challenging.</p>
+					</section>
+					<section>
+						<img src="images/open_vs_closed_loop.png" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Block diagrams of open and closed-loop control; source: figure 1.2 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
+					</section>
+					<section>
+						<video height="500" controls mute autoplay loop>
+							<source src="images/cylinder_short.mp4">
+						</video>
+						<p>Flow past a circular cylinder at $Re=100$.</p>
+					</section>
+					<section>
+						<img src="images/cylinder_drag_lift.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<p>Drag and lift coefficients for the cylinder surface; source: figure 2.9 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
+					</section>
+					<section>
+						<p>Typical steps in open-loop control:</p>
+						<ol>
+							<li>define (parametrized) control law</li>
+							<li>optional: optimize control law
+								<ul>
+									<li>define loss/objective function</li>
+									<li>optimize control law iteratively</li>
+								</ul>
+							</li>
+						</ol>
+					</section>
+					<section>
+						<p>Open-loop example:</p>
+						<ul>
+							<li>periodic cylinder rotation with<br>
+								$$\omega = A \mathrm{sin}(2\pi ft) $$
+							</li>
+							<li>optimization of $A$ and $f$ by searching</li>
+							<li>loss<br> <small>$$\Phi = \sqrt{\bar{C_D}^2 + \bar{C_L}^2 + (C_{D_{max}}-C_{D_{min}})^2 +(C_{L_{max}}-C_{L_{min}})^2}$$</small></li>
+							<li>$\Omega = d/(2\bar{U}) A$ and $S_f = d/\bar{U}f$</li>
+						</ul>
+					</section>
+					<section>
+						<img src="images/cylinder_openloop_loss_surface.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Loss landscape for periodic control; source: figure 3.5 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
+					</section>
+					<section>
+						<img src="images/state_action.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Closed-loop example: $\omega = f(\mathbf{p})$.</p>
+					</section>
+					<section>
+						<video height="500" controls mute autoplay loop>
+							<source src="images/variable_inflow_2x.mp4">
+						</video>
+						<p>Closed-loop flow control with variable Reynolds number; source: <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
+					</section>
+					<section>
+						<p>How to find the control law?</p>
+						<ul>
+							<li>careful manual design</li>
+							<li>adjoint optimization</li>
+							<li>machine learning control (MLC)</li>
+							<li><b>(deep) reinforcement learning (DRL)</b></li>
+						</ul>
+					</section>
+					<section>
+						<p>Favorable attributes of DRL:</p>
+						<ul>
+							<li>sample efficient thanks to NN-based function approximation</li>
+							<li>discrete, continuous, or mixed states and actions</li>
+							<li>control law is learnt from scratch</li>
+							<li>can deal with uncertainty</li>
+							<li>high degree of automation possible</li>
+						</ul>
+					</section>
+					<section>
+						<p>Why CFD-based closed-loop control via DRL?</p>
+						<ul>
+							<li>save virtual environment</li>
+							<li>prior optimization, e.g., sensor placement</li>
+						</ul>
+						<p>Main challenge: CFD environments are expensive!</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Elements of reinforcement learning</h2>
+					</section>
+					<section>
+						<img src="images/reinforcement.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Reinforcement learning cycle.</p>
+					</section>
+					<section>
+						<p>The agent:</p>
+						<ul>
+							<li>interacts, evaluates, improves</li>
+							<li>acts on the environment following a policy $\pi$</li>
+							<li>observes how the state changes</li>
+							<li>receives a reward from the environment</li>
+							<li>evaluates and improves policy</li>
+						</ul>
+					</section>
+					<section>
+						<p>The environment:</p>
+						<ul>
+							<li>is defined by a state $s$</li>
+							<li>transitions from $s$ to $s^\prime$ when acted on</li>
+							<li>returns a reward $r$</li>
+							<li>defines an extrinsic task expressed by reward</li>
+						</ul>
+					</section>
+					<section>
+						<p>States $s\in S$:</p>
+						<ul>
+							<li>define environment</li>
+							<li>can be discrete, continuous, or mixed</li>
+							<li>lie in the state space $S$</li>
+							<li>are typically not fully available -> observation</li>
+							<li>change upon action according to transition function</li>
+						</ul>
+						<p>Note that state and observation are typically used as synonyms.</p>
+					</section>
+					<section>
+						<p>Actions $ a\in A(s)$:</p>
+						<ul>
+							<li>are determined by policy $\pi (s)$</li>
+							<li>lie in the action space $A(s)$</li>
+							<li>may be state-dependent</li>
+							<li>can be discrete, continuous, or mixed</li>
+						</ul>
+					</section>
+					<section>
+						<p>Even more definitions:</p>
+						<ul>
+							<li>task: overall goal; episodic or continuing</li>
+							<li>time step $t$: one interaction between agent and environment</li>
+							<li>episode: cumulation of time steps in episodic tasks</li>
+							<li>horizon: time step limit; finite or infinite</li>
+							<li>experience tuple: $\{ S_t, A_t, R_{t+1}, S_{t+1}\}$</li>
+							<li>trajectory: all experience tuples in an episode</li>
+						</ul>
+					</section>
+					<section>
+						<img src="images/slippery_walk_7.png" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Describing uncertainty: "slippery walk" presented as Markov decision process (MDP). </p>
+					</section>
+					<section>
+						<p>Markov property:</p>
+						<p>
+							$$
+							  P(S_{t+1}|S_t, A_t) = P(S_{t+1}|S_t, A_t, S_{t-1}, A_{t-1}, ...)
+							$$
+						</p>
+						<p>May be relaxed in practice by adding several time levels to the state.</p>
+					</section>
+					<section>
+						<ul>
+							<li>state space: $s\in \{0, 1, 2, 3, 4, 5, 6\}$</li>
+							<li>action space: $a \in \{0, 1\}$</li>
+							<li>experience tuple: $(3, 0, 0, 4)$</li>
+							<li>trajectory: $((5, 0, 0, 6), (6, 1, 0, 7), ...)$</li>
+
+						</ul>
+					</section>
+					<section>
+						<p>What is the meaning of $(3, 0, 0, 4)$?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">action go right</li>
+							<li style="list-style-type: upper-latin;">transition from 4 to 3</li>
+							<li style="list-style-type: upper-latin;">reward of 0</li>
+						</ol>
+					</section>
+					<section>
+						<p>Why might the CFD environment be uncertain?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">random actions</li>
+							<li style="list-style-type: upper-latin;">random state changes</li>
+							<li style="list-style-type: upper-latin;">incomplete state (observation)</li>
+						</ol>
+					</section>
+					<section>
+						<p>Intuitively, what is the optimal policy?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">always go left</li>
+							<li style="list-style-type: upper-latin;">always go right</li>
+							<li style="list-style-type: upper-latin;">alternate left and right</li>
+							<li style="list-style-type: upper-latin;">depends on initial state</li>
+							<li style="list-style-type: upper-latin;">it doesn't matter - all policies optimal</li>
+						</ol>
+					</section>
+					<section>
+						<p>Dealing with sequential feedback:</p>
+						<p>return:
+							$$
+							  G_t = R_{t+1} + R_{t+2} + ... + R_T
+							$$
+						</p>
+						<p>discounted return:
+							$$
+							  G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... \gamma^{T-1}R_T
+							$$
+						</p>
+						<p>$T$ - number of time steps, $\gamma$ - discounting factor, typically $\gamma = 0.99$</p>
+					</section>
+					<section>
+						<p>recursive definition:
+							$$
+							  G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... \gamma^{T-1}R_T
+							$$
+							$$
+							  G_{t+1} = R_{t+2} + \gamma R_{t+3} + \gamma^2 R_{t+4} + ... \gamma^{T-1}R_T
+							$$
+							$$
+							  G_t = R_{t+1} + \gamma G_{t+1}
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Why should we discount?</p>
+						<p>
+							rewards trajectory 1: $(0, 0, 0, 0, 1)$<br>
+							rewards trajectory 2: $(0, 0, 0, 0, 0, 0, 1)$<br>
+						</p>
+						<p>Which one is better?</p>
+						<p>returns: 1 and 1</p>
+						<p>discounted returns: $0.99^5\cdot 1$ and $0.99^7\cdot 1$</p>
+						<p>$\rightarrow$ discounting expresses urgency</p>
+					</section>
+					<section>
+						<p>Returns combined with uncertainty: the state-value function</p>
+						<p>
+							$$
+							  v_\pi (s) = \mathbb{E}_\pi [G_t| S_t=s] = \mathbb{E}_\pi [R_{t+1} + \gamma G_{t+1}| S_t=s]
+							$$
+							In words: the value function expresses the expected return at time step $t$ given that $S_t = s$ when following policy $\pi$.
+						</p>
+					</section>
+					<section>
+						<p>How to compute the value-function if the MDP is known? - Bellman equation</p>
+						<p>
+							$$
+							v_\pi (s) = \mathbb{E}_\pi [R_{t+1} + \gamma G_{t+1}| S_t=s]
+							$$
+							$$
+							v_\pi (s) = \sum\limits_{s^\prime , r, a} p(s^\prime,r| s, a) [r + \gamma \mathbb{E}_\pi [G_{t+1} | S_{t+1} = s^\prime)]]
+							$$
+							$$
+							v_\pi (s) = \sum\limits_{s^\prime , r, a} p(s^\prime,r| s, a) [r + \gamma v_\pi (s^\prime)]\quad \forall s\in S
+							$$
+						</p>
+						<p>$s^\prime$ - next state; deterministic actions assumed</p>
+					</section>
+					<section>
+						<p>Intuitively, which state has the highest value?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">0</li>
+							<li style="list-style-type: upper-latin;">3</li>
+							<li style="list-style-type: upper-latin;">5</li>
+							<li style="list-style-type: upper-latin;">6</li>
+							<li style="list-style-type: upper-latin;">all equal</li>
+						</ol>
+					</section>
+					<section>
+						<p>What action to take? The state-action function:</p>
+						<p>
+							$$
+							q_\pi (s, a) = \mathbb{E}_\pi [G_t | S_t = s, A_t=a]
+							$$
+							$$
+							q_\pi (s, a) = \mathbb{E}_\pi [R_{t+1} + \gamma G_{t+1} | S_t = s, A_t=a]
+							$$
+							$$
+							q_\pi (s, a) = \sum\limits_{s^\prime , r} p(s^\prime,r| s, a)[r + \gamma v_\pi (s^\prime)]\quad \forall s\in S, \forall a\in A
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Intuitively, what would you expect $q_\pi (s, a=0)$ vs. $q_\pi (s, a=1)$ ?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;"> $q_\pi (s, a=0) > q_\pi (s, a=1)$</li>
+							<li style="list-style-type: upper-latin;"> $q_\pi (s, a=0) = q_\pi (s, a=1)$</li>
+							<li style="list-style-type: upper-latin;"> $q_\pi (s, a=0) < q_\pi (s, a=1)$</li>
+						</ol>
+					</section>
+					<section>
+						<p>How much better is an action? - action-advantage function</p>
+						<p>
+							$$
+							a_\pi (s,a) = q_\pi(s,a) - v_\pi(s)
+							$$
+						</p>
+					</section>
+					<section>
+						<p>The optimal policy:</p>
+						<p>
+							$$
+							v_\ast (s) = \underset{\pi}{\mathrm{max}}\ v_\pi (s)\quad \forall s\in S
+							$$
+							$$
+							q_\ast (s, a) = \underset{\pi}{\mathrm{max}}\ q_\pi (s, a)\quad \forall s\in S, \forall a\in A
+							$$
+						</p>
+					</section>
+					<section>
+						<p>Planning: finding $\pi_\ast$ with value iterations</p>
+						<p>
+							$$
+							v_{k+1}(s) = \underset{a}{\mathrm{max}}\sum\limits_{s^\prime, r} p(s^\prime , r | s, a)[r+\gamma v_k(s^\prime)]
+							$$
+						</p>
+						<p>$v_k$ - value estimate at iteration $k$</p>
+					</section>
+					<section>
+						<p>Slippery walk in gym/gym_walk:</p>
+						<pre class="python"><code>
+env = gym.make('SlipperyWalkSeven-v0')
+init_state = env.reset()
+P = env.env.P
+list(P.items())[-2:]
+# output
+[(7,
+  {0: [(0.5000000000000001, 6, 0.0, False),
+    (0.3333333333333333, 7, 0.0, False),
+    (0.16666666666666666, 8, 1.0, True)],
+   1: [(0.5000000000000001, 8, 1.0, True),
+    (0.3333333333333333, 7, 0.0, False),
+    (0.16666666666666666, 6, 0.0, False)]}),
+ (8,
+  {0: [(0.5000000000000001, 8, 0.0, True),
+    (0.3333333333333333, 8, 0.0, True),
+    (0.16666666666666666, 8, 0.0, True)],
+   1: [(0.5000000000000001, 8, 0.0, True),
+    (0.3333333333333333, 8, 0.0, True),
+    (0.16666666666666666, 8, 0.0, True)]})]
+						</code></pre>
+					</section>
+					<section>
+						<p>Value iteration implementation:</p>
+						<pre class="python"><code>
+def value_iteration(P: Dict[int, Dict[int, tuple]], gamma: float=0.99, theta: float=1e-10):
+    V = pt.zeros(len(P))
+    while True:
+        Q = pt.zeros((len(P), len(P[0])))
+        for s in range(len(P)):
+            for a in range(len(P[s])):
+                for prob, next_state, reward, done in P[s][a]:
+                    Q[s][a] += prob * (reward + gamma * V[next_state] * (not done))
+        if pt.max(pt.abs(V - pt.max(Q, dim=1).values)) < theta:
+            break
+        V = pt.max(Q, dim=1).values
+    pi = lambda s: {s:a for s, a in enumerate(pt.argmax(Q, dim=1))}[s]
+    return Q, V, pi
+						</code></pre>
+					</section>
+					<section>
+						<p>Optimal action-value function:</p>
+						<pre class="python"><code>
+optimal_Q, optimal_V, optimal_pi = value_iteration(P)
+optimal_Q[1:-1]
+# output
+tensor([[0.3704, 0.6668],
+        [0.7902, 0.8890],
+        [0.9302, 0.9631],
+        [0.9768, 0.9878],
+        [0.9924, 0.9960],
+        [0.9976, 0.9988],
+        [0.9993, 0.9997]])
+						</code></pre>
+					</section>
+					<section>
+						<p>Why is it called reinforcement <b>learning</b> and not <b>planning</b>?</p>
+						<ol>
+							<li style="list-style-type: upper-latin;">both are equivalent</li>
+							<li style="list-style-type: upper-latin;">reward function unknown</li>
+							<li style="list-style-type: upper-latin;">transition function unknown</li>
+							<li style="list-style-type: upper-latin;">reward and transition function unknown</li>
+						</ol>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Q-learning</h2>
+					</section>
+					<section>
+						<p>What to do if the MDP is partially unknown?</p>
+						<p>trail and error learning</p>
+						<p>$\rightarrow$ requires mix between exploration and exploitation</p>
+					</section>
+					<section>
+						<p>Exploration vs. exploitation strategies:</p>
+						<ul>
+							<li>act always greedily</li>
+							<li>act always random</li>
+							<li>act $\epsilon$-greedily</li>
+							<li>decaying $\epsilon$-greedy</li>
+							<li>Thomson sampling</li>
+						</ul>
+					</section>
+					<section>
+						<p>General learning strategy:</p>
+						<ol>
+							<li>sample next action</li>
+							<li>update value and/or action-value estimate</li>
+							<li>update policy</li>
+							<li>go back to 1. until convergence</li>
+						</ol>
+					</section>
+					<section>
+						<p>Q-learning</p>
+						<p>
+							<small>
+							$$
+							  Q(S_t, A_t) \leftarrow Q(S_t, A_t) = [R_{t+1} + \gamma \underset{a}{\mathrm{max}}(Q(S_{t+1}, a)) - Q(S_t, A_t)]
+							$$
+						</small>
+						</p>
+						<p>$\alpha_t$ - learning rate, typically decaying</p>
+						<p>$Q$-learning is an <b>offline</b> learning strategy.</p>
+					</section>
+					<section>
+						<p>Limitations of tabular learning methods:</p>
+						<ul>
+							<li>high-dimensional state/action spaces</li>
+							<li>continuous state/action spaces</li>
+						</ul>
+						<p>Solution: RL with neural networks for function approximation - <b>deep</b> RL</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Elements of <span style="color: red;">deep</span> reinforcement learning</h2>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Proximal policy optimization</h2>
+					</section>
+				</section>
+
+
 			</div>
 
 		</div>
