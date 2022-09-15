@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Machine learning in computational fluid dynamics</title>
+
+		<meta name="description" content="Machine learning in computational fluid dynamics">
+		<meta name="author" content="Andre Weiner">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+
+	<style>
+		.reveal .slide-number {
+		position: absolute;
+		display: block;
+		left: 8px;
+		bottom: 8px;
+		height: 55px;
+		width: 100px;
+		z-index: 31;
+		font-family: Helvetica, sans-serif;
+		font-size: 32px;
+		line-height: 1;
+		color: #000000;
+		background-color: rgba(0, 0, 0, 0);
+		padding: 5px;
+		}
+	</style>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lecture 13</span></h3>
+					<p>
+						Andre Weiner<br>
+						<small>TU Braunschweig, <a
+								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
+					<small>
+						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+					</small>
+					</p>
+	
+					<style>
+						.row_logo {
+							display: table;
+						}
+	
+						.column_logo {
+							display: table-cell;
+							vertical-align: middle;
+							text-align: center;
+							width: 50%;
+						}
+	
+						.content_logo {
+							display: inline-block;
+						}
+					</style>
+					<div class="row_logo">
+						<div class="column_logo">
+							<div class="content_logo">
+								<img src="images/tubs_logo.png" alt="tubs_logo"
+									style="background:none; border:none; box-shadow:none;">
+							</div>
+						</div>
+						<div class="column_logo">
+							<div class="content_logo">
+								<table>
+									<tr>
+										<td style="border: 0; padding-right: 5px;">&#9993;</th>
+										<td style="border: 0; padding-right: 20px;"><a
+												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+										<td style="border: 0; padding-right: 5px;">&#9741;</td>
+										<td style="border: 0; padding-right: 0px;"><a
+												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
+									</tr>
+									<tr>
+										<td style="border: 0; padding-right: 5px;">&#9997;</td>
+										<td style="border: 0; padding-right: 20px;"><a
+												href="https://ml-cfd.com/">Blog</a></td>
+										<td style="border: 0; padding-right: 5px;">&#10026;</td>
+										<td style="border: 0; padding-right: 0px;"><a
+												href="https://github.com/AndreWeiner">Github</a></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section>
+					<h2>Last lecture(s)</h2>
+				</section>
+	
+				<section>
+					<h2>Outline</h2>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/search/search.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
+		<script>
+
+			// Also available as an ES module, see:
+			// https://revealjs.com/initialization/
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
+			});
+			Reveal.configure({ slideNumber: true });
+
+		</script>
+
+	</body>
+</html>
