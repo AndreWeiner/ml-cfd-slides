@@ -1,29 +1,30 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
 
-		<title>Machine learning in computational fluid dynamics</title>
+	<title>Machine learning in computational fluid dynamics</title>
 
-		<meta name="description" content="Machine learning in computational fluid dynamics">
-		<meta name="author" content="Andre Weiner">
+	<meta name="description" content="Machine learning in computational fluid dynamics">
+	<meta name="author" content="Andre Weiner">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="plugin/chalkboard/style.css">
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-
-	<style>
-		.reveal .slide-number {
+<style>
+	.reveal .slide-number {
 		position: absolute;
 		display: block;
 		left: 8px;
@@ -37,670 +38,713 @@
 		color: #000000;
 		background-color: rgba(0, 0, 0, 0);
 		padding: 5px;
-		}
-	</style>
+	}
+</style>
 
-	<body>
+<body>
 
-		<div class="reveal">
+	<div class="reveal">
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lecture 1</span></h3>
-					<p>
-						Andre Weiner<br>
-						<small>TU Braunschweig, <a
-								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+			<section>
+				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lecture 1</span></h3>
+				<p>
+					Andre Weiner<br>
+					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
+						Control Group</small>
 					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+								alt="Creative Commons License" style="border-width:0"
+								src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
+						of the linked resources are licensed under a<br /> <a rel="license"
+							href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+							International License</a>.
 					</small>
-					</p>
-	
-					<style>
-						.row_logo {
-							display: table;
-						}
-	
-						.column_logo {
-							display: table-cell;
-							vertical-align: middle;
-							text-align: center;
-							width: 50%;
-						}
-	
-						.content_logo {
-							display: inline-block;
-						}
-					</style>
-					<div class="row_logo">
-						<div class="column_logo">
-							<div class="content_logo">
-								<img src="images/tubs_logo.png" alt="tubs_logo"
-									style="background:none; border:none; box-shadow:none;">
-							</div>
-						</div>
-						<div class="column_logo">
-							<div class="content_logo">
-								<table>
-									<tr>
-										<td style="border: 0; padding-right: 5px;">&#9993;</th>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
-										<td style="border: 0; padding-right: 5px;">&#9741;</td>
-										<td style="border: 0; padding-right: 0px;"><a
-												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
-									</tr>
-									<tr>
-										<td style="border: 0; padding-right: 5px;">&#9997;</td>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="https://ml-cfd.com/">Blog</a></td>
-										<td style="border: 0; padding-right: 5px;">&#10026;</td>
-										<td style="border: 0; padding-right: 0px;"><a
-												href="https://github.com/AndreWeiner">Github</a></td>
-									</tr>
-								</table>
-							</div>
+				</p>
+
+				<style>
+					.row_logo {
+						display: table;
+					}
+
+					.column_logo {
+						display: table-cell;
+						vertical-align: middle;
+						text-align: center;
+						width: 50%;
+					}
+
+					.content_logo {
+						display: inline-block;
+					}
+				</style>
+				<div class="row_logo">
+					<div class="column_logo">
+						<div class="content_logo">
+							<img src="images/tubs_logo.png" alt="tubs_logo"
+								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
-				</section>
-	
+					<div class="column_logo">
+						<div class="content_logo">
+							<table>
+								<tr>
+									<td style="border: 0; padding-right: 5px;">&#9993;</th>
+									<td style="border: 0; padding-right: 20px;"><a
+											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+									<td style="border: 0; padding-right: 5px;">&#9741;</td>
+									<td style="border: 0; padding-right: 0px;"><a
+											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
+								</tr>
+								<tr>
+									<td style="border: 0; padding-right: 5px;">&#9997;</td>
+									<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
+									</td>
+									<td style="border: 0; padding-right: 5px;">&#10026;</td>
+									<td style="border: 0; padding-right: 0px;"><a
+											href="https://github.com/AndreWeiner">Github</a></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h2>Outline</h2>
+				<ul>
+					<li>About this course</li>
+					<li>Technology stack</li>
+					<li>Combining ML and CFD</li>
+					<li>Topics we won't consider</li>
+				</ul>
+			</section>
+			<section>
 				<section>
-					<h2>Outline</h2>
+					<h2>about this course</h2>
+				</section>
+				<section>
+					<h3>This course is for you $\rightarrow$</h3>
+					<h3><span style="color: red;">ask questions!</span></h3>
+					<h3>I'll ask you a lot ...</h3>
+				</section>
+				<section>
+					<h3>workload and requirements</h3>
 					<ul>
-						<li>About this course</li>
-						<li>Technology stack</li>
-						<li>Combining ML and CFD</li>
-						<li>Topics we won't consider</li>
+						<li>5 CP, 150h workload</li>
+						<li>11 lectures + 11 exercise sessions</li>
+						<li>$150h-22*1.5h = 106h$ of self-study</li>
+						<li>oral exam if $N_p\le10$, otherwise written</li>
+						<li>prior knowledge of ML and CFD is a plus</li>
+						<li>programming knowledge is essential</li>
 					</ul>
 				</section>
 				<section>
-					<section>
-						<h2>about this course</h2>
-					</section>
-					<section>
-						<h3>This course is for you $\rightarrow$</h3>
-						<h3><span style="color: red;">ask questions!</span></h3>
-						<h3>I'll ask you a lot ...</h3>
-					</section>
-					<section>
-						<h3>workload and requirements</h3>
-						<ul>
-							<li>5 CP, 150h workload</li>
-							<li>11 lectures + 11 exercise sessions</li>
-							<li>$150h-22*1.5h = 106h$ of self-study</li>
-							<li>oral exam if $N_p\le10$, otherwise written</li>
-							<li>prior knowledge of ML and CFD is a plus</li>
-							<li>programming knowledge is essential</li>
-						</ul>
-					</section>
-					<section>
-						<h3>times and location</h3>
-						<ul>
-							<li>lecture: Wednesdays 3:30-5:00pm</li>
-							<li>exercise: Thursdays <b>9:00-10:30am</b></li>
-							<li>location: online via BBB</li>
-						</ul>
-					</section>
-					<section>
-						<h3>is the shifted exercise time OK for you?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">yes</li>
-							<li style="list-style-type: upper-latin;">no</li>
-						</ol>
-					</section>
-					<section>
-						<h3>resources and communication</h3>
-						<ul>
-							<li>slides and exercises available on <a href="https://github.com/AndreWeiner/ml-cfd-lecture">GitHub</a></li>
-							<li>all material is <b>updated regularly</b></li>
-							<li>getting help I: GitHub issues (preferred)</li>
-							<li>getting help II: StudIP, mail</li>
-							<li>feedback I: GitHub issues (preferred)</li>
-							<li>feedback II: StudIP, mail</li>
-							<li><b>issues are open for everyone</b></li>
-						</ul>
-					</section>
-					<section>
-						<h3>Course peculiarities</h3>
-						<ul>
-							<li>problem-oriented and hands-on approach</li>
-							<li>start-to-end problem solving</li>
-							<li>programming knowledge is essential for both <b>lecture and exercise</b> sessions</li>
-							<li>it's going to be really challenging (but also fun)</li>
-							<li>if you follow along (lecture <b>and</b> exercise), you'll be at the <b>forefront of ML+CFD</b></li>
-						</ul>
-					</section>
-					<section>
-						<h3>Lecture overview</h3>
-						<ul>
-							<li>Course overview and motivation</li>
-							<li>Finite-volume-based CFD in a nutshell</li>
-							<li>Introduction to ML</li>
-							<li>Predicting the stability regime of rising bubbles</li>
-							<li>Computing the mass transfer at rising bubbles</li>
-							<li>Analyzing coherent structures in buffeting flows</li>
-							<li>Reduced-order modeling of the flow past a cylinder</li>
-							<li>Controlling the flow past a cylinder</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Remark about exercises</h3>
-						<ul>
-							<li>exercises should be solved in self-study</li>
-							<li>notebooks provide basic guidance</li>
-							<li>exercise session for Q & A</li>
-							<li>reach out to get unstuck!</li>
-							<li>form small study groups to solve exercises</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Book recommendations CFD</h3>
-						<ul>
-							<li><a href="https://zenodo.org/record/4630596#.YXBgepuxVH4">The OpenFOAM technology primer</a> by T. Marić  et al.</li>
-							<li><b>The finite volume method in computational fluid dynamics</b> by F. Moukalled et al.</li>
-							<li><b>An introduction to computational fluid dynamics: the finite volume method</b> by H. K. Versteeg et al.</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Book recommendations data-driven modeling and control</h3>
-						<ul>
-							<li><b>Introduction to linear algebra</b> by G. Strang</li>
-							<li><b>Data-driven science and engineering: machine learning, dynamical systems, and control</b> by S. L. Brunton et al.</li>
-							<li><b>Dynamic mode decomposition: data-driven modeling of complex systems</b> by J. N. Kutz et al.</li>
-							<li><b>Grokking deep reinforcement learning</b> by M. Morales</li>
-							<li><b>Deep learning with PyTorch</b> by E. Stevens at al.</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Book recommendations Linux and programming</h3>
-						<ul>
-							<li><b>Python crash course</b> by E. Matthes</li>
-							<li><b>C++ crash course</b> by J. Lospinoso</li>
-							<li><a href="https://linuxcommand.org/tlcl.php">The Linux command line</a> by W. Shotts</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Video content</h3>
-						<ul>
-							<li><a href="https://www.youtube.com/c/Eigensteve">Youtube channel</a> of Steve Brunton</li>
-							<li><a href="https://www.youtube.com/channel/UCjdgpuxuAxH9BqheyE82Vvw">Youtube channel</a> of József Nagy</li>
-							<li><a href="https://www.youtube.com/channel/UCcqQi9LT0ETkRoUu8eYaEkg">Youtube channel</a> Fluid Mechanics 101</li>
-						</ul>
-						<p>A word of warning: consuming videos is a good means to get brief overview, but <span style="color: red;">true expertise is obtained by hands-on problem solving!</span></p>
-					</section>
+					<h3>times and location</h3>
+					<ul>
+						<li>lecture: Wednesdays 3:30-5:00pm</li>
+						<li>exercise: Thursdays <b>9:00-10:30am</b></li>
+						<li>location: online via BBB</li>
+					</ul>
 				</section>
 				<section>
-					<section>
-						<h2>Technology stack</h2>
-					</section>
-					<section>
-						<h3>Linux and the command line?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3>Linux and the command line</h3>
-						<ul>
-							<li>preferred OS for CFD and ML</li>
-							<li>open-source and highly customizable</li>
-							<li>basic knowledge required</li>
-							<li>access to Linux - exercise I</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Git and GitHub?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3>Git and GitHub</h3>
-						<ul>
-							<li>Git is a version control tool for text files</li>
-							<li>GitHub is a platform to host Git repositories</li>
-							<li>only very basic usage - exercise 1</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Jupyter labs?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3>Jupyter labs</h3>
-						<ul>
-							<li>interactive documents with code and text</li>
-							<li>used for lecture scripts and exercises</li>
-							<li>Markdown for text, Python for code cells</li>
-							<li>only very basic usage - exercise 1</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Python?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3>Python</h3>
-						<ul>
-							<li>interpreted programming language</li>
-							<li>easy syntax, yet very powerful</li>
-							<li>#1 language for ML, data science, automation</li>
-							<li>libraries: Pandas, NumPy, PyTorch, Matplotlib</li>
-							<li>good command required</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Do you need a Python crash/refresher course?</h3>
+					<h3>is the shifted exercise time OK for you?</h3>
+					<ol>
 						<li style="list-style-type: upper-latin;">yes</li>
 						<li style="list-style-type: upper-latin;">no</li>
-					</section>
-					<section>
-						<h3>C++?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3>C++</h3>
-						<ul>
-							<li>compiled programming language</li>
-							<li>more complex syntax, very powerful and versatile</li>
-							<li>#1 language for high-performance applications</li>
-							<li>basic knowledge required</li>
-						</ul>
-					</section>
-					<section>
-						<h3>PyTorch?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3>PyTorch</h3>
-						<ul>
-							<li>library for deep learning (DL)</li>
-							<li>C++ backend, Python/C++ frontend</li>
-							<li>popular DL library in research and industry</li>
-							<li>excellent integration with CFD tools</li>
-							<li>good command required</li>
-						</ul>
-					</section>
-					<section>
-						<h3>OpenFOAM?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3><a href="https://www.openfoam.com/">OpenFOAM</a></h3>
-						<ul>
-							<li>unstructured finite volume CFD library</li>
-							<li>broad range of physical and numerical models</li>
-							<li>#1 open-source CFD tool, written in C++</li>
-							<li>basic knowledge required - exercise 2</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Basilisk?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3><a href="http://basilisk.fr/">Basilisk</a></h3>
-						<ul>
-							<li>finite volume CFD library</li>
-							<li>optimized for multiphase, multiscale problems</li>
-							<li>octree-based, adaptive meshes</li>
-							<li>only used for data generation</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Singularity (container)?</h3>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-							<li style="list-style-type: upper-latin;">basic knowledge</li>
-							<li style="list-style-type: upper-latin;">good command</li>
-						</ol>
-					</section>
-					<section>
-						<h3><a href="https://sylabs.io/guides/3.0/user-guide/quick_start.html">Singularity</a></h3>
-						<ul>
-							<li>isolation of software+dependencies in <b>containers</b></li>
-							<li>containers are isolated portions on the OS-level</li>
-							<li>avoids dependency conflicts and ensures <br>reproducible behavior</li>
-							<li>integration with MPI-applications and schedulers</li>
-							<li>containerized versions of OpenFOAM and Basilisk</li>
-						</ul>
-					</section>
+					</ol>
 				</section>
 				<section>
-					<section>
-						<h2>Combing ML and CFD</h2>
-					</section>
-					<section>
-						<h3>Why combine CFD and ML?</h3>
-						<p>CFD</p>
-						<ul>
-							<li>produces large amounts of complex data</li>
-							<li>requires data or representations thereof</li>
-						</ul>
-						<p>ML</p>
-						<ul>
-							<li>finds patterns in data</li>
-							<li>creates useful representations of data</li>
-						</ul>
-					</section>
-					<section>
-						<img src="images/DNS_snapshots_size.png" alt="data-size"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-						<p>Progression of snapshot size in direct numerical simulations (DNS).</p>
-					</section>
-					<section>
-						<p>simulations become more and more sophisticated</p>
-						<ul>
-							<li>turbulence models</li>
-							<li>transport models</li>
-							<li>equations of state</li>
-							<li>mixture models</li>
-							<li>linear solver settings</li>
-							<li>discretization schemes</li>
-							<li>...</li>
-						</ul>
-						<p>$\rightarrow$ closure models and decision making required</p>
-					</section>
-					<section>
-						<h2>But how exactly can ML help mitigating these problems?</h2>
-					</section>
-					<section>
-						<h2>ML is not a generic problem solver ...</h2>
-					</section>
-					<section>
-						<h3>Problems that ML solves - <span style="color: red;">supervised learning</span> </h3>
-						<img src="images/regression_classification.svg" alt="supervised"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-					</section>
-					<section>
-						<h3>Problems that ML solves - <span style="color: red;">unsupervised learning</span> </h3>
-						<img src="images/unsupervised.svg" alt="unsupervised"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-					</section>
-					<section>
-						<h3>Problems that ML solves - <span style="color: red;">reinforcement learning</span> </h3>
-						<img src="images/reinforcement.svg" alt="reinforcement"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-					</section>
-					<section>
-						<h3>Combing CFD and ML - workflows</h3>
-						<img src="images/data_workflows_1.svg" alt="data-1"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-							<p>Example: using experimental data in CFD simulation</p>
-					</section>
-					<section>
-						<h3>Combing CFD and ML - workflows</h3>
-						<img src="images/data_workflows_2.svg" alt="data-2"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-							<p>Example: creating surrogate or reduced-order models based on CFD data</p>
-					</section>
-					<section>
-						<h3>Combing CFD and ML - workflows</h3>
-						<img src="images/data_workflows_3.svg" alt="data-3"
-							style="background:none; border:none; box-shadow:none; width: 100%">
-							<p>Example: scale-up modeling</p>
-					</section>
-					<section>
-						<h3>Combing CFD and ML - workflows</h3>
-						<img src="images/data_workflows_4.svg" alt="data-3"
-							style="background:none; border:none; box-shadow:none; width: 500px">
-							<p>Example: active flow control or shape optimization</p>
-					</section>
-					<section>
-						<h2>What type of ML could be helpful in the following scenarios?</h2>
-					</section>
-					<section>
-						<p>Creating a transport model $\mu (T)$ based on experimental data ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Mapping a flow field between simulations ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Finding coherent structures in turbulent flows ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Creating a reduced-order model of the velocity field ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Predicting the impact behavior of a droplet on a surface ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Switching between two turbulence models in a RANS simulation ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Predicting the stability regime of rising bubbles ...</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">classification</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
-					<section>
-						<p>Closed-loop active flow control of the flow past a cylinder</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">regression</li>
-							<li style="list-style-type: upper-latin;">reinforcement learning</li>
-							<li style="list-style-type: upper-latin;">clustering</li>
-							<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-						</ol>
-					</section>
+					<h3>resources and communication</h3>
+					<ul>
+						<li>slides and exercises available on <a
+								href="https://github.com/AndreWeiner/ml-cfd-lecture">GitHub</a></li>
+						<li>all material is <b>updated regularly</b></li>
+						<li>getting help I: GitHub issues (preferred)</li>
+						<li>getting help II: StudIP, mail</li>
+						<li>feedback I: GitHub issues (preferred)</li>
+						<li>feedback II: StudIP, mail</li>
+						<li><b>issues are open for everyone</b></li>
+					</ul>
 				</section>
 				<section>
-					<section>
-						<h2>Topics we won't consider</h2>
-					</section>
-					<section>
-						<h3>Physics-informed neural networks (PINNs)</h3>
-					</section>
-					<section>
-						<p>PINNs?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">no clue</li>
-							<li style="list-style-type: upper-latin;">heard about it</li>
-							<li style="list-style-type: upper-latin;">get the concept</li>
-							<li style="list-style-type: upper-latin;">hands-on experience</li>
-						</ol>
-					</section>
-					<section>
-						<p>Example: physics-informed <span style="color: red;">polynomials</span></p>
-						<ul>
-							<li>initial value problem
-								$$ \frac{\mathrm{d}x}{\mathrm{d}t} = -kx,\ x(t=0)=1,\ t\in \left[0,1\right] $$
-							</li>
-							<li>
-								solution
-								$$
-									x(t) = \mathrm{exp}(-kt)
-								$$
-							</li>
-						</ul>
-					</section>
-					<section>
-						$$
+					<h3>Course peculiarities</h3>
+					<ul>
+						<li>problem-oriented and hands-on approach</li>
+						<li>start-to-end problem solving</li>
+						<li>programming knowledge is essential for both <b>lecture and exercise</b> sessions</li>
+						<li>it's going to be really challenging (but also fun)</li>
+						<li>if you follow along (lecture <b>and</b> exercise), you'll be at the <b>forefront of
+								ML+CFD</b></li>
+					</ul>
+				</section>
+				<section>
+					<h3>Lecture overview</h3>
+					<ul>
+						<li>Course overview and motivation</li>
+						<li>Finite-volume-based CFD in a nutshell</li>
+						<li>Introduction to ML</li>
+						<li>Predicting the stability regime of rising bubbles</li>
+						<li>Computing the mass transfer at rising bubbles</li>
+						<li>Analyzing coherent structures in buffeting flows</li>
+						<li>Reduced-order modeling of the flow past a cylinder</li>
+						<li>Controlling the flow past a cylinder</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Remark about exercises</h3>
+					<ul>
+						<li>exercises should be solved in self-study</li>
+						<li>notebooks provide basic guidance</li>
+						<li>exercise session for Q & A</li>
+						<li>reach out to get unstuck!</li>
+						<li>form small study groups to solve exercises</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Book recommendations CFD</h3>
+					<ul>
+						<li><a href="https://zenodo.org/record/4630596#.YXBgepuxVH4">The OpenFOAM technology primer</a>
+							by T. Marić et al.</li>
+						<li><b>The finite volume method in computational fluid dynamics</b> by F. Moukalled et al.</li>
+						<li><b>An introduction to computational fluid dynamics: the finite volume method</b> by H. K.
+							Versteeg et al.</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Book recommendations data-driven modeling and control</h3>
+					<ul>
+						<li><b>Introduction to linear algebra</b> by G. Strang</li>
+						<li><b>Data-driven science and engineering: machine learning, dynamical systems, and control</b>
+							by S. L. Brunton et al.</li>
+						<li><b>Dynamic mode decomposition: data-driven modeling of complex systems</b> by J. N. Kutz et
+							al.</li>
+						<li><b>Grokking deep reinforcement learning</b> by M. Morales</li>
+						<li><b>Deep learning with PyTorch</b> by E. Stevens at al.</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Book recommendations Linux and programming</h3>
+					<ul>
+						<li><b>Python crash course</b> by E. Matthes</li>
+						<li><b>C++ crash course</b> by J. Lospinoso</li>
+						<li><a href="https://linuxcommand.org/tlcl.php">The Linux command line</a> by W. Shotts</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Video content</h3>
+					<ul>
+						<li><a href="https://www.youtube.com/c/Eigensteve">Youtube channel</a> of Steve Brunton</li>
+						<li><a href="https://www.youtube.com/channel/UCjdgpuxuAxH9BqheyE82Vvw">Youtube channel</a> of
+							József Nagy</li>
+						<li><a href="https://www.youtube.com/channel/UCcqQi9LT0ETkRoUu8eYaEkg">Youtube channel</a> Fluid
+							Mechanics 101</li>
+					</ul>
+					<p>A word of warning: consuming videos is a good means to get brief overview, but <span
+							style="color: red;">true expertise is obtained by hands-on problem solving!</span></p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Technology stack</h2>
+				</section>
+				<section>
+					<h3>Linux and the command line?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3>Linux and the command line</h3>
+					<ul>
+						<li>preferred OS for CFD and ML</li>
+						<li>open-source and highly customizable</li>
+						<li>basic knowledge required</li>
+						<li>access to Linux - exercise I</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Git and GitHub?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3>Git and GitHub</h3>
+					<ul>
+						<li>Git is a version control tool for text files</li>
+						<li>GitHub is a platform to host Git repositories</li>
+						<li>only very basic usage - exercise 1</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Jupyter labs?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3>Jupyter labs</h3>
+					<ul>
+						<li>interactive documents with code and text</li>
+						<li>used for lecture scripts and exercises</li>
+						<li>Markdown for text, Python for code cells</li>
+						<li>only very basic usage - exercise 1</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Python?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3>Python</h3>
+					<ul>
+						<li>interpreted programming language</li>
+						<li>easy syntax, yet very powerful</li>
+						<li>#1 language for ML, data science, automation</li>
+						<li>libraries: Pandas, NumPy, PyTorch, Matplotlib</li>
+						<li>good command required</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Do you need a Python crash/refresher course?</h3>
+					<li style="list-style-type: upper-latin;">yes</li>
+					<li style="list-style-type: upper-latin;">no</li>
+				</section>
+				<section>
+					<h3>C++?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3>C++</h3>
+					<ul>
+						<li>compiled programming language</li>
+						<li>more complex syntax, very powerful and versatile</li>
+						<li>#1 language for high-performance applications</li>
+						<li>basic knowledge required</li>
+					</ul>
+				</section>
+				<section>
+					<h3>PyTorch?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3>PyTorch</h3>
+					<ul>
+						<li>library for deep learning (DL)</li>
+						<li>C++ backend, Python/C++ frontend</li>
+						<li>popular DL library in research and industry</li>
+						<li>excellent integration with CFD tools</li>
+						<li>good command required</li>
+					</ul>
+				</section>
+				<section>
+					<h3>OpenFOAM?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3><a href="https://www.openfoam.com/">OpenFOAM</a></h3>
+					<ul>
+						<li>unstructured finite volume CFD library</li>
+						<li>broad range of physical and numerical models</li>
+						<li>#1 open-source CFD tool, written in C++</li>
+						<li>basic knowledge required - exercise 2</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Basilisk?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3><a href="http://basilisk.fr/">Basilisk</a></h3>
+					<ul>
+						<li>finite volume CFD library</li>
+						<li>optimized for multiphase, multiscale problems</li>
+						<li>octree-based, adaptive meshes</li>
+						<li>only used for data generation</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Singularity (container)?</h3>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
+						<li style="list-style-type: upper-latin;">basic knowledge</li>
+						<li style="list-style-type: upper-latin;">good command</li>
+					</ol>
+				</section>
+				<section>
+					<h3><a href="https://sylabs.io/guides/3.0/user-guide/quick_start.html">Singularity</a></h3>
+					<ul>
+						<li>isolation of software+dependencies in <b>containers</b></li>
+						<li>containers are isolated portions on the OS-level</li>
+						<li>avoids dependency conflicts and ensures <br>reproducible behavior</li>
+						<li>integration with MPI-applications and schedulers</li>
+						<li>containerized versions of OpenFOAM and Basilisk</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Combing ML and CFD</h2>
+				</section>
+				<section>
+					<h3>Why combine CFD and ML?</h3>
+					<p>CFD</p>
+					<ul>
+						<li>produces large amounts of complex data</li>
+						<li>requires data or representations thereof</li>
+					</ul>
+					<p>ML</p>
+					<ul>
+						<li>finds patterns in data</li>
+						<li>creates useful representations of data</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/DNS_snapshots_size.png" alt="data-size"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Progression of snapshot size in direct numerical simulations (DNS).</p>
+				</section>
+				<section>
+					<p>simulations become more and more sophisticated</p>
+					<ul>
+						<li>turbulence models</li>
+						<li>transport models</li>
+						<li>equations of state</li>
+						<li>mixture models</li>
+						<li>linear solver settings</li>
+						<li>discretization schemes</li>
+						<li>...</li>
+					</ul>
+					<p>$\rightarrow$ closure models and decision making required</p>
+				</section>
+				<section>
+					<h2>But how exactly can ML help mitigating these problems?</h2>
+				</section>
+				<section>
+					<h2>ML is not a generic problem solver ...</h2>
+				</section>
+				<section>
+					<h3>Problems that ML solves - <span style="color: red;">supervised learning</span> </h3>
+					<img src="images/regression_classification.svg" alt="supervised"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<h3>Problems that ML solves - <span style="color: red;">unsupervised learning</span> </h3>
+					<img src="images/unsupervised.svg" alt="unsupervised"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<h3>Problems that ML solves - <span style="color: red;">reinforcement learning</span> </h3>
+					<img src="images/reinforcement.svg" alt="reinforcement"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<h3>Combing CFD and ML - workflows</h3>
+					<img src="images/data_workflows_1.svg" alt="data-1"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Example: using experimental data in CFD simulation</p>
+				</section>
+				<section>
+					<h3>Combing CFD and ML - workflows</h3>
+					<img src="images/data_workflows_2.svg" alt="data-2"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Example: creating surrogate or reduced-order models based on CFD data</p>
+				</section>
+				<section>
+					<h3>Combing CFD and ML - workflows</h3>
+					<img src="images/data_workflows_3.svg" alt="data-3"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Example: scale-up modeling</p>
+				</section>
+				<section>
+					<h3>Combing CFD and ML - workflows</h3>
+					<img src="images/data_workflows_4.svg" alt="data-3"
+						style="background:none; border:none; box-shadow:none; width: 500px">
+					<p>Example: active flow control or shape optimization</p>
+				</section>
+				<section>
+					<h2>What type of ML could be helpful in the following scenarios?</h2>
+				</section>
+				<section>
+					<p>Creating a transport model $\mu (T)$ based on experimental data ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Mapping a flow field between simulations ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Finding coherent structures in turbulent flows ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Creating a reduced-order model of the velocity field ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Predicting the impact behavior of a droplet on a surface ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Switching between two turbulence models in a RANS simulation ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Predicting the stability regime of rising bubbles ...</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">classification</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+				<section>
+					<p>Closed-loop active flow control of the flow past a cylinder</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">reinforcement learning</li>
+						<li style="list-style-type: upper-latin;">clustering</li>
+						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
+					</ol>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Topics we won't consider</h2>
+				</section>
+				<section>
+					<h3>Physics-informed neural networks (PINNs)</h3>
+				</section>
+				<section>
+					<p>PINNs?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">no clue</li>
+						<li style="list-style-type: upper-latin;">heard about it</li>
+						<li style="list-style-type: upper-latin;">get the concept</li>
+						<li style="list-style-type: upper-latin;">hands-on experience</li>
+					</ol>
+				</section>
+				<section>
+					<p>Example: physics-informed <span style="color: red;">polynomials</span></p>
+					<ul>
+						<li>initial value problem
+							$$ \frac{\mathrm{d}x}{\mathrm{d}t} = -kx,\ x(t=0)=1,\ t\in \left[0,1\right] $$
+						</li>
+						<li>
+							solution
+							$$
 							x(t) = \mathrm{exp}(-kt)
-						$$
-						<img src="images/exp_decay.svg" alt="decay"
-							style="background:none; border:none; box-shadow:none; width: 800px">
-					</section>
-					<section>
-						<p>idea: fit polynomial ansatz</p>
-						$$
-						  \hat{x}(t) = at^2 + bt + 1 
-						$$
-						<ul>
-							<li>using classical regression</li>
-							<li>"physics-informed" regression</li>
-						</ul>
-					</section>
-					<section>
-						<p>Approach 1: training based on pairs $(t_i, x_i)$</p>
-						$$
-							L(a,b) = \frac{1}{N_p} \sum\limits_{i=1}^{N_p} \left( x_i - \hat{x}(t_i) \right)^2
-						$$
-						<p>solve minimization problem</p>
-						$$
-							\underset{a,b}{\mathrm{argmin}} L(a, b)
-						$$
-					</section>
-					<section>
-						<img src="images/ml_fit_data.svg" alt="decay"
-							style="background:none; border:none; box-shadow:none; width: 600px">
-						<p>Polynomial fit based on data $(x_i, t_i)$.</p>
-					</section>
-					<section>
-						<p>Approach 2: training based on ODE evaluated at control points $t_i$</p>
-						$$
-							L(a,b) = \frac{1}{N_c} \sum\limits_{i=1}^{N_c} \left( \left. \frac{\mathrm{d} \hat{x}}{\mathrm{d}t }\right\vert_{t_i} + k\hat{x}(t_i) \right)^2
-						$$
-						<p>solve minimization problem</p>
-						$$
-							\underset{a,b}{\mathrm{argmin}} L(a, b)
-						$$
-					</section>
-					<section>
-						<img src="images/ml_fit_ode.svg" alt="decay"
-							style="background:none; border:none; box-shadow:none; width: 600px">
-						<p>Polynomial fit based on ODE evaluated at control points $t_i$.</p>
-					</section>
-					<section>
-						<p>Some problems with PINNs:</p>
-						<ul>
-							<li>limited number of activation functions</li>
-							<li>optimization is often hard and slow</li>
-							<li>additional tuning parameters</li>
-							<li>governing equations + IC/BC must be known</li>
-							<li>data-driven approximation often faster and more accurate</li>
-						</ul>
-						<p>active research area $\rightarrow$ might change in the future</p>
-					</section>
-					<section>
-						<h3>Advanced DL concepts</h3>
-					</section>
-					<section>
-						<h2>How can I apply <span style="color: red;">algorithm XYZ</span> to my fluid flow?</h2>
-					</section>
-					<section>
-						<h2><s>How can I apply <span style="color: red;">algorithm XYZ</span> to my fluid flow?</s></h2>
-					</section>
-					<section>
-						<h2>It's about <span style="color: red;">solving or mitigating problems</span> and not so much about particular algorithms ...</h2>
-					</section>
-					<section>
-						<h3>Advanced DL concepts</h3>
-						<ul>
-							<li>convolutional neural networks</li>
-							<li>graph neural networks</li>
-							<li>recurrent neural networks</li>
-							<li>Bayesian neural networks</li>
-							<li>autoencoders</li>
-							<li>generative and adversarial models</li>
-							<li>...</li>
-						</ul>
-						<p>Our focus is on <span style="color: red;">solving problems in CFD with ML</span> and not so much on particular algorithms.</p>
-					</section>
+							$$
+						</li>
+					</ul>
 				</section>
-			</div>
-
+				<section>
+					$$
+					x(t) = \mathrm{exp}(-kt)
+					$$
+					<img src="images/exp_decay.svg" alt="decay"
+						style="background:none; border:none; box-shadow:none; width: 800px">
+				</section>
+				<section>
+					<p>idea: fit polynomial ansatz</p>
+					$$
+					\hat{x}(t) = at^2 + bt + 1
+					$$
+					<ul>
+						<li>using classical regression</li>
+						<li>"physics-informed" regression</li>
+					</ul>
+				</section>
+				<section>
+					<p>Approach 1: training based on pairs $(t_i, x_i)$</p>
+					$$
+					L(a,b) = \frac{1}{N_p} \sum\limits_{i=1}^{N_p} \left( x_i - \hat{x}(t_i) \right)^2
+					$$
+					<p>solve minimization problem</p>
+					$$
+					\underset{a,b}{\mathrm{argmin}} L(a, b)
+					$$
+				</section>
+				<section>
+					<img src="images/ml_fit_data.svg" alt="decay"
+						style="background:none; border:none; box-shadow:none; width: 600px">
+					<p>Polynomial fit based on data $(x_i, t_i)$.</p>
+				</section>
+				<section>
+					<p>Approach 2: training based on ODE evaluated at control points $t_i$</p>
+					$$
+					L(a,b) = \frac{1}{N_c} \sum\limits_{i=1}^{N_c} \left( \left. \frac{\mathrm{d} \hat{x}}{\mathrm{d}t
+					}\right\vert_{t_i} + k\hat{x}(t_i) \right)^2
+					$$
+					<p>solve minimization problem</p>
+					$$
+					\underset{a,b}{\mathrm{argmin}} L(a, b)
+					$$
+				</section>
+				<section>
+					<img src="images/ml_fit_ode.svg" alt="decay"
+						style="background:none; border:none; box-shadow:none; width: 600px">
+					<p>Polynomial fit based on ODE evaluated at control points $t_i$.</p>
+				</section>
+				<section>
+					<p>Some problems with PINNs:</p>
+					<ul>
+						<li>limited number of activation functions</li>
+						<li>optimization is often hard and slow</li>
+						<li>additional tuning parameters</li>
+						<li>governing equations + IC/BC must be known</li>
+						<li>data-driven approximation often faster and more accurate</li>
+					</ul>
+					<p>active research area $\rightarrow$ might change in the future</p>
+				</section>
+				<section>
+					<h3>Advanced DL concepts</h3>
+				</section>
+				<section>
+					<h2>How can I apply <span style="color: red;">algorithm XYZ</span> to my fluid flow?</h2>
+				</section>
+				<section>
+					<h2><s>How can I apply <span style="color: red;">algorithm XYZ</span> to my fluid flow?</s></h2>
+				</section>
+				<section>
+					<h2>It's about <span style="color: red;">solving or mitigating problems</span> and not so much about
+						particular algorithms ...</h2>
+				</section>
+				<section>
+					<h3>Advanced DL concepts</h3>
+					<ul>
+						<li>convolutional neural networks</li>
+						<li>graph neural networks</li>
+						<li>recurrent neural networks</li>
+						<li>Bayesian neural networks</li>
+						<li>autoencoders</li>
+						<li>generative and adversarial models</li>
+						<li>...</li>
+					</ul>
+					<p>Our focus is on <span style="color: red;">solving problems in CFD with ML</span> and not so much
+						on particular algorithms.</p>
+				</section>
+			</section>
 		</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/zoom/zoom.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/search/search.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script src="plugin/math/math.js"></script>
-		<script>
+	</div>
 
-			// Also available as an ES module, see:
-			// https://revealjs.com/initialization/
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+	<script src="plugin/chalkboard/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+	<script>
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
-			});
-			Reveal.configure({ slideNumber: true });
+		// Also available as an ES module, see:
+		// https://revealjs.com/initialization/
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			center: true,
+			hash: true,
+			chalkboard: {
+				boardmarkerWidth: 4,
+				chalkWidth: 4,
+				chalkEffect: 0.01,
+				theme: "chalkboard",
+				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
+				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
+				eraser: { src: path + 'img/sponge.png', radius: 20 }
+			},
+			customcontrols: {
+				controls: [
+					{
+						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
+						title: 'Toggle chalkboard (B)',
+						action: 'RevealChalkboard.toggleChalkboard();'
+					},
+					{
+						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
+						title: 'Toggle notes canvas (C)',
+						action: 'RevealChalkboard.toggleNotesCanvas();'
+					}
+				]
+			},
 
-		</script>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+		});
+		Reveal.configure({ slideNumber: true });
 
-	</body>
+	</script>
+
+</body>
+
 </html>
