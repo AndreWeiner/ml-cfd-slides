@@ -735,12 +735,250 @@ T = VolScalarField(mesh, "T", Tsol.reshape(10, 10), bc)
 					</p>
 				</section>
 				<section>
+					<h3>What could happen if the molecular diffusivity is decreased?</h3>
+				</section>
+				<section>
+					<h3>How does a $\partial_t T$ term alter the LSE?</h3>
+				</section>
+				<section>
 					<h3>How do I know if the solution is trustworthy?</h3>
 				</section>
 			</section>
 			<section>
 				<section>
 					<h2>The FVM in OpenFOAM</h2>
+				</section>
+				<section>
+					<p><b>Goal:</b> reproduce simulation results in OpenFOAM</p>
+					<p>$\rightarrow$ test_cases/corner_flow</p>
+					<p>Instructions provided in the lecture notebook.</p>
+				</section>
+				<section>
+					<p>system/blockMeshDict</p>
+					<pre class="python"><code>
+scale   1.0;
+
+vertices
+(
+    (0 0 0)
+    (1 0 0)
+    (1 1 0)
+    (0 1 0)
+    (0 0 0.1)
+    (1 0 0.1)
+    (1 1 0.1)
+    (0 1 0.1)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (10 10 1) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    top
+    {
+        type patch;
+        faces
+        (
+            (3 7 6 2)
+        );
+    }
+    bottom
+    {
+        type wall;
+        faces
+        (
+            (1 5 4 0)
+        );
+    }
+    right
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    left
+    {
+        type wall;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
+							</code></pre>
+				</section>
+				<section>
+					<img src="images/10x10_mesh_wireframe_3d.png" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>OpenFOAM mesh created by <b>blockMesh</b>.
+					</p>
+				</section>
+				<section>
+					<p>system/exprFieldsDict</p>
+					<pre class="python"><code>
+expressions
+(
+    U
+    {
+        field       U;
+        dimensions  [0 1 -1 0 0 0 0];
+
+        variables
+        (
+            "A = 0.05"
+        );
+
+        expression
+        #{
+            vector (2*A*pos().x(), -2*A*pos().y(), 0.0 )
+        #};
+    }
+);
+							</code></pre>
+				</section>
+				<section>
+					<img src="images/10x10_vel_wireframe_3d.png" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>Velocity field initialized with <b>setExprFields</b>.
+					</p>
+				</section>
+				<section>
+					<p>0.org/T</p>
+					<pre class="python"><code>
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    top
+    {
+        type            fixedValue;
+        value           uniform 1.0;
+    }
+
+    bottom
+    {
+        type            fixedGradient;
+        gradient        uniform 5.0;
+    }
+
+    right
+    {
+        type            fixedGradient;
+        gradient        uniform -2.0;
+    }
+
+    left
+    {
+        type            fixedValue;
+        value           uniform 2.0;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+							</code></pre>
+				</section>
+				<section>
+					<p>constant/transportProperties</p>
+					<pre class="python"><code>
+DT              0.1;
+				</code></pre>
+				</section>
+				<section>
+					<p>system/fvSchemes</p>
+					<pre class="python"><code>
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+    div(phi,T)      Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian(DT,T) Gauss linear orthogonal;
+}
+							</code></pre>
+				</section>
+				<section>
+					<p>system/fvSolution</p>
+					<pre class="python"><code>
+solvers
+{
+    T
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-06;
+        relTol          0.0;
+    }
+}
+							</code></pre>
+				</section>
+				<section>
+					<p>Compare the source code of <a href="https://www.openfoam.com/documentation/guides/latest/doc/guide-applications-solvers-basic-scalarTransportFoam.html">scalarTransportFoam</a> with the Python implementation.</p>
+				</section>
+				<section>
+					<h3>How can I test the setup for pure diffusion?</h3>
+				</section>
+				<section>
+					<h3>How can I test the setup for pure convection?</h3>
+				</section>
+				<section>
+					<img src="images/10x10_T_corner_pure_diffusion.png" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>OpenFOAM solution for pure diffusion.
+					</p>
+				</section>
+				<section>
+					<img src="images/10x10_solution.svg" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>Python solution for pure diffusion.
+					</p>
+				</section>
+				<section>
+					<img src="images/10x10_T_corner_full.png" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>Solution converged to $res=9.75\times 10^{-7}$ in 364 iterations.
+					</p>
+				</section>
+				<section>
+					<img src="images/10x10_full_solution_with_inlet.svg" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>Python solution for convection and diffusion.
+					</p>
 				</section>
 			</section>
 			<section>
