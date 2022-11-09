@@ -331,7 +331,7 @@ class FVMatrix(object):
 				<section>
 					<p>
 						$$
-						a_p T_{i,j} + a_n T_{i, j+1} + a_s T_{i, j-1} + a_e T_{i+1, j} a_w T_{i-1, j} = b
+						a_p T_{i,j} + a_n T_{i, j+1} + a_s T_{i, j-1} + a_e T_{i+1, j} + a_w T_{i-1, j} = b
 						$$
 					</p>
 				</section>
@@ -340,15 +340,17 @@ class FVMatrix(object):
 						style="background:none; border:none; box-shadow:none; height: 400px">
 					<p>
 						<small>
-						$$
-						s:\quad \int\limits_{x_i-\Delta x_i/2}^{x_i+\Delta x_i/2} \lambda \partial_y T|_s \mathrm{d}x \approx
-						\lambda\Delta x_i
-						g_{y,s}\qquad
-						w:\quad\int\limits_{y_j-\Delta y_j/2}^{y_j+\Delta y_j/2} \lambda \partial_x T|_w \mathrm{d}y \approx
-						\lambda\Delta y_i
-						\frac{T_{i, j} - T_{w}}{0.5\Delta x_i}
-						$$
-					</small>
+							$$
+							s:\quad \int\limits_{x_i-\Delta x_i/2}^{x_i+\Delta x_i/2} \lambda \partial_y T|_s
+							\mathrm{d}x \approx
+							\lambda\Delta x_i
+							g_{y,s}\qquad
+							w:\quad\int\limits_{y_j-\Delta y_j/2}^{y_j+\Delta y_j/2} \lambda \partial_x T|_w \mathrm{d}y
+							\approx
+							\lambda\Delta y_i
+							\frac{T_{i, j} - T_{w}}{0.5\Delta x_i}
+							$$
+						</small>
 					</p>
 				</section>
 				<section>
@@ -569,6 +571,203 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
 					</ul>
 					<p>disadvantages: <b>less robust</b></p>
 				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Equation discretization part II - convection</h2>
+				</section>
+				<section>
+					<h3>Gauss theorem applied to convection</h3>
+					$$
+					\int\limits_V \nabla\cdot\left(\mathbf{u} T\right) \mathrm{d}v =\qquad\qquad\qquad
+					$$
+				</section>
+				<section>
+					<img src="images/stencil_internal.svg" alt="stencil"
+						style="background:none; border:none; box-shadow:none; height: 400px">
+					<p>
+						$$
+						\int\limits_{\partial V} \mathbf{u} T \cdot \mathbf{n} \mathrm{d}o =
+						\qquad\qquad\qquad\qquad\qquad
+						$$
+					</p>
+				</section>
+				<section>
+					<p>Power law with $n=2$ (<a href="https://en.wikipedia.org/wiki/Potential_flow">source</a>):</p>
+					<p>
+						$$
+						\psi = 2 Axy
+						$$
+						$$
+						\mathbf{u}(x,y) = (\partial_y \psi, -\partial_x \psi)^T = (2Ax, -2Ay)^T
+						$$
+					</p>
+				</section>
+				<section>
+					<img src="images/2D_velocity_field.svg" alt="vel"
+						style="background:none; border:none; box-shadow:none; width: 50%">
+					<p>
+						Stream function $\psi = 2 Axy$ and velocity vector $\mathbf{u}(x,y) = (2Ax, -2Ay)^T$.
+					</p>
+				</section>
+				<section>
+					<img src="images/surface_velocity_corner_flow.svg" alt="vel"
+						style="background:none; border:none; box-shadow:none; width: 50%">
+					<p>
+						Velocity vectors in the cell centers and on the surface.
+					</p>
+				</section>
+				<section>
+					<p>A field type for surface vector fields</p>
+					<pre class="python"><code>
+class SurfaceVectorField(object):
+    def __init__(self, mesh, name, value_x, value_y):
+        self.mesh = mesh
+        self.name = name
+        self.surface_field_x = pt.ones((mesh.N_x + 1, mesh.N_y)) * value_x
+        self.surface_field_y = pt.ones((mesh.N_x, mesh.N_y + 1)) * value_y
+
+    def x(self):
+        return self.surface_field_x
+
+    def y(self):
+        return self.surface_field_y
+	# snip
+							</code></pre>
+				</section>
+				<section>
+					<p>Initializing the surface velocity</p>
+					<pre class="python"><code>
+def create_surface_velocity_field(
+			mesh: Mesh, A: float) -> SurfaceVectorField:
+    xx, yy = pt.meshgrid(mesh.xf, mesh.y, indexing="ij")
+    u_x, _ = velocity_field(xx, yy, A)
+    xx, yy = pt.meshgrid(mesh.x, mesh.yf, indexing="ij")
+    _, u_y = velocity_field(xx, yy, A)
+    return SurfaceVectorField(mesh, "U", u_x, u_y)
+							</code></pre>
+				</section>
+				<section>
+					$$
+					\begin{align}
+					& n:\quad \int\limits_{x_i - \Delta x_i/2}^{x_i + \Delta x_i/2} u_y T|_n \approx
+					\qquad\qquad\qquad \\[10pt]
+					& e:\quad \int\limits_{y_j - \Delta y_j/2}^{y_j + \Delta y_j/2} u_x T|_e \approx
+					\qquad\qquad\qquad \\
+					\end{align}
+					$$
+				</section>
+
+				<section>
+					<img src="images/stencil_boundary.svg" alt="stencil"
+						style="background:none; border:none; box-shadow:none; height: 400px">
+					<p>
+						<small>
+							$$
+							s:\quad \int\limits_{x_i-\Delta x_i/2}^{x_i+\Delta x_i/2}  u_y T|_s
+							\mathrm{d}x \approx
+							u_{y,s}\Delta x_i (T_{i,j}-0.5 g_{y,s} \Delta y_j)\qquad
+							w:\quad\int\limits_{y_j-\Delta y_j/2}^{y_j+\Delta y_j/2} u_x T|_w
+							\mathrm{d}y \approx
+							u_{x,w}\Delta y_j T_w
+							$$
+						</small>
+					</p>
+				</section>
+				<section>
+					<p>Function to construct the convection FVMatrix</p>
+					<pre class="python"><code>
+def fvm_div(vel: SurfaceVectorField,
+			field: VolScalarField) -> FVMatrix:
+    # snip
+    return FVMatrix(pt.sparse_coo_tensor([row, col], val),
+                    source, field)
+							</code></pre>
+				</section>
+				<section>
+					<p>Combining domain and equation discretization</p>
+					<pre class="python"><code>
+mesh = Mesh(1.0, 1.0, 5, 5, 1.0, 1.0)
+vel = create_surface_velocity_field(mesh, 1.0)
+bc = {
+    "left" : ("fixedValue", 2.0),
+    "right" : ("fixedGradient", -2.0),
+    "top" : ("fixedValue", 1.0),
+    "bottom" : ("fixedGradient", -5.0),
+}
+T = VolScalarField(mesh, "T", 0.0, bc)
+matrix = fvm_div(vel, T)
+							</code></pre>
+				</section>
+				<section>
+					<img src="images/conv_fv_matrix.svg" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>Coefficient matrix and source vector; blue coeff. are negative; coeff. scaled by absolute
+						value.
+					</p>
+				</section>
+				<section>
+					<p>Putting it all together</p>
+					<pre class="python"><code>
+mesh = Mesh(1.0, 1.0, 10, 10, 1.0, 1.0)
+vel = create_surface_velocity_field(mesh, 0.05)
+bc = {
+    "left" : ("fixedValue", 2.0),
+    "right" : ("fixedGradient", -2.0),
+    "top" : ("fixedValue", 1.0),
+    "bottom" : ("fixedGradient", -5.0),
+}
+T = VolScalarField(mesh, "T", 0.0, bc)
+pde = fvm_div(vel, T) - fvm_laplace(0.1, T)
+
+Tsol, res_coarse = gauss_seidel(
+	pde.matrix, pde.source,
+	pde.field.internal_field.flatten(),
+	tol=1.0e-6
+)
+T = VolScalarField(mesh, "T", Tsol.reshape(10, 10), bc)
+							</code></pre>
+				</section>
+				<section>
+					<img src="images/10x10_full_solution_with_inlet.svg" alt="matrix"
+						style="background:none; border:none; box-shadow:none; height: 500px">
+					<p>Solution converged to $res=9.53\times 10^{-7}$ in 358 iterations.
+					</p>
+				</section>
+				<section>
+					<h3>How do I know if the solution is trustworthy?</h3>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>The FVM in OpenFOAM</h2>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>The FVM in Basilisk</h2>
+				</section>
+				<section>
+					<video height="450" controls mute autoplay loop>
+						<source src="images/basilisk_2D_spherical_cap.mp4">
+					</video>
+					<p>Axis-symmetric rise of a spherical-cap bubble.</p>
+				</section>
+				<section>
+					<p>Check <a href="http://basilisk.fr/src/examples/bubble.c">this example</a> for 3D simulations.</p>
+				</section>
+				<section>
+					<h3>What makes bubbles/drops spherical?</h3>
+				</section>
+				<section>
+					<ul>
+						<li>adaptive quadtree/octree meshes</li>
+						<li>2nd order FVM (space and time)</li>
+						<li>geometric convective transport (VoF)</li>
+						<li>very accurate approximation of surface tension</li>
+					</ul>
+				</section>
+			</section>
 			</section>
 		</div>
 
