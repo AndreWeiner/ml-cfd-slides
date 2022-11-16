@@ -1,29 +1,32 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
 
-		<title>Machine learning in computational fluid dynamics</title>
+	<title>Machine learning in computational fluid dynamics</title>
 
-		<meta name="description" content="Machine learning in computational fluid dynamics">
-		<meta name="author" content="Andre Weiner">
+	<meta name="description" content="Machine learning in computational fluid dynamics">
+	<meta name="author" content="Andre Weiner">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="plugin/chalkboard/style.css">
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
 
-	<style>
-		.reveal .slide-number {
+<style>
+	.reveal .slide-number {
 		position: absolute;
 		display: block;
 		left: 8px;
@@ -37,116 +40,139 @@
 		color: #000000;
 		background-color: rgba(0, 0, 0, 0);
 		padding: 5px;
-		}
-	</style>
+	}
+</style>
 
-	<body>
+<body>
 
-		<div class="reveal">
+	<div class="reveal">
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 4 & 5</span></h3>
-					<p>
-						Andre Weiner<br>
-						<small>TU Braunschweig, <a
-								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+			<section>
+				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 4 & 5</span>
+				</h3>
+				<p>
+					Andre Weiner<br>
+					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
+						Control Group</small>
 					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+								alt="Creative Commons License" style="border-width:0"
+								src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
+						of the linked resources are licensed under a<br /> <a rel="license"
+							href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+							International License</a>.
 					</small>
-					</p>
-	
-					<style>
-						.row_logo {
-							display: table;
-						}
-	
-						.column_logo {
-							display: table-cell;
-							vertical-align: middle;
-							text-align: center;
-							width: 50%;
-						}
-	
-						.content_logo {
-							display: inline-block;
-						}
-					</style>
-					<div class="row_logo">
-						<div class="column_logo">
-							<div class="content_logo">
-								<img src="images/tubs_logo.png" alt="tubs_logo"
-									style="background:none; border:none; box-shadow:none;">
-							</div>
-						</div>
-						<div class="column_logo">
-							<div class="content_logo">
-								<table>
-									<tr>
-										<td style="border: 0; padding-right: 5px;">&#9993;</th>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
-										<td style="border: 0; padding-right: 5px;">&#9741;</td>
-										<td style="border: 0; padding-right: 0px;"><a
-												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
-									</tr>
-									<tr>
-										<td style="border: 0; padding-right: 5px;">&#9997;</td>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="https://ml-cfd.com/">Blog</a></td>
-										<td style="border: 0; padding-right: 5px;">&#10026;</td>
-										<td style="border: 0; padding-right: 0px;"><a
-												href="https://github.com/AndreWeiner">Github</a></td>
-									</tr>
-								</table>
-							</div>
+				</p>
+
+				<style>
+					.row_logo {
+						display: table;
+					}
+
+					.column_logo {
+						display: table-cell;
+						vertical-align: middle;
+						text-align: center;
+						width: 50%;
+					}
+
+					.content_logo {
+						display: inline-block;
+					}
+				</style>
+				<div class="row_logo">
+					<div class="column_logo">
+						<div class="content_logo">
+							<img src="images/tubs_logo.png" alt="tubs_logo"
+								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
-				</section>
+					<div class="column_logo">
+						<div class="content_logo">
+							<table>
+								<tr>
+									<td style="border: 0; padding-right: 5px;">&#9993;</th>
+									<td style="border: 0; padding-right: 20px;"><a
+											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+									<td style="border: 0; padding-right: 5px;">&#9741;</td>
+									<td style="border: 0; padding-right: 0px;"><a
+											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
+								</tr>
+								<tr>
+									<td style="border: 0; padding-right: 5px;">&#9997;</td>
+									<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
+									</td>
+									<td style="border: 0; padding-right: 5px;">&#10026;</td>
+									<td style="border: 0; padding-right: 0px;"><a
+											href="https://github.com/AndreWeiner">Github</a></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
 
+			<section>
+				<h2>Last lectures</h2>
+				<p>The finite volume method in a nutshell</p>
+				<ul>
+					<li>Mathematical model</li>
+					<li>Domain discretization (meshing)</li>
+					<li>Equation discretization</li>
+					<li>Solving the linear system of equations</li>
+					<li>OpenFOAM and Basilisk</li>
+				</ul>
+			</section>
+			<section>
+				<h2>Outline</h2>
+				<p>Introduction to selected ML concepts</p>
+				<ul>
+					<li>Floating point numbers</li>
+					<li>Exploring parameter spaces</li>
+					<li>Generating data with simulations</li>
+					<li>Normalizing data</li>
+					<li>Feature selection and design</li>
+					<hr>
+					<li>Deep learning</li>
+				</ul>
+			</section>
+			<section>
 				<section>
-					<h2>Last lecture</h2>
-					<p>The finite volume method in a nutshell</p>
+					<p>Advice: always run <b>git pull</b> before working with the lecture material.</p>
+				</section>
+				<section>
+					<p>Update flowTorch in the <b>ml-cfd</b> environment:</p>
+					<pre class="python"><code>
+# enter the Python environment
+source ml-cfd/bin/activate
+# remove the old version of flowTorch
+pip uninstall flowtorch
+# install the latest version
+pip install git+https://github.com/FlowModelingControl/flowtorch.git@aweiner
+					</code></pre>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Floating point numbers</h2>
+				</section>
+				<section>
+					<h3>IEEE 754 standard</h3>
+					<p>Floating point number representation:</p>
+					$$
+					S\times M\times 2^{E-e}
+					$$
 					<ul>
-						<li>Mathematical model</li>
-						<li>Domain discretization (meshing)</li>
-						<li>Equation discretization</li>
-						<li>Solving the linear system of equations</li>
-						<li>Post-processing</li>
+						<li>$S$ - sign, $M$ - mantissa, $E$ - exponent</li>
+						<li>$e$ - machine constant</li>
+						<li>typically 32 or 64 bit (4 or 8 bytes)</li>
 					</ul>
 				</section>
 				<section>
-					<h2>Outline</h2>
-					<p>Introduction to selected ML concepts</p>
-					<ul>
-						<li>Floating point numbers</li>
-						<li>Exploring parameter spaces</li>
-						<li>Generating data with simulations</li>
-						<li>Normalizing data</li>
-						<li>Feature selection and design</li>
-						<li>Deep learning</li>
-					</ul>
-				</section>
-				<section>
-					<section>
-						<h2>Floating point numbers</h2>
-					</section>
-					<section>
-						<h3>IEEE 754 standard</h3>
-						<p>Floating point number representation:</p>
-						$$
-						  S\times M\times 2^{E-e}
-						$$
-						<ul>
-							<li>$S$ - sign, $M$ - mantissa, $E$ - exponent</li>
-							<li>$e$ - machine constant</li>
-							<li>typically 32 or 64 bit (4 or 8 bytes)</li>
-						</ul>
-					</section>
-					<section>
-						<p>How are bits distributed among $S$, $M$, $E$?</p>
-						<pre class="python"><code>
+					<p>How are bits distributed among $S$, $M$, $E$?</p>
+					<pre class="python"><code>
 for dtype in [np.float32, np.float64]:
 	finfo = np.finfo(dtype)
 	print(f"dtype: {finfo.dtype}")
@@ -164,10 +190,10 @@ Number of bits: 64
 Bits reserved for mantissa: 52
 Bits reserved for exponent: 11
 						</code></pre>
-					</section>
-					<section>
-						<p>Which numbers can we represent?</p>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<p>Which numbers can we represent?</p>
+					<pre class="python"><code>
 for dtype in [np.float32, np.float64]:
 	finfo = np.finfo(dtype)
 	print("Largest representable number: {:e}".format(finfo.max))
@@ -185,19 +211,34 @@ Smallest representable number: -1.797693e+308
 Machine tolerance: 2.220446e-16
 Approximately accurate up to 15 decimal digits
 						</code></pre>
-					</section>
-					<section>
-						<p><b>Machine tolerance:</b> smallest value that can be added to $1.0$ without loosing information.</p>
-						<p>Typical floating point number usage:</p>
-						<ul>
-							<li>CFD: 64bit</li>
-							<li>ML: mixed 32/64bit</li>
-							<li>DL: 32bit</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Roundoff error</h3>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<p>What is the preferred floating point type in</p>
+					<ul>
+						<li>CFD?</li>
+						<li>ML?</li>
+						<li>DL?</li>
+					</ul>
+				</section>
+				<section>
+					<p>Setting the default floating point type in PyTorch:</p>
+					<pre class="python"><code>
+x = pt.tensor(1.0)
+print(x.dtype)
+pt.set_default_dtype(pt.float64)
+x = pt.tensor(1.0)
+print(x.dtype)
+# expected output
+torch.float32
+torch.float64
+						</code></pre>
+				</section>
+				<section>
+					<h3>What is the machine tolerance?</h3>
+				</section>
+				<section>
+					<p>Experiment: adding a small number to one</p>
+					<pre class="python"><code>
 a = pt.tensor(1.0, dtype=pt.float32)
 for b in [10**i for i in range(-1, -11, -1)]:
     print("1.0 + {:1.1e} = {:10.10f}".format(b, a+b))
@@ -214,106 +255,157 @@ for b in [10**i for i in range(-1, -11, -1)]:
 1.0 + 1.0e-09 = 1.0000000000
 1.0 + 1.0e-10 = 1.0000000000
 						</code></pre>
-					</section>
-					<section>
-						<p>Task: fit a 4th order polynomial to $O(10^{-2})$ data</p>
-						$$
-						  y(x) = ax^4+bx^3+cx^2+dx+e
-						$$
-						<p>Potential problems?</p>
-					</section>
-					<section>
-						<p>Roundoff errors bite you sooner than you think!</p>
-					</section>
-					<section>
-						<h3>Truncation error</h3>
-						<p>Results from <b>discrete approximations</b> of <b>continuous variables</b>.</p>
-						$$
-						  \int\limits_0^1 x^2 \mathrm{d}x = 1/3
-						$$
-						<p>Can not be avoided even with perfectly accurate floating point numbers.</p>
-					</section>
-					<section>
-						<img src="images/residual_trapezoidal_rule.svg" alt="truncation"
-							style="background:none; border:none; box-shadow:none; width: 80%">
-						<p>Truncation error of the trapezoidal rule with increasing number of integration steps.</p>
-					</section>
+						<p>How is this type of error referred to?</p>
 				</section>
 				<section>
-					<section>
-						<h2>Exploring parameter spaces</h2>
-					</section>
-					<section>
-						<p>Sampling a parameter space may be expensive, so drawing samples should be:</p>
-						<ul>
-							<li><b>efficient</b> - not more samples then necessary</li>
-							<li><b>homogeneous</b> - all parameter space covered</li>
-							<li><b>unbiased$^*$</b> - equal sampling probability for all points</li>
-						</ul>
-						<p>$^*$ assuming there is no prior knowledge about the parameter space</p>
-					</section>
-					<section>
-						<p>Task: establish relation between Reynolds number and target quantity; assumptions:</p>
-						<ul>
-							<li>no prior knowledge of dependency</li>
-							<li>lower bound $Re=10$</li>
-							<li>upper bound $Re=100$</li>
-							<li>$N_s = 10$ simulation are affordable</li>
-						</ul>
-						<p><b>How do we draw the samples?</b></p>
-					</section>
-					<section>
-						<p>Equally spaced samples:</p>
-						<p>$Re = \{10, 20, 30, ..., 100 \}$</p>
-					</section>
-					<section>
-						<p>unbiased?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">yes</li>
-							<li style="list-style-type: upper-latin;">no</li>
-						</ol>
-					</section>
-					<section>
-						<img src="images/biased_sampling.svg" alt="biased"
-							style="background:none; border:none; box-shadow:none; width: 80%">
-						<p>Bias introduced by sampling.</p>
-					</section>
-					<section>
-						<p>efficient?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">yes</li>
-							<li style="list-style-type: upper-latin;">no</li>
-						</ol>
-					</section>
-					<section>
-						<p>How does the number of required samples $N_t$ scale with the number of parameters $d$ if we treat all parameters equally?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">linearly: $N_t = N_s d$</li>
-							<li style="list-style-type: upper-latin;">quadratically: $N_t = N_s d^2$</li>
-							<li style="list-style-type: upper-latin;">exponentially: $N_t = N_s^d$</li>
-						</ol>
-					</section>
-					<section>
-						<p>Randomly drawn samples:</p>
-						<p>$Re = \{51, 45, 91, 84, 92, 67, 99, 71, 100, 41 \}$</p>
-						<ul>
-							<li>unbiased?</li>
-							<li>homogeneous?</li>
-							<li>efficient?</li>
-						</ul>
-					</section>
-					<section>
-						<p>Combining advantages: latin hypercube sampling (LHS)</p>
-						<ul>
-							<li>segment parameter space in equally sized junks (hypercubes)</li>
-							<li>randomly draw one sample in each segment of each parameter</li>
-							<li>shuffle and combine samples</li>
-						</ul>
-					</section>
-					<section>
-						<p>LHS sampling in Python/PyTorch</p>
-						<pre class="python"><code>
-def lhs_sampling(x_min, x_max, n_samples):
+					<p>Task: fit a 4th order polynomial</p>
+					$$
+					y(x) = ax^4+bx^3+cx^2+dx+e
+					$$
+					<p>to data with $-0.01 \le x \le 0.01$ and $1 \le y \le 10$.</p>
+					<p>Problems?</p>
+				</section>
+				<section>
+					<p>Roundoff errors affect you sooner than you think!</p>
+					<pre class="python"><code>
+for x in pt.arange(-0.01, 0.011, 0.0025):
+    print("x={:+1.4e}, x**2={:1.4e}, x**3={:+1.4e}, x**4={:1.4e}".format(x, x**2, x**3, x**4))
+# expected output
+x=-1.0000e-02, x**2=1.0000e-04, x**3=-1.0000e-06, x**4=1.0000e-08
+x=-7.5000e-03, x**2=5.6250e-05, x**3=-4.2187e-07, x**4=3.1641e-09
+x=-5.0000e-03, x**2=2.5000e-05, x**3=-1.2500e-07, x**4=6.2500e-10
+x=-2.5000e-03, x**2=6.2500e-06, x**3=-1.5625e-08, x**4=3.9062e-11
+x=+0.0000e+00, x**2=0.0000e+00, x**3=+0.0000e+00, x**4=0.0000e+00
+x=+2.5000e-03, x**2=6.2500e-06, x**3=+1.5625e-08, x**4=3.9062e-11
+x=+5.0000e-03, x**2=2.5000e-05, x**3=+1.2500e-07, x**4=6.2500e-10
+x=+7.5000e-03, x**2=5.6250e-05, x**3=+4.2187e-07, x**4=3.1641e-09
+x=+1.0000e-02, x**2=1.0000e-04, x**3=+1.0000e-06, x**4=1.0000e-08
+						</code></pre>
+				</section>
+				<section>
+					<p>Another experiment:</p>
+					<pre class="python"><code>
+a = pt.tensor(1.0)
+print("a={:1.10f}".format(a))
+b = a - 2.0/3.0
+print("b={:1.10f}".format(b))
+a = 3.0*b
+print("a={:1.10f}".format(a))
+# expected output
+a=1.0000000000
+b=0.3333333135
+a=0.9999999404
+						</code></pre>
+						<p>Where does the error come from?</p>
+				</section>
+				<section>
+					<p>Roundoff errors accumulate!</p>
+					<pre class="python"><code>
+def iterate(n_iter: float = 1):
+    a = pt.tensor(1.0)
+    for _ in range(n_iter):
+        b = a - 2/3
+        a = 3.0 * b
+    print(f"a={a:1.10f} after {n_iter:1d} iteration(s)")
+
+for i in range(1, 10):
+    iterate(i)
+# expected output
+a=0.9999999404 after 1 iteration(s)
+a=0.9999997616 after 2 iteration(s)
+a=0.9999992251 after 3 iteration(s)
+a=0.9999976158 after 4 iteration(s)
+a=0.9999927878 after 5 iteration(s)
+a=0.9999783039 after 6 iteration(s)
+a=0.9999348521 after 7 iteration(s)
+a=0.9998044968 after 8 iteration(s)
+a=0.9994134307 after 9 iteration(s)
+						</code></pre>
+				</section>
+				<section>
+					<h3>Truncation error</h3>
+					<p>Results from <b>discrete approximations</b> of <b>continuous variables</b>.</p>
+					$$
+					\int\limits_0^1 x^2 \mathrm{d}x = 1/3
+					$$
+					<p>Cannot be avoided even with perfectly accurate floating point numbers.</p>
+				</section>
+				<section>
+					<img src="images/residual_trapezoidal_rule.svg" alt="truncation"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Truncation error of the trapezoidal rule with increasing number of integration steps.</p>
+				</section>
+				<section>
+					<h3>What is the (typical) convergence order of OpenFOAM and Basilisk?</h3>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Exploring parameter spaces</h2>
+				</section>
+				<section>
+					<p>Sampling a parameter space may be expensive, so drawing samples should be:</p>
+					<ul>
+						<li><b>efficient</b> - not more samples then necessary</li>
+						<li><b>homogeneous</b> - good coverage of the entire space</li>
+						<li><b>unbiased$^*$</b> - equal sampling probability for all points</li>
+					</ul>
+					<p>$^*$ assuming there is no <b>prior</b> knowledge about the parameter space</p>
+				</section>
+				<section>
+					<p>Task: establish relation between Reynolds number and $c_D$; assumptions:</p>
+					<ul>
+						<li>no prior knowledge of dependency</li>
+						<li>lower bound $Re=10$</li>
+						<li>upper bound $Re=100$</li>
+						<li>$N_s = 10$ simulation are affordable</li>
+					</ul>
+					<p><b>How do we draw the samples?</b></p>
+				</section>
+				<section>
+					<p>Equally spaced samples:</p>
+					<p>$Re = \{10, 20, 30, ..., 100 \}$</p>
+					<ul>
+						<li>unbiased?</li>
+						<li>homogeneous?</li>
+						<li>efficient?</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/biased_sampling.svg" alt="biased"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Bias introduced by sampling.</p>
+				</section>
+				<section>
+					<p>How does the number of required samples $N_t$ scale with the number of parameters $d$ if we treat
+						all parameters equally?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">linearly: $N_t = N_s d$</li>
+						<li style="list-style-type: upper-latin;">quadratically: $N_t = N_s d^2$</li>
+						<li style="list-style-type: upper-latin;">exponentially: $N_t = N_s^d$</li>
+					</ol>
+				</section>
+				<section>
+					<p>Randomly drawn samples:</p>
+					<p>$Re = \{51, 45, 91, 84, 92, 67, 99, 71, 100, 41 \}$</p>
+					<ul>
+						<li>unbiased?</li>
+						<li>homogeneous?</li>
+						<li>efficient?</li>
+					</ul>
+				</section>
+				<section>
+					<p>Combining advantages: latin hypercube sampling (LHS)</p>
+					<ul>
+						<li>segment parameter space in $N_s$ equally sized junks (hypercubes)</li>
+						<li>randomly draw one sample in each segment of each parameter</li>
+						<li>shuffle and combine samples</li>
+					</ul>
+				</section>
+				<section>
+					<p>LHS sampling in Python/PyTorch</p>
+					<pre class="python"><code>
+def lhs_sampling(x_min: list, x_max: list, n_samples: int) -> pt.Tensor:
 	assert len(x_min) == len(x_max)
 	n_parameters = len(x_min)
 	samples = pt.zeros((n_parameters, n_samples))
@@ -323,108 +415,117 @@ def lhs_sampling(x_min, x_max, n_samples):
 		samples[i, :] = rand[pt.randperm(n_samples)]
 	return samples
 						</code></pre>
-					</section>
-					<section>
-						<img src="images/lhs_sampling.svg" alt="lhs"
-							style="background:none; border:none; box-shadow:none; width: 80%">
-					</section>
 				</section>
 				<section>
-					<section>
-						<h2>Generating data from simulations</h2>
-					</section>
-					<section>
-						<p>Requirements for a good base simulation:</p>
-						<ul>
-							<li>setup reflects mathematical problem</li>
-							<li>low mesh dependency</li>
-							<li>validated against reference data</li>
-							<li>setup is optimized</li>
-						</ul>
-					</section>
-					<section>
-						<p>Task: study dependency of vortex shedding frequency on Reynolds number for the flow past a cylinder; $80 < Re < 1000$.</p>
-					</section>
-					<section>
-						<p>Mesh dependency study for</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">all cases</li>
-							<li style="list-style-type: upper-latin;">lowest $Re$</li>
-							<li style="list-style-type: upper-latin;">largest $Re$</li>
-							<li style="list-style-type: upper-latin;">random $Re$ (unbiased)</li>
-						</ol>
-					</section>
-					<section>
-						<p>In the individual simulation setups, do we have to change only $Re$?</p>
-					</section>
-					<section>
-						<p>Automation: using <b>sed</b> to modify input files.</p>
-						<pre class="python"><code>
+					<img src="images/lhs_sampling.svg" alt="lhs"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Generating data from simulations</h2>
+				</section>
+				<section>
+					<p>Requirements for a good base simulation:</p>
+					<ul>
+						<li>setup reflects mathematical problem</li>
+						<li>low mesh dependency</li>
+						<li>validated against reference data</li>
+						<li>setup is optimized</li>
+					</ul>
+				</section>
+				<section>
+					<p>Task: study dependency of vortex shedding frequency on Reynolds number for the flow past a
+						cylinder; $80 < Re < 1000$.</p>
+				</section>
+				<section>
+					<p>Mesh dependency study for</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">all cases</li>
+						<li style="list-style-type: upper-latin;">lowest $Re$</li>
+						<li style="list-style-type: upper-latin;">largest $Re$</li>
+						<li style="list-style-type: upper-latin;">random $Re$ (unbiased)</li>
+					</ol>
+				</section>
+				<section>
+					<p>In the individual simulation setups, do we have to change only $Re$?</p>
+				</section>
+				<section>
+					<p><b>sed</b> - Stream EDitor: replace text in files</p>
+					<pre class="python"><code>
+sed -i 's/old_text/new_text/' exampleDict
+						</code></pre>
+				</section>
+				<section>
+					<p>Running external programs with <b>system</b> and <b>Popen</b>:</p>
+					<pre class="python"><code>
 # with os.system
 cmd = "sed -i 's/old_text/new_text/' exampleDict"
 os.system(cmd)
 # with subprocess.Popen
 cmd = ["sed", "-i", "'s/old_text/new_text/'", "exampleDict"]
-p = subprocess.Popen(cmd)
+p = subprocess.Popen(cmd, cwd="./test_case/")
 # print exit code to check if execution was successful
 print(p.poll())
 						</code></pre>
-					</section>
-					<section>
-						<p>Automation: multiprocessing.</p>
-						<pre class="python"><code>
-def run_simulation(path):
-    pwd = getcwd()
-    chdir(path)
-    p = Popen(["./Allrun.singularity"]).wait()
-    chdir(pwd)
+				</section>
+				<section>
+					<p>Leveraging the hardware's full potential:</p>
+					<pre class="python"><code>
+def run_simulation(path: str):
+    return_code = Popen(["./Allrun"], cwd=path).wait()
+    if return_code == 0:
+        print(f"Simulation {path} completed successfully.")
+    else:
+        print(f"Warning: simulation {path} failed.")
 
 simulations = ["./sim_0/", "./sim_1/", "./sim_2/"]
-pool = Pool(2)
+pool = Pool(2)  # from multiprocessing
 with pool:
     pool.map(run_simulation, simulations)
 						</code></pre>
-					</section>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Normalizing data</h2>
 				</section>
 				<section>
-					<section>
-						<h2>Normalizing data</h2>
-					</section>
-					<section>
-						<p>Example dataset with Reynolds $Re$ number, angle of attack $\alpha$, and lift coefficient $c_l$:</p>
-						<ul>
-							<li>$10\times 10^6 < Re < 20\times 10^6$</li>
-							<li>$0^\circ < \alpha < 4^\circ$</li>
-							<li>$c_l$ - measured</li>
-						</ul>
-					</section>
-					<section>
-						<p>Avoiding roundoff errors: min-max-normalization for each feature/label $x_i$:</p>
-						$$
-						  x_i^* = \frac{x_i - x_{i,min}}{x_{i,max}-x_{i,min}},\quad x_i^*\in [0,1]
-						$$
-						$$
-						  \tilde{x}_i = 2x_i^* - 1,\quad \tilde{x}_i \in [-1,1]
-						$$
-					</section>
-					<section>
-						<p>Avoiding roundoff errors: mean-std.-normalization for each feature/label $x_i$:</p>
-						$$
-						  x_i^* = \frac{x_i - \mu_{x_i}}{\sigma_{x_i}}
-						$$
-						<ul>
-							<li>$\mu_{x_i}$ - mean</li>
-							<li>$\sigma_{x_i}$ - standard deviation</li>
-							<li>less sensitive to outliers</li>
-						</ul>
-					</section>
-					<section>
-						<img src="images/sigmoid_function.svg" alt="sigmoid"
-							style="background:none; border:none; box-shadow:none; width: 80%">
-						<p>Sigmoid function $\sigma (x) = 1/(1+e^{-x})$.</p>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
+					<p>Example dataset with Reynolds $Re$ number, angle of attack $\alpha$, and lift coefficient $c_l$:
+					</p>
+					<ul>
+						<li>$10\times 10^6 < Re < 20\times 10^6$</li>
+						<li>$0^\circ < \alpha < 4^\circ$</li>
+						<li>$c_l$ - measured</li>
+					</ul>
+				</section>
+				<section>
+					<p>Avoiding roundoff errors: min-max-normalization for each feature/label $x_i$:</p>
+					$$
+					x_i^* = \frac{x_i - x_{i,min}}{x_{i,max}-x_{i,min}},\quad x_i^*\in [0,1]
+					$$
+					$$
+					\tilde{x}_i = 2x_i^* - 1,\quad \tilde{x}_i \in [-1,1]
+					$$
+				</section>
+				<section>
+					<p>Avoiding roundoff errors: mean-std.-normalization for each feature/label $x_i$:</p>
+					$$
+					x_i^* = \frac{x_i - \mu_{x_i}}{\sigma_{x_i}}
+					$$
+					<ul>
+						<li>$\mu_{x_i}$ - mean</li>
+						<li>$\sigma_{x_i}$ - standard deviation</li>
+						<li>less sensitive to outliers</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/sigmoid_function.svg" alt="sigmoid"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Sigmoid function $\sigma (x) = 1/(1+e^{-x})$.</p>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
 							Another example: clustering
 
 | $i$ | $Re$ | $c_l$ |
@@ -433,17 +534,17 @@ with pool:
 | 2 | $12\times 10^6$ | $0.12$ |
 | 3 | $15\times 10^6$ | $0.11$ |
 						</textarea>
-					</section>
-					<section>
-						<p>Intuitively, how would you group the measurements?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">1+2, 3</li>
-							<li style="list-style-type: upper-latin;">1+3, 2</li>
-							<li style="list-style-type: upper-latin;">2+3, 1</li>
-						</ol>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
+				</section>
+				<section>
+					<p>Intuitively, how would you group the measurements?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">1+2, 3</li>
+						<li style="list-style-type: upper-latin;">1+3, 2</li>
+						<li style="list-style-type: upper-latin;">2+3, 1</li>
+					</ol>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
 							Automated clustering based on Euclidean distance:
 
 							$$
@@ -456,9 +557,9 @@ with pool:
 							| 1-3 | $5\times 10^6$ |
 							| 2-3 | $3\times 10^6$ |
 						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
 							Data after min-max-normalization:
 
 							| $i$ | $Re^*$ | $c_l^*$ |
@@ -467,9 +568,9 @@ with pool:
 							| 2 | $0.4$ | $0.05$ |
 							| 3 | $1$ | $0$ |
 						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
 							Euclidean distance after normalization:
 
 							| points | distance |
@@ -478,244 +579,266 @@ with pool:
 							| 1-3 | $1.41$ |
 							| 2-3 | $0.60$ |
 						</textarea>
-					</section>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Feature selection and design</h2>
+				</section>
+				<section>
+					<h3>Feature design</h3>
+					<ul>
+						<li>some features are naturally given</li>
+						<li>additional features may be designed to</li>
+						<ul>
+							<li>embed mathematical constraints</li>
+							<li>embed known physical laws</li>
+							<li>decrease variance</li>
+						</ul>
+					</ul>
+					<p>Rule of thumb: extract/generate as many features as possible.</p>
+				</section>
+				<section>
+					<h3>Features must be available in the target application!</h3>
+				</section>
+				<section>
+					<h3>Feature selection tools</h3>
+					<ul>
+						<li><a href="https://stackoverflow.com/questions/39409866/correlation-heatmap">correlation
+								(heatmap)</a></li>
+						<li>sequential forward/backward selection</li>
+						<li>random feature permutation</li>
+						<li>attention (DL)</li>
+						<li>...</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/cylinder_sensors.png" alt="lhs"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Question: which sensors are suitable for drag/lift prediction?</p>
+				</section>
+				<section>
+					<img src="images/corr_map.png" alt="lhs"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Example for correlation heatmap.</p>
+				</section>
+				<section>
+					<p>Automated feature selection/learning:</p>
+					<ul>
+						<li>sequential forward/backward selection</li>
+						<li>random feature permutation</li>
+						<li>attention (learned feature importance)</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Deep learning</h2>
+				</section>
+				<section>
+					<h3>Terminology</h3>
 				</section>
 				<section>
 					<section>
-						<h2>Feature selection and design</h2>
-					</section>
-					<section>
-						<h3>Feature design</h3>
-						<ul>
-							<li>some features are naturally given</li>
-							<li>additional features may be designed to</li>
-							<ul>
-								<li>embed mathematical constraints</li>
-								<li>embed known physical laws</li>
-								<li>decrease variance</li>
-							</ul>
-						</ul>
-						<p>Rule of thumb: extract/generate as many features as possible.</p>
-					</section>
-					<section>
-						<h3>Features must be available in the target application!</h3>
-					</section>
-					<section>
-						<h3>Feature selection tools</h3>
-						<ul>
-							<li><a href="https://stackoverflow.com/questions/39409866/correlation-heatmap">correlation (heatmap)</a></li>
-							<li>sequential forward/backward selection</li>
-							<li>purity of decision trees/random forests</li>
-							<li>...</li>
-						</ul>
+						<p>Feature and label vectors</p>
+						<p>
+
+							$N_s$ <span style="color: green">samples</span> of $N_f$
+							<a style="color:red">
+								features
+							</a>
+							and $N_l$
+							<a style="color:blue">
+								labels
+							</a>
+						</p>
+						<table>
+							<thead>
+								<tr>
+									<th style="color: green">$i$</th>
+									<th style="color:red">$x_{1}$</th>
+									<th style="color:red">...</th>
+									<th style="color:red">$x_{N_f}$</th>
+									<th style="color:blue">$y_{1}$</th>
+									<th style="color:blue">...</th>
+									<th style="color:blue">$y_{N_l}$</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th style="color: green">1</th>
+									<td style="color:red">0.1</td>
+									<td style="color:red">...</td>
+									<td style="color:red">0.6</td>
+									<td style="color:blue">0.5</td>
+									<td style="color:blue">...</td>
+									<td style="color:blue">0.2</td>
+								</tr>
+								<tr>
+									<th style="color: green">...</th>
+									<td style="color:red">...</td>
+									<td style="color:red">...</td>
+									<td style="color:red">...</td>
+									<td style="color:blue">...</td>
+									<td style="color:blue">...</td>
+									<td style="color:blue">...</td>
+								</tr>
+								<tr>
+									<th style="color: green">$N_s$</th>
+									<td style="color:red">1.0</td>
+									<td style="color:red">...</td>
+									<td style="color:red">0.7</td>
+									<td style="color:blue">0.4</td>
+									<td style="color:blue">...</td>
+									<td style="color:blue">0.2</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>ML models often map <b>multiple inputs</b> to <b>multiple outputs!</b></p>
 					</section>
 				</section>
 				<section>
-					<section>
-						<h2>Deep learning</h2>
-					</section>
-					<section>
-						<h3>Terminology</h3>
-					</section>
-					<section>
-						<section>
-							<p>Feature and label vectors</p>
-							<p>
-		
-								$N_s$ <span style="color: green">samples</span> of $N_f$
-								<a style="color:red">
-									features
-								</a>
-								and $N_l$
-								<a style="color:blue">
-									labels
-								</a>
-							</p>
-							<table>
-								<thead>
-									<tr>
-										<th style="color: green">$i$</th>
-										<th style="color:red">$x_{1}$</th>
-										<th style="color:red">...</th>
-										<th style="color:red">$x_{N_f}$</th>
-										<th style="color:blue">$y_{1}$</th>
-										<th style="color:blue">...</th>
-										<th style="color:blue">$y_{N_l}$</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<th style="color: green">1</th>
-										<td style="color:red">0.1</td>
-										<td style="color:red">...</td>
-										<td style="color:red">0.6</td>
-										<td style="color:blue">0.5</td>
-										<td style="color:blue">...</td>
-										<td style="color:blue">0.2</td>
-									</tr>
-									<tr>
-										<th style="color: green">...</th>
-										<td style="color:red">...</td>
-										<td style="color:red">...</td>
-										<td style="color:red">...</td>
-										<td style="color:blue">...</td>
-										<td style="color:blue">...</td>
-										<td style="color:blue">...</td>
-									</tr>
-									<tr>
-										<th style="color: green">$N_s$</th>
-										<td style="color:red">1.0</td>
-										<td style="color:red">...</td>
-										<td style="color:red">0.7</td>
-										<td style="color:blue">0.4</td>
-										<td style="color:blue">...</td>
-										<td style="color:blue">0.2</td>
-									</tr>
-								</tbody>
-							</table>
-							<p>ML models often map <b>multiple inputs</b> to <b>multiple outputs!</b></p>
-						</section>
-					</section>
-					<section>
-						<p>Feature vector:</p>
-						<p>
-							$$ \mathrm{x} = \left[x_{1}, x_{2}, ..., x_{N_f}\right]^T $$
-							$\mathrm{x}$ - column vector of length $N_f$
-						</p>
-						<p>
-							$$ \mathrm{X} = \left[\mathrm{x}_{1}, \mathrm{x}_{2}, ..., \mathrm{x}_{N_s}\right] $$
-							$\mathrm{X}$ - matrix with $N_s$ rows and $N_f$ columns
-						</p>
-					</section>
-					<section>
-						<p>Label vector:</p>
-						<p>
-							$$ \mathrm{y} = \left[y_{1}, y_{2}, ..., y_{N_l}\right]^T $$
-							$\mathrm{y}$ - column vector of length $N_l$
-						</p>
-						<p>
-							$$ \mathrm{Y} = \left[\mathrm{y}_{1}, \mathrm{y}_{2}, ..., \mathrm{y}_{N_s}\right] $$
-							$\mathrm{Y}$ - matrix with $N_s$ rows and $N_l$ columns
-						</p>
-					</section>
-					<section>
-						<p>ML model and prediction</p>
-						<p>
-							$$ f_\mathbf{p}(\mathbf{x}) : \mathbb{R}^{N_f} \rightarrow \mathbb{R}^{N_l} $$
-							$f_\mathbf{p}$ - ML model with weights $\mathbf{p}$ mapping from the feature space
-							$\mathbb{R}^{N_f}$ to the label space
-							$\mathbb{R}^{N_l}$
-							$$ \hat{\mathrm{y}_i} = f_\mathbf{p}(\mathbf{x}_i) $$
-							$\hat{\mathrm{y}}_i$ - (model) prediction
-						</p>
-					</section>
-					<section>
-						<h3>Neural networks</h3>
-						<p>Assumptions for this lecture:</p>
-						<ul>
-							<li>only fully connected layers</li>
-							<li>constant number of neurons for each hidden layer</li>
-							<li>blind usage as generic function approximation tool</li>
-						</ul>
-					</section>
-					<section>
-						<img src="images/example_nn.png" alt="network"
-							style="background:none; border:none; box-shadow:none; width: 50%">
-						<ul>
-							<li>neuron: weighted sum + nonlinear map</li>
-							<li>lines: weights/free parameters</li>
-							<li>input/output: features/labels</li>
-							<li>1: bias unit</li>
-						</ul>
-					</section>
-					<section>
-						<p>Formalization: weighted sum of inputs</p>
-						$$
-						z_j^l(\mathbf{x}^{l-1}) = \sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1}
-						$$
-							<div class="row_logo">
-								<div class="column_logo">
-									<div class="content_logo">
-										<ul>
-											<li>$l$ - current layer</li>
-											<li>$N_{neu}$ - neurons per layer</li>
-										</ul>
-									</div>
-								</div>
-								<div class="column_logo">
-									<div class="content_logo">
-										<ul>
-											<li>$\mathbf{x}$ - feature/input</li>
-											<li>$\mathbf{W}$ - weight matrix</li>
-										</ul>
-									</div>
-								</div>
+					<p>Feature vector:</p>
+					<p>
+						$$ \mathrm{x} = \left[x_{1}, x_{2}, ..., x_{N_f}\right]^T $$
+						$\mathrm{x}$ - column vector of length $N_f$
+					</p>
+					<p>
+						$$ \mathrm{X} = \left[\mathrm{x}_{1}, \mathrm{x}_{2}, ..., \mathrm{x}_{N_s}\right] $$
+						$\mathrm{X}$ - matrix with $N_s$ rows and $N_f$ columns
+					</p>
+				</section>
+				<section>
+					<p>Label vector:</p>
+					<p>
+						$$ \mathrm{y} = \left[y_{1}, y_{2}, ..., y_{N_l}\right]^T $$
+						$\mathrm{y}$ - column vector of length $N_l$
+					</p>
+					<p>
+						$$ \mathrm{Y} = \left[\mathrm{y}_{1}, \mathrm{y}_{2}, ..., \mathrm{y}_{N_s}\right] $$
+						$\mathrm{Y}$ - matrix with $N_s$ rows and $N_l$ columns
+					</p>
+				</section>
+				<section>
+					<p>ML model and prediction</p>
+					<p>
+						$$ f_\mathbf{p}(\mathbf{x}) : \mathbb{R}^{N_f} \rightarrow \mathbb{R}^{N_l} $$
+						$f_\mathbf{p}$ - ML model with weights $\mathbf{p}$ mapping from the feature space
+						$\mathbb{R}^{N_f}$ to the label space
+						$\mathbb{R}^{N_l}$
+						$$ \hat{\mathrm{y}_i} = f_\mathbf{p}(\mathbf{x}_i) $$
+						$\hat{\mathrm{y}}_i$ - (model) prediction
+					</p>
+				</section>
+				<section>
+					<h3>Neural networks</h3>
+					<p>Assumptions for this lecture:</p>
+					<ul>
+						<li>only fully connected layers</li>
+						<li>constant number of neurons for each hidden layer</li>
+						<li>blind usage as generic function approximation tool</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/example_nn.png" alt="network"
+						style="background:none; border:none; box-shadow:none; width: 50%">
+					<ul>
+						<li>neuron: weighted sum + nonlinear map</li>
+						<li>lines: weights/free parameters</li>
+						<li>input/output: features/labels</li>
+						<li>1: bias unit</li>
+					</ul>
+				</section>
+				<section>
+					<p>Formalization: weighted sum of inputs</p>
+					$$
+					z_j^l(\mathbf{x}^{l-1}) = \sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1}
+					$$
+					<div class="row_logo">
+						<div class="column_logo">
+							<div class="content_logo">
+								<ul>
+									<li>$l$ - current layer</li>
+									<li>$N_{neu}$ - neurons per layer</li>
+								</ul>
 							</div>
-						</section>
-						<section>
-							<p>Formalization: nonlinear map/activation</p>
-						$$
-						x_j^l = a_j^l \left(\sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1}\right) = a_j^l\left( z_j^l(\mathbf{x}^{l-1}) \right)
-						$$
-							<div class="row_logo">
-								<div class="column_logo">
-									<div class="content_logo">
-										<ul>
-											<li>$a_j$ - activation function</li>
-											<li>$z_j$ - weighted sum</li>
-										</ul>
-									</div>
-								</div>
-								<div class="column_logo">
-									<div class="content_logo">
-										<ul>
-											<li>$j$ - neuron index in current layer $l$</li>
-										</ul>
-									</div>
-								</div>
+						</div>
+						<div class="column_logo">
+							<div class="content_logo">
+								<ul>
+									<li>$\mathbf{x}$ - feature/input</li>
+									<li>$\mathbf{W}$ - weight matrix</li>
+								</ul>
 							</div>
-						</section>
-						<section>
-							<p>Short reminder: function composition:</p>
-							<ul>
-								<li>$f(x) = 2x+1$</li>
-								<li>$g(x) = x^2$</li>
-								<li>$h(x) = f(g(x)) = f \circ g(x) = 2x^2+1$</li>
-							</ul>
-						</section>
-						<section>
-							<p>Formalization: layer composition</p>
-							$$
-							  \mathbf{a}^l = \left[ a_1^l, a_2^l,..., a_{N_{neu}}^l \right]
-							$$
-							$$
-							f_\mathbf{p}(\mathbf{x}) = \mathbf{a}^{N_L} \circ \mathbf{a}^{N_{L-1}} \circ \dots \circ \mathbf{a}^1\left( \mathbf{x} \right)
-							$$
-							<p>$N_L$ - number of layers</p>
-						</section>
-						<section>
-							<p>Attributes of good activation functions:</p>
-							<ul>
-								<li>nonlinear (except output layer)</li>
-								<li>continuous, infinite support</li>
-								<li>monotonic</li>
-								<li>constant slope</li>
-								<li>effectively computable</li>
-							</ul>
-						</section>
-						<section>
-							<img src="images/activation_functions.svg" alt="activations"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Comparison of common activation functions.</p>
-						</section>
-						<section>
-							<img src="images/activation_slopes.svg" alt="activation_slopes"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Derivatives of common activation functions.</p>
-						</section>
-						<section>
-							<p>Neural network in Python/PyTorch</p>
-							<pre class="python"><code>
+						</div>
+					</div>
+				</section>
+				<section>
+					<p>Formalization: nonlinear map/activation</p>
+					$$
+					x_j^l = a_j^l \left(\sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1}\right) = a_j^l\left(
+					z_j^l(\mathbf{x}^{l-1}) \right)
+					$$
+					<div class="row_logo">
+						<div class="column_logo">
+							<div class="content_logo">
+								<ul>
+									<li>$a_j$ - activation function</li>
+									<li>$z_j$ - weighted sum</li>
+								</ul>
+							</div>
+						</div>
+						<div class="column_logo">
+							<div class="content_logo">
+								<ul>
+									<li>$j$ - neuron index in current layer $l$</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<p>Short reminder: function composition:</p>
+					<ul>
+						<li>$f(x) = 2x+1$</li>
+						<li>$g(x) = x^2$</li>
+						<li>$h(x) = f(g(x)) = f \circ g(x) = 2x^2+1$</li>
+					</ul>
+				</section>
+				<section>
+					<p>Formalization: layer composition</p>
+					$$
+					\mathbf{a}^l = \left[ a_1^l, a_2^l,..., a_{N_{neu}}^l \right]
+					$$
+					$$
+					f_\mathbf{p}(\mathbf{x}) = \mathbf{a}^{N_L} \circ \mathbf{a}^{N_{L-1}} \circ \dots \circ
+					\mathbf{a}^1\left( \mathbf{x} \right)
+					$$
+					<p>$N_L$ - number of layers</p>
+				</section>
+				<section>
+					<p>Attributes of good activation functions:</p>
+					<ul>
+						<li>nonlinear (except output layer)</li>
+						<li>continuous, infinite support</li>
+						<li>monotonic</li>
+						<li>constant slope</li>
+						<li>effectively computable</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/activation_functions.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Comparison of common activation functions.</p>
+				</section>
+				<section>
+					<img src="images/activation_slopes.svg" alt="activation_slopes"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Derivatives of common activation functions.</p>
+				</section>
+				<section>
+					<p>Neural network in Python/PyTorch</p>
+					<pre class="python"><code>
 class SimpleNN(pt.nn.Module):
 	def __init__(self, **kwargs):
 		super().__init__()
@@ -740,61 +863,61 @@ class SimpleNN(pt.nn.Module):
 			x = self.activation(self.layers[i_layer](x))
 		return self.layers[-1](x)
 							</code></pre>
-						</section>
-						<section>
-							<h3>Example problem</h3>
-							<ul>
-								<li>1D setup for computing channel flow (exercise)</li>
-								<li>15 simulations with varying inlet velocity $\bar{U}$</li>
-								<li>$\delta$ - halt channel height; $\nu$ - kinematic viscosity</li>
-								<li>Reynolds number $Re = 2\bar{U}\delta/\nu$</li>
-								<li>data: streamwise velocity component $U_x$ for varying distances normal to wall $y$</li>
-							</ul>
-							<p>Goal: model for streamwise velocity</p>
-							$$
-							U_{x} = f_{\mathbf{p}}(y, Re)
-							$$
-						</section>
-						<section>
-							<p>What are the features?</p>
-						</section>
-						<section>
-							<p>What are the labels?</p>
-						</section>
-						<section>
-							<h3>Preparing the data</h3>
-						</section>
-						<section>
-							<img src="images/developed_1d_profile.svg" alt="profiles"
-								style="background:none; border:none; box-shadow:none; width: 70%">
-							<p>Fully developed velocity profiles for different Reynolds numbers.</p>
-						</section>
-						<section>
-							<p>Validation using Spalding's function</p>
-							$$
-								u_\tau = \sqrt{\nu \partial_y U_x/\rho},\quad y^+ = yu_\tau/\nu,\quad u^+=U_x/u_\tau
-							$$
-							$$
-								y^+= u^+ + \left[e^{u^+\kappa} -1 - u^+\kappa (1+u^+\kappa/2) - (u^+\kappa)^3/6\right]/E
-							$$
-							<p>$\kappa$, $E$ - constants</p>
-						</section>
-						<section>
-							<img src="images/1d_profile_inner.svg" alt="inner_coord"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Velocity profiles depicted in inner coordinates.</p>
-						</section>
-						<section>
-							<p>Splitting the data</p>
-							<ul>
-								<li><b>training data:</b> optimization of model weights</li>
-								<li><b>validation data:</b> sanity check during training</li>
-								<li><b>testing data:</b> final performance evaluation</li>
-							</ul>
-						</section>
-						<section>
-							<p>Splitting the data</p>
-							<pre class="python"><code>
+				</section>
+				<section>
+					<h3>Example problem</h3>
+					<ul>
+						<li>1D setup for computing channel flow (exercise)</li>
+						<li>15 simulations with varying inlet velocity $\bar{U}$</li>
+						<li>$\delta$ - halt channel height; $\nu$ - kinematic viscosity</li>
+						<li>Reynolds number $Re = 2\bar{U}\delta/\nu$</li>
+						<li>data: streamwise velocity component $U_x$ for varying distances normal to wall $y$</li>
+					</ul>
+					<p>Goal: model for streamwise velocity</p>
+					$$
+					U_{x} = f_{\mathbf{p}}(y, Re)
+					$$
+				</section>
+				<section>
+					<p>What are the features?</p>
+				</section>
+				<section>
+					<p>What are the labels?</p>
+				</section>
+				<section>
+					<h3>Preparing the data</h3>
+				</section>
+				<section>
+					<img src="images/developed_1d_profile.svg" alt="profiles"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Fully developed velocity profiles for different Reynolds numbers.</p>
+				</section>
+				<section>
+					<p>Validation using Spalding's function</p>
+					$$
+					u_\tau = \sqrt{\nu \partial_y U_x/\rho},\quad y^+ = yu_\tau/\nu,\quad u^+=U_x/u_\tau
+					$$
+					$$
+					y^+= u^+ + \left[e^{u^+\kappa} -1 - u^+\kappa (1+u^+\kappa/2) - (u^+\kappa)^3/6\right]/E
+					$$
+					<p>$\kappa$, $E$ - constants</p>
+				</section>
+				<section>
+					<img src="images/1d_profile_inner.svg" alt="inner_coord"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Velocity profiles depicted in inner coordinates.</p>
+				</section>
+				<section>
+					<p>Splitting the data</p>
+					<ul>
+						<li><b>training data:</b> optimization of model weights</li>
+						<li><b>validation data:</b> sanity check during training</li>
+						<li><b>testing data:</b> final performance evaluation</li>
+					</ul>
+				</section>
+				<section>
+					<p>Splitting the data</p>
+					<pre class="python"><code>
 probs = pt.ones(Ux.shape[-1])
 test_idx = pt.multinomial(probs, 2)
 probs[test_idx] = 0.0
@@ -805,10 +928,10 @@ test_Ux = Ux[:, test_idx]
 val_Ux = Ux[:, val_idx]
 train_Ux = Ux[:, train_idx]
 							</code></pre>
-						</section>
-						<section>
-							<p>Reshaping the data</p>
-							<pre class="python"><code>
+				</section>
+				<section>
+					<p>Reshaping the data</p>
+					<pre class="python"><code>
 def reshape_data(Ux, y, Re):
     assert Ux.shape[1] == Re.shape[0]
     assert Ux.shape[0] == y.shape[0]
@@ -820,11 +943,11 @@ def reshape_data(Ux, y, Re):
         data[start:end, 2] = Re[i]
     return data
 							</code></pre>
-						</section>
+				</section>
 
-						<section>
-							<p>Normalizing the data</p>
-							<pre class="python"><code>
+				<section>
+					<p>Normalizing the data</p>
+					<pre class="python"><code>
 class MinMaxScaler(object):
     def __init__(self):
         self.min = None
@@ -857,16 +980,16 @@ assert pt.isclose(train_data_norm.min(), pt.tensor(-1.0))
 assert pt.isclose(train_data_norm.max(), pt.tensor(1.0))
 assert pt.allclose(train_data, scaler.rescale(train_data_norm))
 							</code></pre>
-						</section>
-						<section>
-							<h3>Optimizing the weights</h3>
-							<p>Mean squared error loss function:</p>
-							$$
-								L(\mathbf{p}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s}\left(U_{x,i} - U_x(\mathbf{x}_i)\right)^2
-							$$
-						</section>
-						<section>
-							<pre class="python"><code>
+				</section>
+				<section>
+					<h3>Optimizing the weights</h3>
+					<p>Mean squared error loss function:</p>
+					$$
+					L(\mathbf{p}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s}\left(U_{x,i} - U_x(\mathbf{x}_i)\right)^2
+					$$
+				</section>
+				<section>
+					<pre class="python"><code>
 def optimize_model(model, x_train, y_train, x_val, y_val,
                    epochs=1000, lr=0.001, save_best=""):
     criterion = pt.nn.MSELoss()
@@ -887,10 +1010,10 @@ def optimize_model(model, x_train, y_train, x_val, y_val,
         # snip
     return train_loss, val_loss
 							</code></pre>
-						</section>
-						<section>
-							<p>Putting it all together</p>
-							<pre class="python"><code>
+				</section>
+				<section>
+					<p>Putting it all together</p>
+					<pre class="python"><code>
 save_model_in = f"{output}/first_training/"
 model_params = {
     "n_inputs": 2,
@@ -909,15 +1032,15 @@ train_loss, val_loss = optimize_model(
     10000, save_best=save_model_in
 )
 							</code></pre>
-						</section>
-						<section>
-							<img src="images/train_val_loss.svg" alt="loss"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Training and validation loss vs. optimization epochs.</p>
-						</section>
-						<section>
-							<p>Dealing with oscillating loss values</p>
-							<pre class="python"><code>
+				</section>
+				<section>
+					<img src="images/train_val_loss.svg" alt="loss"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Training and validation loss vs. optimization epochs.</p>
+				</section>
+				<section>
+					<p>Dealing with oscillating loss values</p>
+					<pre class="python"><code>
 if train_loss[-1] < best_train_loss:
     pt.save(model.state_dict(), f"{save_best}best_model_train.pt")
     best_train_loss = train_loss[-1]
@@ -925,110 +1048,136 @@ if val_loss[-1] < best_val_loss:
     pt.save(model.state_dict(), f"{save_best}best_model_val.pt")
     best_val_loss = val_loss[-1]
 							</code></pre>
-						</section>
-						<section>
-							<img src="images/profile_pred_vs_org.svg" alt="prediction"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Velocity profile predictions vs. numerical data.</p>
-						</section>
-						<section>
-							<h3>Dealing with uncertainty</h3>
-							<p>What do you do in a real experiment to deal with uncertainty?</p>
-						</section>
-						<section>
-							<p>Quantiles:</p>
-							<ol>
-								<li>sort the data</li>
-								<li>count to $p\%$ of the data</li>
-								<li>list item is $q_p$ quantile</li>
-							</ol>
-							<p>Example:</p>
-							<ol>
-								<li>data: $\{0, 5, 4, 1, 2\}$</li>
-								<li>sorted: $\{0, 1, 2, 4, 5\}$</li>
-								<li>$q_{50} = 2$</li>
-							</ol>
-						</section>
-						<section>
-							<p>What is a common name for $q_{50}$?</p>
-							<ol>
-								<li style="list-style-type: upper-latin;">mean</li>
-								<li style="list-style-type: upper-latin;">median</li>
-								<li style="list-style-type: upper-latin;">mode</li>
-							</ol>
-						</section>
-						<section>
-							<p>Information in boxplots:</p>
-							<ul>
-								<li>$q_{25}$, $q_{50}$, $q_{75}$</li>
-								<li>inter quantile range (IQR) $q_{75}-q_{25}$</li>
-								<li>lowest/largest values in IQR</li>
-								<li>outliers (not in IQR)</li>
-							</ul>
-						</section>
-						<section>
-							<img src="images/profile_activations.svg" alt="activations"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Boxplots comparing different activation functions.</p>
-						</section>
-						<section>
-							<img src="images/profile_layers.svg" alt="layers"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Boxplots showing the effect of additional hidden layers.</p>
-						</section>
-						<section>
-							<h3>Visualizing prediction errors</h3>
-						</section>
-						<section>
-							<img src="images/profile_error_hist.svg" alt="histogram"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Prediction errors depicted as histogram.</p>
-						</section>
-						<section>
-							<img src="images/profile_error_heatmap.svg" alt="heatmap"
-								style="background:none; border:none; box-shadow:none; width: 80%">
-							<p>Maximum prediction errors in discrete subsections of the feature space.</p>
-						</section>
-						<section>
-							<h3>Outlook</h3>
-							<p>Things we did not cover today:</p>
-							<ul>
-								<li>batch training</li>
-								<li>batch normalization</li>
-								<li>training on GPU/TPU</li>
-								<li>model composition</li>
-								<li>hyperparameter tuning</li>
-								<li>...</li>
-							</ul>
-						</section>
 				</section>
-			</div>
-
+				<section>
+					<img src="images/profile_pred_vs_org.svg" alt="prediction"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Velocity profile predictions vs. numerical data.</p>
+				</section>
+				<section>
+					<h3>Dealing with uncertainty</h3>
+					<p>What do you do in a real experiment to deal with uncertainty?</p>
+				</section>
+				<section>
+					<p>Quantiles:</p>
+					<ol>
+						<li>sort the data</li>
+						<li>count to $p\%$ of the data</li>
+						<li>list item is $q_p$ quantile</li>
+					</ol>
+					<p>Example:</p>
+					<ol>
+						<li>data: $\{0, 5, 4, 1, 2\}$</li>
+						<li>sorted: $\{0, 1, 2, 4, 5\}$</li>
+						<li>$q_{50} = 2$</li>
+					</ol>
+				</section>
+				<section>
+					<p>What is a common name for $q_{50}$?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">mean</li>
+						<li style="list-style-type: upper-latin;">median</li>
+						<li style="list-style-type: upper-latin;">mode</li>
+					</ol>
+				</section>
+				<section>
+					<p>Information in boxplots:</p>
+					<ul>
+						<li>$q_{25}$, $q_{50}$, $q_{75}$</li>
+						<li>inter quantile range (IQR) $q_{75}-q_{25}$</li>
+						<li>lowest/largest values in IQR</li>
+						<li>outliers (not in IQR)</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/profile_activations.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Boxplots comparing different activation functions.</p>
+				</section>
+				<section>
+					<img src="images/profile_layers.svg" alt="layers"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Boxplots showing the effect of additional hidden layers.</p>
+				</section>
+				<section>
+					<h3>Visualizing prediction errors</h3>
+				</section>
+				<section>
+					<img src="images/profile_error_hist.svg" alt="histogram"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Prediction errors depicted as histogram.</p>
+				</section>
+				<section>
+					<img src="images/profile_error_heatmap.svg" alt="heatmap"
+						style="background:none; border:none; box-shadow:none; width: 80%">
+					<p>Maximum prediction errors in discrete subsections of the feature space.</p>
+				</section>
+				<section>
+					<h3>Outlook</h3>
+					<p>Things we did not cover today:</p>
+					<ul>
+						<li>batch training</li>
+						<li>batch normalization</li>
+						<li>training on GPU/TPU</li>
+						<li>model composition</li>
+						<li>hyperparameter tuning</li>
+						<li>...</li>
+					</ul>
+				</section>
+			</section>
 		</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/zoom/zoom.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/search/search.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script src="plugin/math/math.js"></script>
-		<script>
+	</div>
 
-			// Also available as an ES module, see:
-			// https://revealjs.com/initialization/
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+	<script src="plugin/chalkboard/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+	<script>
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
-			});
-			Reveal.configure({ slideNumber: true });
+		// Also available as an ES module, see:
+		// https://revealjs.com/initialization/
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			center: true,
+			hash: true,
+			chalkboard: {
+				boardmarkerWidth: 4,
+				chalkWidth: 4,
+				chalkEffect: 0.01,
+				theme: "chalkboard",
+				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
+				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
+				eraser: { src: path + 'img/sponge.png', radius: 20 }
+			},
+			customcontrols: {
+				controls: [
+					{
+						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
+						title: 'Toggle chalkboard (B)',
+						action: 'RevealChalkboard.toggleChalkboard();'
+					},
+					{
+						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
+						title: 'Toggle notes canvas (C)',
+						action: 'RevealChalkboard.toggleNotesCanvas();'
+					}
+				]
+			},
 
-		</script>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+		});
+		Reveal.configure({ slideNumber: true });
 
-	</body>
+	</script>
+
+</body>
+
 </html>
