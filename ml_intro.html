@@ -140,6 +140,15 @@
 			</section>
 			<section>
 				<section>
+					<p><b>Online only</b> lectures and exercises:</p>
+					<ul>
+						<li><b>Dec 14 2022</b> lecture</li>
+						<li><b>Dec 15 2022</b> exercise</li>
+						<li><b>Dec 21 2022</b> lecture</li>
+						<li><b>Dec 22 2022</b> exercise</li>
+					</ul>
+				</section>
+				<section>
 					<p>Advice: always run <b>git pull</b> before working with the lecture material.</p>
 				</section>
 				<section>
@@ -634,6 +643,51 @@ with pool:
 			<section>
 				<section>
 					<h2>Deep learning</h2>
+					<ul>
+						<li>test case overview</li>
+						<li>simple feed-forward networks</li>
+						<li>preparing the datasets</li>
+						<li>generic training loop</li>
+						<li>more building blocks</li>
+						<li>dealing with uncertainty</li>
+						<li>visualizing prediction errors</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>Test case overview</h3>
+				</section>
+				<section>
+					<ul>
+						<li>1D setup for computing channel flow (exercise)</li>
+						<li>16 simulations with varying inlet velocity $\bar{U}$</li>
+						<li>Reynolds number $Re = 2\bar{U}\delta/\nu$</li>
+						<li>data: streamwise velocity component $u_x$ for varying distances normal to wall $y$</li>
+					</ul>
+					<p>Goal: model for streamwise velocity</p>
+					$$
+					\tilde{u}_{x} = f_{\mathbf{\theta}}(\tilde{y}, Re)
+					$$
+					<p>$\tilde{u}_{x} = u_x/\bar{U}_{max}$, $\tilde{y} = y/(2\delta)$</p>
+				</section>
+				<section>
+					<img src="images/developed_1d_profile_normalized.svg" alt="prediction"
+						style="background:none; border:none; box-shadow:none; width: 60%">
+					<p>Streamwise velocity component for various $Re$.</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>Simple feed-forward networks</h3>
+				</section>
+				<section>
+					<p>Assumptions for this lecture:</p>
+					<ul>
+						<li>only fully connected layers</li>
+						<li>constant number of neurons for each hidden layer</li>
+						<li>blind usage as generic function approximation tool</li>
+					</ul>
 				</section>
 				<section>
 					<h3>Terminology</h3>
@@ -722,22 +776,13 @@ with pool:
 				<section>
 					<p>ML model and prediction</p>
 					<p>
-						$$ f_\mathbf{p}(\mathbf{x}) : \mathbb{R}^{N_f} \rightarrow \mathbb{R}^{N_l} $$
-						$f_\mathbf{p}$ - ML model with weights $\mathbf{p}$ mapping from the feature space
+						$$ f_\mathbf{\theta}(\mathbf{x}) : \mathbb{R}^{N_f} \rightarrow \mathbb{R}^{N_l} $$
+						$f_\mathbf{\theta}$ - ML model with weights $\mathbf{\theta}$ mapping from the feature space
 						$\mathbb{R}^{N_f}$ to the label space
 						$\mathbb{R}^{N_l}$
-						$$ \hat{\mathrm{y}_i} = f_\mathbf{p}(\mathbf{x}_i) $$
+						$$ \hat{\mathrm{y}}_i = f_\mathbf{\theta}(\mathbf{x}_i) $$
 						$\hat{\mathrm{y}}_i$ - (model) prediction
 					</p>
-				</section>
-				<section>
-					<h3>Neural networks</h3>
-					<p>Assumptions for this lecture:</p>
-					<ul>
-						<li>only fully connected layers</li>
-						<li>constant number of neurons for each hidden layer</li>
-						<li>blind usage as generic function approximation tool</li>
-					</ul>
 				</section>
 				<section>
 					<img src="images/example_nn.png" alt="network"
@@ -752,7 +797,7 @@ with pool:
 				<section>
 					<p>Formalization: weighted sum of inputs</p>
 					$$
-					z_j^l(\mathbf{x}^{l-1}) = \sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1}
+					z_j^l\left(\mathbf{x}^{l-1}\right) = \sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1} + b_j^{l-1}
 					$$
 					<div class="row_logo">
 						<div class="column_logo">
@@ -774,28 +819,41 @@ with pool:
 					</div>
 				</section>
 				<section>
+					<p>Vector notation:</p>
+					<p>
+						$$
+						\mathbf{z}_l = \mathbf{W}_{l-1}^T \mathbf{x}_{l-1} + \mathbf{b}_{l-1},
+						$$
+					</p>
+				</section>
+				<section>
 					<p>Formalization: nonlinear map/activation</p>
 					$$
-					x_j^l = a_j^l \left(\sum\limits_{i=1}^{N_{neu}^{l-1}} w_{ji}^{l-1} x_i^{l-1}\right) = a_j^l\left(
-					z_j^l(\mathbf{x}^{l-1}) \right)
-					$$
+  \mathbf{x}_l = a_l(\mathbf{z}_l) = a_l(\mathbf{W}_{l-1}^T\mathbf{x}_{l-1}+\mathbf{b}_{l-1}).
+$$
 					<div class="row_logo">
 						<div class="column_logo">
 							<div class="content_logo">
 								<ul>
-									<li>$a_j$ - activation function</li>
-									<li>$z_j$ - weighted sum</li>
+									<li>$a_l$ - activation function</li>
+									<li>$z_l$ - weighted sum</li>
 								</ul>
 							</div>
 						</div>
 						<div class="column_logo">
 							<div class="content_logo">
 								<ul>
-									<li>$j$ - neuron index in current layer $l$</li>
+									<li>$l$ - current layer$</li>
 								</ul>
 							</div>
 						</div>
 					</div>
+				</section>
+				<section>
+					<p>Example: network with two hidden layers</p>
+					$$
+  f_\theta(\mathbf{x}) = \mathbf{W}_2^T a_1(\mathbf{W}_1^T a_0(\mathbf{W}_0^T\mathbf{x} \mathbf{W}_0 + \mathbf{b}_0) + \mathbf{b}_1) + \mathbf{b}_2,
+$$
 				</section>
 				<section>
 					<p>Short reminder: function composition:</p>
@@ -808,13 +866,207 @@ with pool:
 				<section>
 					<p>Formalization: layer composition</p>
 					$$
-					\mathbf{a}^l = \left[ a_1^l, a_2^l,..., a_{N_{neu}}^l \right]
-					$$
-					$$
-					f_\mathbf{p}(\mathbf{x}) = \mathbf{a}^{N_L} \circ \mathbf{a}^{N_{L-1}} \circ \dots \circ
-					\mathbf{a}^1\left( \mathbf{x} \right)
-					$$
+  f_{\theta}(\mathbf{x}) = m_{N_L} \circ m_{N_{L-1}}\circ ... \circ m_0 (\mathbf{x}),
+$$
 					<p>$N_L$ - number of layers</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>Preparing the dataset</h3>
+				</section>
+				<section>
+					<pre class="python"><code>
+def reshape_data(u_x_norm, y_norm, Re) -> pt.Tensor:
+    data = pt.zeros((u_x_norm.shape[0]*u_x_norm.shape[1], 3))
+    for i in range(u_x_norm.shape[1]):
+        start, end = i*u_x_norm.shape[0], (i+1)*u_x_norm.shape[0]
+        data[start:end, 0] = u_x_norm[:, i]
+        data[start:end, 1] = y_norm
+        data[start:end, 2] = Re[i]
+    return data
+				</code></pre>
+				<p>Additional step: normalization!</p>
+				</section>
+				<section>
+					<p>Splitting the data</p>
+					<ul>
+						<li><b>training data:</b> optimization of model weights</li>
+						<li><b>validation data:</b> sanity check during training</li>
+						<li><b>testing data:</b> final performance evaluation</li>
+					</ul>
+				</section>
+				<section>
+					<p>Splitting the data</p>
+					<pre class="python"><code>
+n_Re = len(Re)
+probs = pt.ones(u_x.shape[-1])
+probs[0] = 0.0
+probs[-1] = 0.0
+train_size, val_size, test_size = 8, 3, 3
+test_idx = pt.multinomial(probs, test_size)
+probs[test_idx] = 0.0
+val_idx = pt.multinomial(probs, val_size)
+probs[val_idx] = 0.0
+train_idx = pt.multinomial(probs, train_size)
+train_idx = pt.cat((train_idx, pt.tensor([0, n_Re-1], dtype=pt.int64)))
+				</code></pre>
+				</section>
+				<section>
+					<p>The PyTorch dataloader</p>
+					<pre class="python"><code>
+	train_loader = pt.utils.data.DataLoader(train_dataset, batch_size=500, shuffle=True)
+	for features, labels in train_loader:
+		print(features.shape, labels.shape)
+	# expected output
+	torch.Size([500, 2]) torch.Size([500, 1])
+	torch.Size([500, 2]) torch.Size([500, 1])
+	...
+				</code></pre>
+				</section>
+			</section>
+		</section>
+			<section>
+				<section>
+					<h3>A generic training loop</h3>
+				</section>
+				<section>
+					<p>Mean squared error loss function:</p>
+					<p>
+						$$
+						L_2(\mathbf{\mathbf{\theta}}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s} \left( \mathbf{y}_i - f_{\mathbf{\theta}}(\mathbf{x}_i) \right)^2
+						$$
+					</p>
+					<p>Optimization problem:</p>
+					<p>
+						$$
+						\mathbf{\theta}^\ast = \underset{\mathbf{\theta}}{\mathrm{argmin}} L_2 (\mathbf{\theta})
+						$$
+					</p>
+				</section>
+				<section>
+					<p>Gradient decent update rule:</p>
+					<p>
+						$$
+						\mathbf{\theta}_{n+1} = \mathbf{\theta}_n - \lambda_0 \frac{\mathrm{d}L}{\mathrm{d}\mathbf{\theta}}
+						$$
+					</p>
+					<p>More complex update rule:</p>
+					<p>
+						$$
+						\mathbf{\theta}_{n+1} = \mathbf{\theta}_n - g\left(\lambda_0,\frac{\mathrm{d}L}{\mathrm{d}\mathbf{\theta}}\right)
+						$$
+					</p>
+					<p>$g$ - abstraction for momentum, learning rate adjustment, batch gradients, ...</p>
+				</section>
+				<section>
+					<p>Epoch - one loop over the entire (training) dataset</p>
+					<pre class="python"><code>
+def run_epoch(
+    model, optimizer, data_loader, loss_func, device,
+    # snip
+    ) -> float:
+    # snip
+    # loop over all batches
+    for features, labels in data_loader:
+        features, labels = features.to(device), labels.to(device)
+        pred = model(features)
+        loss = loss_func(labels, pred)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        running_loss.append(loss.item())
+    #snip
+				</code></pre>
+				</section>
+				<section>
+					<p>Model training and evaluation</p>
+					<pre class="python"><code>
+def train_model(...):
+    # snip
+    model.to(device)
+    for e in range(epochs):
+        # model update
+        model = model.train()
+        run_epoch(model, optimizer, train_loader, loss_func, device, ...)
+
+        # validation/testing dataset
+        model.eval()
+        ...
+        # learning rate update
+        lr_schedule.step()
+        ...
+				</code></pre>
+				</section>
+				<section>
+					<p>Saving checkpoints (part of train_model)</p>
+					<pre class="python"><code>
+if checkpoint_file is not None:
+    suffix = f"_epoch_{e}" if log_all else ""
+    pt.save(
+        {
+            "epoch" : e,
+            "model_state_dict" : model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "results" : results
+        }, checkpoint_file + suffix
+    )
+				</code></pre>
+				</section>
+				<section>
+					<p>Saving checkpoints (part of train_model)</p>
+					<pre class="python"><code>
+def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
+    layers = [
+        pt.nn.Linear(n_in, n_neurons),
+        activation()
+    ]
+    for _ in range(n_hidden):
+        layers.append(pt.nn.Linear(n_neurons, n_neurons))
+        layers.append(activation())
+    layers.append(pt.nn.Linear(n_neurons, n_out))
+    return pt.nn.Sequential(*layers)
+				</code></pre>
+				</section>
+				<section>
+					<img src="images/loss_lecture_4_model_0.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Training, validation and test loss - 2 hidden layers, ReLU activation.</p>
+				</section>
+				<section>
+					<img src="images/prediction_lecture_4_model_0.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Prediction - first attempt.</p>
+				</section>
+				<section>
+					<img src="images/loss_lecture_4_model_0_raw.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Influence of normalization on training performance.</p>
+				</section>
+				<section>
+					<img src="images/batch_size_lecture_4.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Influence of batch size on training performance.</p>
+				</section>
+				<section>
+					<img src="images/lr_bs128_lecture_4.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Influence of learning rate - batch size 128.</p>
+				</section>
+				<section>
+					<img src="images/lr_scheduler_bs128_lecture_4.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Comparison of learning rate schedulers - batch size 128.</p>
+				</section>
+				<section>
+					<img src="images/prediction_lecture_4_model_pl.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Model prediction with batch size 128 and learning rate scheduling.</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>More building blocks</h3>
 				</section>
 				<section>
 					<p>Attributes of good activation functions:</p>
@@ -828,235 +1080,123 @@ with pool:
 				</section>
 				<section>
 					<img src="images/activation_functions.svg" alt="activations"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Comparison of common activation functions.</p>
 				</section>
 				<section>
 					<img src="images/activation_slopes.svg" alt="activation_slopes"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Derivatives of common activation functions.</p>
 				</section>
 				<section>
-					<p>Neural network in Python/PyTorch</p>
-					<pre class="python"><code>
-class SimpleNN(pt.nn.Module):
-	def __init__(self, **kwargs):
-		super().__init__()
-		self.n_inputs = kwargs.get("n_inputs", 1)
-		self.n_outputs = kwargs.get("n_outputs", 1)
-		self.n_layers = kwargs.get("n_layers", 1)
-		self.n_neurons = kwargs.get("n_neurons", 10)
-		self.activation = kwargs.get("activation", pt.sigmoid)
-		self.layers = pt.nn.ModuleList()
-		# input layer to first hidden layer
-		self.layers.append(pt.nn.Linear(self.n_inputs, self.n_neurons))
-		# add more hidden layers if specified
-		if self.n_layers > 1:
-			for hidden in range(self.n_layers-1):
-				self.layers.append(pt.nn.Linear(
-					self.n_neurons, self.n_neurons))
-		# last hidden layer to output layer
-		self.layers.append(pt.nn.Linear(self.n_neurons, self.n_outputs))
-
-	def forward(self, x):
-		for i_layer in range(len(self.layers)-1):
-			x = self.activation(self.layers[i_layer](x))
-		return self.layers[-1](x)
-							</code></pre>
-				</section>
-				<section>
-					<h3>Example problem</h3>
-					<ul>
-						<li>1D setup for computing channel flow (exercise)</li>
-						<li>15 simulations with varying inlet velocity $\bar{U}$</li>
-						<li>$\delta$ - halt channel height; $\nu$ - kinematic viscosity</li>
-						<li>Reynolds number $Re = 2\bar{U}\delta/\nu$</li>
-						<li>data: streamwise velocity component $U_x$ for varying distances normal to wall $y$</li>
-					</ul>
-					<p>Goal: model for streamwise velocity</p>
-					$$
-					U_{x} = f_{\mathbf{p}}(y, Re)
-					$$
-				</section>
-				<section>
-					<p>What are the features?</p>
-				</section>
-				<section>
-					<p>What are the labels?</p>
-				</section>
-				<section>
-					<h3>Preparing the data</h3>
-				</section>
-				<section>
-					<img src="images/developed_1d_profile.svg" alt="profiles"
+					<img src="images/activations_plateau_bs128_lecture_4.svg" alt="activation_slopes"
 						style="background:none; border:none; box-shadow:none; width: 70%">
-					<p>Fully developed velocity profiles for different Reynolds numbers.</p>
+					<p>Training/validation loss for different activation functions; batch size 128; plateau-based learning rate adjustment.</p>
 				</section>
 				<section>
-					<p>Validation using Spalding's function</p>
-					$$
-					u_\tau = \sqrt{\nu \partial_y U_x/\rho},\quad y^+ = yu_\tau/\nu,\quad u^+=U_x/u_\tau
-					$$
-					$$
-					y^+= u^+ + \left[e^{u^+\kappa} -1 - u^+\kappa (1+u^+\kappa/2) - (u^+\kappa)^3/6\right]/E
-					$$
-					<p>$\kappa$, $E$ - constants</p>
+					<img src="images/prediction_act_lecture_4.svg" alt="activation_slopes"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Prediction of trained model with $\mathrm{tanh}$ activation.</p>
 				</section>
 				<section>
-					<img src="images/1d_profile_inner.svg" alt="inner_coord"
-						style="background:none; border:none; box-shadow:none; width: 80%">
-					<p>Velocity profiles depicted in inner coordinates.</p>
-				</section>
-				<section>
-					<p>Splitting the data</p>
+					<p>Normalization of layer $l$:</p>
+					<p>
+						$$
+						  \mathbf{x}_l\leftarrow \frac{\mathbf{x}_l - \mathbf{\mu}_l}{\mathbf{\sigma}_l} \mathbf{\gamma}_l + \mathbf{\beta}_l
+						$$
+					</p>
 					<ul>
-						<li><b>training data:</b> optimization of model weights</li>
-						<li><b>validation data:</b> sanity check during training</li>
-						<li><b>testing data:</b> final performance evaluation</li>
+						<li><b>batch:</b> mean etc. across batch</li>
+						<li><b>layer:</b> mean etc. across layer</li>
 					</ul>
 				</section>
 				<section>
-					<p>Splitting the data</p>
-					<pre class="python"><code>
-probs = pt.ones(Ux.shape[-1])
-test_idx = pt.multinomial(probs, 2)
-probs[test_idx] = 0.0
-val_idx = pt.multinomial(probs, 2)
-probs[val_idx] = 0.0
-train_idx = pt.multinomial(probs, probs.shape[0]-4)
-test_Ux = Ux[:, test_idx]
-val_Ux = Ux[:, val_idx]
-train_Ux = Ux[:, train_idx]
-							</code></pre>
-				</section>
-				<section>
-					<p>Reshaping the data</p>
-					<pre class="python"><code>
-def reshape_data(Ux, y, Re):
-    assert Ux.shape[1] == Re.shape[0]
-    assert Ux.shape[0] == y.shape[0]
-    data = pt.zeros((Ux.shape[0]*Ux.shape[1], 3))
-    for i in range(Ux.shape[1]):
-        start, end = i*Ux.shape[0], (i+1)*Ux.shape[0]
-        data[start:end, 0] = Ux[:, i]
-        data[start:end, 1] = y
-        data[start:end, 2] = Re[i]
-    return data
-							</code></pre>
-				</section>
-
-				<section>
-					<p>Normalizing the data</p>
-					<pre class="python"><code>
-class MinMaxScaler(object):
-    def __init__(self):
-        self.min = None
-        self.max = None
-        self.trained = False
-
-    def fit(self, data):
-        self.min = data.min(dim=0).values
-        self.max = data.max(dim=0).values
-        self.trained = True
-
-    def scale(self, data):
-        assert self.trained
-        assert len(data.shape) == 2
-        data_norm = (data - self.min) / (self.max - self.min)
-        return 2.0*data_norm - 1.0
-
-    def rescale(self, data_norm):
-        assert self.trained
-        assert len(data_norm.shape) == 2
-        data = (data_norm + 1.0) * 0.5
-        return data * (self.max - self.min) + self.min
-
-scaler = MinMaxScaler()
-scaler.fit(train_data)
-train_data_norm = scaler.scale(train_data)
-val_data_norm = scaler.scale(val_data)
-test_data_norm = scaler.scale(test_data)
-assert pt.isclose(train_data_norm.min(), pt.tensor(-1.0))
-assert pt.isclose(train_data_norm.max(), pt.tensor(1.0))
-assert pt.allclose(train_data, scaler.rescale(train_data_norm))
-							</code></pre>
-				</section>
-				<section>
-					<h3>Optimizing the weights</h3>
-					<p>Mean squared error loss function:</p>
-					$$
-					L(\mathbf{p}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s}\left(U_{x,i} - U_x(\mathbf{x}_i)\right)^2
-					$$
-				</section>
-				<section>
-					<pre class="python"><code>
-def optimize_model(model, x_train, y_train, x_val, y_val,
-                   epochs=1000, lr=0.001, save_best=""):
-    criterion = pt.nn.MSELoss()
-    optimizer = pt.optim.Adam(params=model.parameters(), lr=lr)
-    best_val_loss, best_train_loss = 1.0e5, 1.0e5
-    train_loss, val_loss = [], []
-    for e in range(1, epochs+1):
-        optimizer.zero_grad()
-        prediction = model(x_train).squeeze()
-        loss = criterion(prediction, y_train)
-        loss.backward()
-        optimizer.step()
-        train_loss.append(loss.item())
-        with pt.no_grad():
-            prediction = model(x_val).squeeze()
-            loss = criterion(prediction, y_val)
-            val_loss.append(loss.item())
-        # snip
-    return train_loss, val_loss
-							</code></pre>
-				</section>
-				<section>
-					<p>Putting it all together</p>
-					<pre class="python"><code>
-save_model_in = f"{output}/first_training/"
-model_params = {
-    "n_inputs": 2,
-    "n_outputs": 1,
-    "n_layers": 2,
-    "n_neurons": 40,
-    "activation": pt.nn.SELU()
-}
-model = SimpleNN(**model_params)
-train_loss, val_loss = optimize_model(
-    model,
-    train_data_norm[:, 1:], 
-    train_data_norm[:, 0],
-    val_data_norm[:, 1:],
-    val_data_norm[:, 0],
-    10000, save_best=save_model_in
+					<p>Batch normalization</p>
+					<pre class="python"><code data-line-numbers="5">
+simple_network = pt.nn.Sequential(
+    pt.nn.Linear(n_in, n_neurons),
+    pt.nn.ReLU(),
+    pt.nn.BatchNorm1d(n_neurons)
+    pt.nn.Linear(n_neurons, n_neurons),
+    # snip
 )
-							</code></pre>
+				</code></pre>
 				</section>
 				<section>
-					<img src="images/train_val_loss.svg" alt="loss"
-						style="background:none; border:none; box-shadow:none; width: 80%">
-					<p>Training and validation loss vs. optimization epochs.</p>
+					<p>Layer normalization</p>
+					<pre class="python"><code data-line-numbers="5">
+simple_network = pt.nn.Sequential(
+    pt.nn.Linear(n_in, n_neurons),
+    pt.nn.ReLU(),
+    pt.nn.LayerNorm([n_neurons])
+    pt.nn.Linear(n_neurons, n_neurons),
+    # snip
+)
+				</code></pre>
 				</section>
 				<section>
-					<p>Dealing with oscillating loss values</p>
+					<p>Skip connections</p>
 					<pre class="python"><code>
-if train_loss[-1] < best_train_loss:
-    pt.save(model.state_dict(), f"{save_best}best_model_train.pt")
-    best_train_loss = train_loss[-1]
-if val_loss[-1] < best_val_loss:
-    pt.save(model.state_dict(), f"{save_best}best_model_val.pt")
-    best_val_loss = val_loss[-1]
-							</code></pre>
+class SkipBlock(pt.nn.Module):
+    def __init__(self, n_in, n_out, activation):
+        super(SkipBlock, self).__init__()
+        self._layer_1 = pt.nn.Linear(n_in, n_in)
+        self._layer_2 = pt.nn.Linear(2*n_in, n_out)
+        self._activation = activation()
+
+    def forward(self, x):
+        h = self._activation(self._layer_1(x))
+        x = pt.cat([x, h], dim=1)
+        return self._activation(self._layer_2(x))
+				</code></pre>
 				</section>
 				<section>
-					<img src="images/profile_pred_vs_org.svg" alt="prediction"
-						style="background:none; border:none; box-shadow:none; width: 80%">
-					<p>Velocity profile predictions vs. numerical data.</p>
+					<p>Network with skip connections</p>
+					<pre class="python"><code>
+skip_network = pt.nn.Sequential(
+    SkipBlock(n_in, n_neurons, pt.nn.Tanh),
+    SkipBlock(n_neurons, n_neurons, pt.nn.Tanh),
+    pt.nn.Linear(n_neurons, n_out)
+)
+				</code></pre>
 				</section>
+				<section>
+					<p>Residual blocks</p>
+					<pre class="python"><code>
+class ResidualBlock(pt.nn.Module):
+    def __init__(self, n_in, n_out, activation):
+        super(ResidualBlock, self).__init__()
+        self.F = pt.nn.Sequential(
+			pt.nn.Linear(n_in, n_out),
+			activation()
+		)
+
+    def forward(self, x):
+        return x + self.F(x)
+				</code></pre>
+				</section>
+				<section>
+					<img src="images/adv_networks_lecture_4.svg" alt="activation_slopes"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Comparison of network architectures; note that the number of weights varies between the architectures.</p>
+				</section>
+			</section>
+			<section>
 				<section>
 					<h3>Dealing with uncertainty</h3>
-					<p>What do you do in a real experiment to deal with uncertainty?</p>
+				</section>
+				<section>
+					<p>How do we deal with uncertainty in experiments?</p>
+				</section>
+				<section>
+					<p>Making results repeatable:</p>
+					<pre class="python"><code>
+n_repeat = 10
+for i in range(n_repeat):
+    pt.manual_seed(i)
+    for key, model in generate_advanced_models().items():
+        # train and evaluate model
+				</code></pre>
 				</section>
 				<section>
 					<p>Quantiles:</p>
@@ -1083,46 +1223,36 @@ if val_loss[-1] < best_val_loss:
 				<section>
 					<p>Information in boxplots:</p>
 					<ul>
-						<li>$q_{25}$, $q_{50}$, $q_{75}$</li>
-						<li>inter quantile range (IQR) $q_{75}-q_{25}$</li>
-						<li>lowest/largest values in IQR</li>
-						<li>outliers (not in IQR)</li>
+						<li>$q_{25}$, $q_{50}$, $q_{75}$ (box)</li>
+						<li>inter quantile range (IQR): $k(q_{75}-q_{25})$</li>
+						<li>lowest/largest values in IQR (whiskers)</li>
+						<li>outliers (markers)</li>
 					</ul>
 				</section>
 				<section>
-					<img src="images/profile_activations.svg" alt="activations"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/uncertainty_arch_lecture_4.svg" alt="activations"
+						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Boxplots comparing different activation functions.</p>
 				</section>
-				<section>
-					<img src="images/profile_layers.svg" alt="layers"
-						style="background:none; border:none; box-shadow:none; width: 80%">
-					<p>Boxplots showing the effect of additional hidden layers.</p>
-				</section>
+			</section>
+			<section>
 				<section>
 					<h3>Visualizing prediction errors</h3>
 				</section>
 				<section>
+					<img src="images/final_prediction_lecture_4_model_pl.svg" alt="histogram"
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Final model prediction compared against true velocity profiles.</p>
+				</section>
+				<section>
 					<img src="images/profile_error_hist.svg" alt="histogram"
-						style="background:none; border:none; box-shadow:none; width: 80%">
-					<p>Prediction errors depicted as histogram.</p>
+						style="background:none; border:none; box-shadow:none; width: 70%">
+					<p>Difference between predicted and true label depicted as histogram.</p>
 				</section>
 				<section>
 					<img src="images/profile_error_heatmap.svg" alt="heatmap"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Maximum prediction errors in discrete subsections of the feature space.</p>
-				</section>
-				<section>
-					<h3>Outlook</h3>
-					<p>Things we did not cover today:</p>
-					<ul>
-						<li>batch training</li>
-						<li>batch normalization</li>
-						<li>training on GPU/TPU</li>
-						<li>model composition</li>
-						<li>hyperparameter tuning</li>
-						<li>...</li>
-					</ul>
 				</section>
 			</section>
 		</div>
