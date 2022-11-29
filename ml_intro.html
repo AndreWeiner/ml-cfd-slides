@@ -754,23 +754,23 @@ with pool:
 				<section>
 					<p>Feature vector:</p>
 					<p>
-						$$ \mathrm{x} = \left[x_{1}, x_{2}, ..., x_{N_f}\right]^T $$
-						$\mathrm{x}$ - column vector of length $N_f$
+						$$ \mathbf{x} = \left[x_{1}, x_{2}, ..., x_{N_f}\right]^T $$
+						$\mathbf{x}$ - column vector of length $N_f$
 					</p>
 					<p>
-						$$ \mathrm{X} = \left[\mathrm{x}_{1}, \mathrm{x}_{2}, ..., \mathrm{x}_{N_s}\right] $$
-						$\mathrm{X}$ - matrix with $N_s$ rows and $N_f$ columns
+						$$ \mathbf{X} = \left[\mathbf{x}_{1}, \mathbf{x}_{2}, ..., \mathbf{x}_{N_s}\right] $$
+						$\mathbf{X}$ - matrix with $N_s$ rows and $N_f$ columns
 					</p>
 				</section>
 				<section>
 					<p>Label vector:</p>
 					<p>
-						$$ \mathrm{y} = \left[y_{1}, y_{2}, ..., y_{N_l}\right]^T $$
-						$\mathrm{y}$ - column vector of length $N_l$
+						$$ \mathbf{y} = \left[y_{1}, y_{2}, ..., y_{N_l}\right]^T $$
+						$\mathbf{y}$ - column vector of length $N_l$
 					</p>
 					<p>
-						$$ \mathrm{Y} = \left[\mathrm{y}_{1}, \mathrm{y}_{2}, ..., \mathrm{y}_{N_s}\right] $$
-						$\mathrm{Y}$ - matrix with $N_s$ rows and $N_l$ columns
+						$$ \mathbf{Y} = \left[\mathbf{y}_{1}, \mathbf{y}_{2}, ..., \mathbf{y}_{N_s}\right] $$
+						$\mathbf{Y}$ - matrix with $N_s$ rows and $N_l$ columns
 					</p>
 				</section>
 				<section>
@@ -836,14 +836,14 @@ $$
 							<div class="content_logo">
 								<ul>
 									<li>$a_l$ - activation function</li>
-									<li>$z_l$ - weighted sum</li>
+									<li>$\mathbf{z}_l$ - weighted sum</li>
 								</ul>
 							</div>
 						</div>
 						<div class="column_logo">
 							<div class="content_logo">
 								<ul>
-									<li>$l$ - current layer$</li>
+									<li>$l$ - current layer</li>
 								</ul>
 							</div>
 						</div>
@@ -852,7 +852,7 @@ $$
 				<section>
 					<p>Example: network with two hidden layers</p>
 					$$
-  f_\theta(\mathbf{x}) = \mathbf{W}_2^T a_1(\mathbf{W}_1^T a_0(\mathbf{W}_0^T\mathbf{x} \mathbf{W}_0 + \mathbf{b}_0) + \mathbf{b}_1) + \mathbf{b}_2,
+  f_\theta(\mathbf{x}) = \mathbf{W}_2^T a_1(\mathbf{W}_1^T a_0(\mathbf{W}_0^T\mathbf{x} + \mathbf{b}_0) + \mathbf{b}_1) + \mathbf{b}_2,
 $$
 				</section>
 				<section>
@@ -934,7 +934,7 @@ train_idx = pt.cat((train_idx, pt.tensor([0, n_Re-1], dtype=pt.int64)))
 					<p>Mean squared error loss function:</p>
 					<p>
 						$$
-						L_2(\mathbf{\mathbf{\theta}}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s} \left( \mathbf{y}_i - f_{\mathbf{\theta}}(\mathbf{x}_i) \right)^2
+						L_2(\mathbf{\theta}) = \frac{1}{N_s}\sum\limits_{i=1}^{N_s} \left( \mathbf{y}_i - f_{\mathbf{\theta}}(\mathbf{x}_i) \right)^2
 						$$
 					</p>
 					<p>Optimization problem:</p>
@@ -1014,7 +1014,7 @@ if checkpoint_file is not None:
 				</code></pre>
 				</section>
 				<section>
-					<p>Saving checkpoints (part of train_model)</p>
+					<p>Function to create network with multiple fully-connected layers</p>
 					<pre class="python"><code>
 def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
     layers = [
