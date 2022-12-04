@@ -755,10 +755,10 @@ class LogisticRegression(object):
 					<p>What does the label vector look like if we have 4 classes and the true label is class 3 / regime
 						3 (start counting from 1)?</p>
 					<ol>
-						<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 0, 0, 1, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 1, 0, 1, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathrm{y}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
+						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
+						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0, 1, 0 \right]^T$</li>
+						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 1, 0, 1, 0 \right]^T$</li>
+						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
 					</ol>
 				</section>
 				<section>
@@ -772,14 +772,14 @@ class LogisticRegression(object):
 					</p>
 				</section>
 				<section>
-					<p>What is a likely/possible prediction if the true class is 2 (start counting from 1)?</p>
+					<p>What is a likely/possible prediction if the true class is 3 (start counting from 1)?</p>
 					<ol>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0.1, 0, 0.9, 0.1 \right]^T$
+						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 0.1, 0, 0.9, 0.1 \right]^T$
 						</li>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0.02, 0.95, 0.03 \right]^T$
+						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
+						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 0, 0.02, 0.95, 0.03 \right]^T$
 						</li>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
+						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
 					</ol>
 				</section>
 				<section>
