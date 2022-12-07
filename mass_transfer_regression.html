@@ -1,30 +1,33 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+<head>
+	<meta charset="utf-8">
 
-		<title>Machine learning in computational fluid dynamics</title>
+	<title>Machine learning in computational fluid dynamics</title>
 
-		<meta name="description" content="Machine learning in computational fluid dynamics">
-		<meta name="author" content="Andre Weiner">
+	<meta name="description" content="Machine learning in computational fluid dynamics">
+	<meta name="author" content="Andre Weiner">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="plugin/chalkboard/style.css">
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
 
 
-	<style>
-		.reveal .slide-number {
+<style>
+	.reveal .slide-number {
 		position: absolute;
 		display: block;
 		left: 8px;
@@ -38,524 +41,573 @@
 		color: #000000;
 		background-color: rgba(0, 0, 0, 0);
 		padding: 5px;
-		}
-		.row_img {
-				display: table;
-			}
-			.column_img {
-				display: table-cell;
-				vertical-align: middle;
-				text-align: center;
-				width: 50%;
-			}
-			.content_img {
-				display: inline-block;
-			}
-	</style>
+	}
 
-	<body>
+	.row_img {
+		display: table;
+	}
 
-		<div class="reveal">
+	.column_img {
+		display: table-cell;
+		vertical-align: middle;
+		text-align: center;
+		width: 50%;
+	}
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 7 & 8</span></h3>
-					<p>
-						Andre Weiner<br>
-						<small>TU Braunschweig, <a
-								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
+	.content_img {
+		display: inline-block;
+	}
+</style>
+
+<body>
+
+	<div class="reveal">
+
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+			<section>
+				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 7 & 8</span>
+				</h3>
+				<p>
+					Andre Weiner<br>
+					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
+						Control Group</small>
 					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+								alt="Creative Commons License" style="border-width:0"
+								src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
+						of the linked resources are licensed under a<br /> <a rel="license"
+							href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+							International License</a>.
 					</small>
-					</p>
-	
-					<style>
-						.row_logo {
-							display: table;
-						}
-	
-						.column_logo {
-							display: table-cell;
-							vertical-align: middle;
-							text-align: center;
-							width: 50%;
-						}
-	
-						.content_logo {
-							display: inline-block;
-						}
-					</style>
-					<div class="row_logo">
-						<div class="column_logo">
-							<div class="content_logo">
-								<img src="images/tubs_logo.png" alt="tubs_logo"
+				</p>
+
+				<style>
+					.row_logo {
+						display: table;
+					}
+
+					.column_logo {
+						display: table-cell;
+						vertical-align: middle;
+						text-align: center;
+						width: 50%;
+					}
+
+					.content_logo {
+						display: inline-block;
+					}
+				</style>
+				<div class="row_logo">
+					<div class="column_logo">
+						<div class="content_logo">
+							<img src="images/tubs_logo.png" alt="tubs_logo"
+								style="background:none; border:none; box-shadow:none;">
+						</div>
+					</div>
+					<div class="column_logo">
+						<div class="content_logo">
+							<table>
+								<tr>
+									<td style="border: 0; padding-right: 5px;">&#9993;</th>
+									<td style="border: 0; padding-right: 20px;"><a
+											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+									<td style="border: 0; padding-right: 5px;">&#9741;</td>
+									<td style="border: 0; padding-right: 0px;"><a
+											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
+								</tr>
+								<tr>
+									<td style="border: 0; padding-right: 5px;">&#9997;</td>
+									<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
+									</td>
+									<td style="border: 0; padding-right: 5px;">&#10026;</td>
+									<td style="border: 0; padding-right: 0px;"><a
+											href="https://github.com/AndreWeiner">Github</a></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+
+			<section>
+				<h2>Last lecture</h2>
+				<p>Predicting the stability regime of rising bubbles</p>
+				<ul>
+					<li>Motivation</li>
+					<li>Forces acting on rising bubbles</li>
+					<li>Loading, inspecting, and preparing the data</li>
+					<li>Binary classification</li>
+					<li>Multi-class classification</li>
+				</ul>
+			</section>
+			<section>
+				<h2>Outline</h2>
+				<p>Computing highly accurate mass transfer at rising bubbles</p>
+				<ul>
+					<li>The high Schmidt number problem</li>
+					<li>Decoupling two-phase flow and species transport</li>
+					<hr>
+					<li>Data processing and visualization</li>
+					<li>Creating models for deformation and velocity</li>
+					<li>Single-phase simulations with mass transfer</li>
+					<li>Analyzing the results</li>
+				</ul>
+			</section>
+
+			<section>
+				<h3>Applying ML in CFD (or any other field) requires <span style="color: red;">domain knowledge</span>
+				</h3>
+			</section>
+
+			<section>
+				<section>
+					<h2>High Schmidt number problem</h2>
+				</section>
+				<section>
+					<h3>Gas-liquid reactors</h3>
+					<div class=row_img>
+						<div class=column_img style="width:20%">
+							<div class=content_img>
+								<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400"
 									style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>
+										<b>micro reactor</b><br>
+										size: millimeter<br>
+										source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
+									</small>
+								</p>
 							</div>
 						</div>
-						<div class="column_logo">
-							<div class="content_logo">
-								<table>
-									<tr>
-										<td style="border: 0; padding-right: 5px;">&#9993;</th>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
-										<td style="border: 0; padding-right: 5px;">&#9741;</td>
-										<td style="border: 0; padding-right: 0px;"><a
-												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
-									</tr>
-									<tr>
-										<td style="border: 0; padding-right: 5px;">&#9997;</td>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="https://ml-cfd.com/">Blog</a></td>
-										<td style="border: 0; padding-right: 5px;">&#10026;</td>
-										<td style="border: 0; padding-right: 0px;"><a
-												href="https://github.com/AndreWeiner">Github</a></td>
-									</tr>
-								</table>
+						<div class=column_img style="width:35%">
+							<p>
+								<b>prediction</b> of
+							</p>
+							<ul>
+								<li>mass transfer</li>
+								<li>enhancement</li>
+								<li>mixing</li>
+								<li>conversion</li>
+								<li>selectivity</li>
+								<li>yield</li>
+								<li>...</li>
+							</ul>
+						</div>
+						<div class=column_img style="width:25%">
+							<div class=content_img>
+								<img src="images/eni_fischer_tropsch.png" alt="bubble_column" height="400"
+									style="background:none; border:none; box-shadow:none;">
+								<p>
+									<small>
+										<b>bubble column reactor</b><br>
+										size: meter<br>
+										source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M.
+											Raimundo, ENI</a>
+									</small>
+								</p>
 							</div>
 						</div>
 					</div>
 				</section>
-
-
 				<section>
-					<h2>Last lecture</h2>
-					<p>Predicting the stability regime of rising bubbles</p>
+					<img src="images/kueck_bl_bubble.png" alt="bl" width="100%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Source: <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/cite.200900034">U. D. Kück et
+							al. 2009</a></p>
+				</section>
+				<section>
+					<img src="images/g14168.png" alt="scale" width="100%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>The bigger picture: scale-up strategy.</p>
+				</section>
+				<section>
+					<h3>Reynolds number</h3>
+					<p>
+						$$ Re = \frac{\text{inertia force}}{\text{viscous force}} = \frac{d_b U_b}{\nu_l} $$
+					</p>
+					<p>$d_b$ - sphere-equivalent bubble diameter, $U_b$ - bubble speed (terminal velocity), $\nu_l$ -
+						kinematic liquid viscosity</p>
+				</section>
+				<section>
+					<h3>Schmidt number</h3>
+					<p>
+						$$ Sc = \frac{\text{diffusive trans. of momentum}}{\text{diffusive trans. of species}} =
+						\frac{\nu_l}{D_l} $$
+					</p>
+					<p>$D_l$ - molecular diffusivity of species dissolved in liquid, $\nu_l$ - kinematic liquid
+						viscosity</p>
+				</section>
+				<section>
+					<h3>Péclet number</h3>
+					<p>
+						$$ Pe = \frac{\text{convective trans. of species}}{\text{diffusive trans. of species}} =
+						\frac{d_bU_b}{D_l} = ReSc $$
+					</p>
+					<p>$\rightarrow$ determines boundary layer thickness</p>
+				</section>
+				<section>
+					<p>
+						specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - rise velocity?
+					</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">$U_b\approx 0.025 m/s$</li>
+						<li style="list-style-type: upper-latin;">$U_b\approx 0.25 m/s$</li>
+						<li style="list-style-type: upper-latin;">$U_b\approx 2.5 m/s$</li>
+						<li style="list-style-type: upper-latin;">$U_b\approx 25 m/s$</li>
+					</ol>
+				</section>
+				<section>
+					<img src="images/ub_vs_db_water.png" alt="bl" width="100%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Rise velocity of air bubbles in water.</p>
+				</section>
+				<section>
+					<p>
+						specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - kinematic viscosity
+						water?
+					</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-3} m^2/s$</li>
+						<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-4} m^2/s$</li>
+						<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-5} m^2/s$</li>
+						<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-6} m^2/s$</li>
+					</ol>
+				</section>
+				<section>
+					<p>
+						specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - molecular diffusivity
+						oxygen in water?
+					</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-7} m^2/s$</li>
+						<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-8} m^2/s$</li>
+						<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-9} m^2/s$</li>
+						<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-10} m^2/s$</li>
+					</ol>
+				</section>
+				<section>
+					<p>Estimating the velocity boundary layer's thickness:</p>
+					<p>
+						$$ Re = \frac{d_b U_b}{\nu_l} = \frac{0.25\times 10^{-3}}{10^{-6}} = 250 $$
+					</p>
+					<p>
+						$$ \frac{d_b}{\delta_h} \approx \sqrt{2Re} \approx 22 \rightarrow \delta_h\approx 45\mu m$$
+					</p>
+					<p>Reference: <a href="https://tuprints.ulb.tu-darmstadt.de/11405/">A. Weiner 2019</a>, p. 3, table
+						1.</p>
+				</section>
+				<section>
+					<p>Estimating the species boundary layer's thickness:</p>
+					<p>
+						$$ Sc = \frac{\nu_l}{D_{O_2}} = \frac{10^{-6}}{2\times 10^{-9}} = 500 $$
+					</p>
+					<p>
+						$$ \frac{\delta_h}{\delta_c} \approx \frac{1}{\sqrt{Sc}} \sqrt{\pi/2} \approx 18 \rightarrow
+						\delta_c\approx 2.5\mu m$$
+					</p>
+					<p>Reference: <a
+							href="https://www.researchgate.net/profile/Andre-Weiner/publication/318124144_Advanced_subgrid-scale_modeling_for_convection-dominated_species_transport_at_fluid_interfaces_with_application_to_mass_transfer_from_rising_bubbles/links/5bea90af92851c6b27ba6b54/Advanced-subgrid-scale-modeling-for-convection-dominated-species-transport-at-fluid-interfaces-with-application-to-mass-transfer-from-rising-bubbles.pdf">A.
+							Weiner et al. 2017</a>, p. 3.</p>
+				</section>
+				<section>
+					<p>
+						Summing up:
+					</p>
 					<ul>
-						<li>Motivation</li>
-						<li>Forces acting on rising bubbles</li>
-						<li>Loading, inspecting, and preparing the data</li>
-						<li>Binary classification</li>
-						<li>Multi-class classification</li>
+						<li>
+							$Pe = Sc\ Re = \nu_l / D_{O_2} \cdot U_b d_b/\nu_l \approx 10^5 $
+						</li>
+						<li>
+							$$ Re\approx 250;\quad \delta_h/d_b \propto Re^{-1/2};\quad\delta_h\approx 45~\mu m $$
+						</li>
+						<li>
+							$$ Sc\approx 500;\quad \delta_c/\delta_h \propto Sc^{-1/2};\quad\delta_c\approx 2.5~\mu m $$
+						</li>
 					</ul>
+					<p>
+						$\delta_h/\delta_c$ typically <b style="color:red;">10 ... 100</b>
+					</p>
+					<p>
+						feasible simulations up to $Pe\approx 1000$ (3D, HPC)
+					</p>
 				</section>
 				<section>
-					<h2>Outline</h2>
-					<p>Computing highly accurate mass transfer at rising bubbles</p>
+					<p>Practical solution to overcome the high Schmidt/Péclet number problem:<br> <b>boundary layer
+							models</b></p>
 					<ul>
-						<li>The high Schmidt number problem</li>
-						<li>Decoupling two-phase flow and species transport</li>
-						<hr>
-						<li>Data processing and visualization</li>
-						<li>Creating models for deformation and velocity</li>
-						<li>Single-phase simulations with mass transfer</li>
-						<li>Analyzing the results</li>
+						<li>solve simplified boundary layer substitute problem</li>
+						<li>fit substitute solution locally in interface cells</li>
+						<li>correct simulation based on reconstructed profile</li>
 					</ul>
+					<p>Data-driven solutions possible, <a
+							href="https://tuprints.ulb.tu-darmstadt.de/11405/">reference</a>.</p>
 				</section>
-
 				<section>
-					<h3>Applying ML in CFD (or any other field) requires <span style="color: red;">domain knowledge</span></h3>
+					<video width="100%" controls mute autoplay loop>
+						<source src="videos/local_marangoni_forces.mp4">
+					</video>
+					<p>Source: <a
+							href="https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/computational-analysis-of-single-rising-bubbles-influenced-by-soluble-surfactant/74FFCE053782E4E0901EFD77CDAF4518">C.
+							Pesci et al. 2018</a></p>
 				</section>
-
 				<section>
-					<section>
-						<h2>High Schmidt number problem</h2>
-					</section>
-					<section>
-						<h3>Gas-liquid reactors</h3>
-						<div class=row_img>
-							<div class=column_img style="width:20%">
-								<div class=content_img>
-									<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400" style="background:none; border:none; box-shadow:none;">
-									<p>
-										<small>
-												<b>micro reactor</b><br>
-												size: millimeter<br>
-												source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
-										</small>
-									</p>
-								</div>
-							</div>
-							<div class=column_img style="width:35%">
-								<p>
-									<b>prediction</b> of
-								</p>
-									<ul>
-										<li>mass transfer</li>
-										<li>enhancement</li>
-										<li>mixing</li>
-										<li>conversion</li>
-										<li>selectivity</li>
-										<li>yield</li>
-										<li>...</li>
-									</ul>
-							</div>
-							<div class=column_img style="width:25%">
-								<div class=content_img>
-									<img src="images/eni_fischer_tropsch.png" alt="bubble_column" height="400" style="background:none; border:none; box-shadow:none;">
-									<p>
-										<small>
-											<b>bubble column reactor</b><br>
-											size: meter<br>
-											source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M. Raimundo, ENI</a>
-										</small>
-									</p>
-								</div>
-							</div>
+					<div class=row_img style="width:100%">
+						<div class=column_img style="width:45%">
+							<small>Experiment vs. Simulation</small>
+							<img src="images/experiment_vs_simulation_crop.png" alt="oxygen_wake" width="60%"
+								style="background:none; border:none; box-shadow:none;">
 						</div>
-					</section>
-					<section>
-						<img src="images/kueck_bl_bubble.png" alt="bl" width="100%"
-							style="background:none; border:none; box-shadow:none;">
-						<p>Source: <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/cite.200900034">U. D. Kück et al. 2009</a></p>
-					</section>
-					<section>
-						<img src="images/g14168.png" alt="scale" width="100%"
-							style="background:none; border:none; box-shadow:none;">
-						<p>The bigger picture: scale-up strategy.</p>
-					</section>
-					<section>
-						<h3>Reynolds number</h3>
-						<p>
-							$$ Re = \frac{\text{inertia force}}{\text{viscous force}} = \frac{d_b U_b}{\nu_l} $$
-						</p>
-						<p>$d_b$ - sphere-equivalent bubble diameter, $U_b$ - bubble speed (terminal velocity), $\nu_l$ - kinematic liquid viscosity</p>
-					</section>
-					<section>
-						<h3>Schmidt number</h3>
-						<p>
-							$$ Sc = \frac{\text{diffusive trans. of momentum}}{\text{diffusive trans. of species}} = \frac{\nu_l}{D_l} $$
-						</p>
-						<p>$D_l$ - molecular diffusivity of species dissolved in liquid, $\nu_l$ - kinematic liquid viscosity</p>
-					</section>
-					<section>
-						<h3>Péclet number</h3>
-						<p>
-							$$ Pe = \frac{\text{convective trans. of species}}{\text{diffusive trans. of species}} = \frac{d_bU_b}{D_l} = ReSc $$
-						</p>
-						<p>$\rightarrow$ determines boundary layer thickness</p>
-					</section>
-					<section>
-						<p>
-							specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - rise velocity?
-						</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">$U_b\approx 0.025 m/s$</li>
-							<li style="list-style-type: upper-latin;">$U_b\approx 0.25 m/s$</li>
-							<li style="list-style-type: upper-latin;">$U_b\approx 2.5 m/s$</li>
-							<li style="list-style-type: upper-latin;">$U_b\approx 25 m/s$</li>
-						</ol>
-					</section>
-					<section>
-						<img src="images/ub_vs_db_water.png" alt="bl" width="100%"
-							style="background:none; border:none; box-shadow:none;">
-						<p>Rise velocity of air bubbles in water.</p>
-					</section>
-					<section>
-						<p>
-							specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - kinematic viscosity water?
-						</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-3} m^2/s$</li>
-							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-4} m^2/s$</li>
-							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-5} m^2/s$</li>
-							<li style="list-style-type: upper-latin;">$\nu_l\approx 10^{-6} m^2/s$</li>
-						</ol>
-					</section>
-					<section>
-						<p>
-							specimen calculation $d_b=1~mm$ pure water/oxygen at room temperature - molecular diffusivity oxygen in water?
-						</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-7} m^2/s$</li>
-							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-8} m^2/s$</li>
-							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-9} m^2/s$</li>
-							<li style="list-style-type: upper-latin;">$D_{O_2}\approx 2\times 10^{-10} m^2/s$</li>
-						</ol>
-					</section>
-					<section>
-						<p>Estimating the velocity boundary layer's thickness:</p>
-						<p>
-							$$ Re = \frac{d_b U_b}{\nu_l} = \frac{0.25\times 10^{-3}}{10^{-6}} = 250 $$
-						</p>
-						<p>
-							$$ \frac{d_b}{\delta_h} \approx \sqrt{2Re} \approx 22 \rightarrow \delta_h\approx 45\mu m$$
-						</p>
-						<p>Reference: <a href="https://tuprints.ulb.tu-darmstadt.de/11405/">A. Weiner 2019</a>, p. 3, table 1.</p>
-					</section>
-					<section>
-						<p>Estimating the species boundary layer's thickness:</p>
-						<p>
-							$$ Sc = \frac{\nu_l}{D_{O_2}} = \frac{10^{-6}}{2\times 10^{-9}} = 500 $$
-						</p>
-						<p>
-							$$ \frac{\delta_h}{\delta_c} \approx \frac{1}{\sqrt{Sc}} \sqrt{\pi/2} \approx 18 \rightarrow \delta_c\approx 2.5\mu m$$
-						</p>
-						<p>Reference: <a href="https://www.researchgate.net/profile/Andre-Weiner/publication/318124144_Advanced_subgrid-scale_modeling_for_convection-dominated_species_transport_at_fluid_interfaces_with_application_to_mass_transfer_from_rising_bubbles/links/5bea90af92851c6b27ba6b54/Advanced-subgrid-scale-modeling-for-convection-dominated-species-transport-at-fluid-interfaces-with-application-to-mass-transfer-from-rising-bubbles.pdf">A. Weiner et al. 2017</a>, p. 3.</p>
-					</section>
-					<section>
-						<p>
-							Summing up:
-						</p>
-						<ul>
-							<li>
-								$Pe = Sc\ Re = \nu_l / D_{O_2} \cdot U_b d_b/\nu_l \approx 10^5 $
-							</li>
-							<li>
-								$$ Re\approx 250;\quad \delta_h/d_b \propto Re^{-1/2};\quad\delta_h\approx 45~\mu m $$
-							</li>
-							<li>
-								$$ Sc\approx 500;\quad \delta_c/\delta_h \propto Sc^{-1/2};\quad\delta_c\approx 2.5~\mu m $$
-							</li>
-						</ul>
-						<p>
-							$\delta_h/\delta_c$ typically <b style="color:red;">10 ... 100</b>
-						</p>
-						<p>
-							feasible simulations up to $Pe\approx 1000$ (3D, HPC)
-						</p>
-					</section>
-					<section>
-						<p>Practical solution to overcome the high Schmidt/Péclet number problem:<br> <b>boundary layer models</b></p>
-						<ul>
-							<li>solve simplified boundary layer substitute problem</li>
-							<li>fit substitute solution locally in interface cells</li>
-							<li>correct simulation based on reconstructed profile</li>
-						</ul>
-						<p>Data-driven solutions possible, <a href="https://tuprints.ulb.tu-darmstadt.de/11405/">reference</a>.</p>
-					</section>
-					<section>
-						<video width="100%" controls mute autoplay loop>
-							<source src="videos/local_marangoni_forces.mp4">
-						</video>
-						<p>Source: <a href="https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/computational-analysis-of-single-rising-bubbles-influenced-by-soluble-surfactant/74FFCE053782E4E0901EFD77CDAF4518">C. Pesci et al. 2018</a></p>
-					</section>
-					<section>
-						<div class=row_img style="width:100%">
-							<div class=column_img style="width:45%">
-								<small>Experiment vs. Simulation</small>
-								<img src="images/experiment_vs_simulation_crop.png" alt="oxygen_wake" width="60%" style="background:none; border:none; box-shadow:none;">
-							</div>
-							<div class=column_img style="width:55%">
-								<img src="images/local_sh_number.png" alt="local_sh" width="100%" style="background:none; border:none; box-shadow:none;">
-								<small>Local Sherwood number for clean (left) and contaminated (right) interfaces.</small>
-							</div>
+						<div class=column_img style="width:55%">
+							<img src="images/local_sh_number.png" alt="local_sh" width="100%"
+								style="background:none; border:none; box-shadow:none;">
+							<small>Local Sherwood number for clean (left) and contaminated (right) interfaces.</small>
 						</div>
-						<p>Source: <a href="https://www.sciencedirect.com/science/article/pii/S2590140019300140">A. Weiner et al. 2019</a></p>
-					</section>
-					<section>
-						<h3>New problems</h3>
-						<ul>
-							<li>How to validate boundary layer models?</li>
-							<li>How to generate data for data-driven boundary layer models?</li>
-						</ul>
-						<p>Solution: decoupling of two-phase flow problem and species transport by means of regression.</p>
-					</section>
+					</div>
+					<p>Source: <a href="https://www.sciencedirect.com/science/article/pii/S2590140019300140">A. Weiner
+							et al. 2019</a></p>
 				</section>
 				<section>
-					<section>
-						<h2>Decoupling two-phase flow and species transport</h2>
-					</section>
-					<section>
-						<img src="images/two_phase_model.png" alt="two-phase" width="100%" style="background:none; border:none; box-shadow:none;">
-						<small>
-						<p><b>Sharp interface model:</b> $t$ - time, $\Omega^+$ - liquid domain, $\Omega^-$ - gas domain, $\Sigma$ - interface,
-							$V$ - control volume, $S$ - control surface, $\mathbf{n}_\Sigma$ - unit vector normal to $\Sigma$, $\partial S$ - boundary of $S$,
+					<h3>New problems</h3>
+					<ul>
+						<li>How to validate boundary layer models?</li>
+						<li>How to generate data for data-driven boundary layer models?</li>
+					</ul>
+					<p>Solution: decoupling of two-phase flow problem and species transport by means of regression.</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Decoupling two-phase flow and species transport</h2>
+				</section>
+				<section>
+					<img src="images/two_phase_model.png" alt="two-phase" width="100%"
+						style="background:none; border:none; box-shadow:none;">
+					<small>
+						<p><b>Sharp interface model:</b> $t$ - time, $\Omega^+$ - liquid domain, $\Omega^-$ - gas
+							domain, $\Sigma$ - interface,
+							$V$ - control volume, $S$ - control surface, $\mathbf{n}_\Sigma$ - unit vector normal to
+							$\Sigma$, $\partial S$ - boundary of $S$,
 							$\mathbf{m}$ - unit vector normal to $\partial S$
 						</p>
 					</small>
-					</section>
-					<section>
-						<p>Mass conservation:</p>
-						<p>
-							$$
-							\frac{\partial \rho}{\partial t} + \nabla \cdot \left( \rho\mathbf{u} \right) = 0
-							$$
-						</p>
-						<p>in $\Omega^\pm (t)$ - two equations!</p>
-					</section>
-					<section>
-						<p>Conservation of momentum:</p>
-						<p>
-							$$
-							\frac{\partial \rho \mathbf{u}}{\partial t} + \nabla \cdot \left( \rho \mathbf{u} \otimes \mathbf{u} \right) = -\nabla p + \nabla \cdot \left( \eta \left( \nabla \mathbf{u} + \nabla \mathbf{u}^\mathsf{T} \right) \right) + \rho\mathbf{b}
-							$$
-						</p>
-						<p>in $\Omega^\pm (t)$ - two equations!</p>
-					</section>
-					<section>
-						<p>What happens at the interface? Definition of <b>jump brackets</b> for a generic variable $\varphi$:</p>
-						<p>
-							$$
-							 [\![ \varphi  (t,\mathbf{x}) ]\!] = \lim_{h\to+0}\left(\varphi^+ (t,\mathbf{x} + h\mathbf{n}_\Sigma) - \varphi^- (t,\mathbf{x} - h\mathbf{n}_\Sigma)\right)
-							$$
-						</p>
-						<p>
-							for $\mathbf{x}\in \Sigma (t)$
-						</p>
-					</section>
-					<section>
-						<p>Which quantity jumps at $\Sigma$ due to surface tension?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">interface normal velocity</li>
-							<li style="list-style-type: upper-latin;">interface tangential velocity</li>
-							<li style="list-style-type: upper-latin;">pressure</li>
-							<li style="list-style-type: upper-latin;">shear stress</li>
-						</ol>
-					</section>
-					<section>
-						<p>Which quantity jumps at $\Sigma$ due to mass transfer?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">interface normal velocity</li>
-							<li style="list-style-type: upper-latin;">interface tangential velocity</li>
-							<li style="list-style-type: upper-latin;">pressure</li>
-							<li style="list-style-type: upper-latin;">shear stress</li>
-						</ol>
-					</section>
-					<section>
-						<p>mass jump condition:</p>
-						<p>
-							$$
-							[\![ \rho \left( \mathbf{u} - \mathbf{u}^\Sigma \right) ]\!] \cdot \mathbf{n}_\Sigma = 0\quad \text{on}\quad \Sigma (t)
-							$$
-						</p>
-						<p>
-							$$
-							\left[ \rho^+ \left( \mathbf{u}^+ - \mathbf{u}^\Sigma \right) - \rho^- \left( \mathbf{u}^- - \mathbf{u}^\Sigma \right)\right] \cdot \mathbf{n}_\Sigma = 0\quad \text{on}\quad \Sigma (t)
-							$$
-						</p>
-						<p>
-							$$
-							\dot{m}^+ - \dot{m}^- = 0\quad \text{on}\quad \Sigma (t)
-							$$
-						</p>
-						<p>$\mathbf{u}^\Sigma$ - interface velocity</p>
-					</section>
-					<section>
-						<p>neglecting mass transfer:</p>
-						<p>
-							$$ \dot{m}^+ = \dot{m}^- = 0\quad \text{on}\quad \Sigma (t) $$
-						</p>
-						<p>$\mathbf{u}^+\cdot \mathbf{n}_\Sigma = \mathbf{u}^\Sigma\cdot \mathbf{n}_\Sigma$ and $\mathbf{u}^-\cdot \mathbf{n}_\Sigma = \mathbf{u}^\Sigma\cdot \mathbf{n}_\Sigma$</p>
-					</section>
-					<section>
-						<p>typical assumption for tangential velocity component (not a consequence of mass conservation):</p>
-						<p>
-							$$
-							[\![ \mathbf{u} ]\!]  \cdot \mathbf{t}_\Sigma = 0
-							$$
-						</p>
-						<p>$$\mathbf{u}^+\cdot \mathbf{t}_\Sigma = \mathbf{u}^-\cdot \mathbf{t}_\Sigma$$</p>
-						<p>
-							$\mathbf{t}_\Sigma$ - unit vector tangential to interface
-						</p>
-					</section>
-					<section>
-						<p>momentum jump conditions ...</p>
-					</section>
-					<section>
-						<img src="images/mesh_b.png" alt="two-phase" width="50%" style="background:none; border:none; box-shadow:none;">
-						<p>Closest numerical approach to sharp interface model: <b>interface tracking</b></p>
-					</section>
-					<section>
-						<p>Advantages and disadvantages of interface tracking:</p>
-						<ul>
-							<li>possibility to combine physical phenomena</li>
-							<li>interface-aligned meshes</li>
-							<li>very good accuracy at the interface</li>
-							<li>extremely high complexity</li>
-							<li>very slow</li>
-							<li>stability issues</li>
-						</ul>
-					</section>
-					<section>
-						<p>A one-field approach to two-phase flow simulations: the <b>volume of fluid method</b></p>
-						<img src="images/basilisk_volume_fraction_mesh_plic.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
-					</section>
-					<section>
-						<p>Advantages and disadvantages of volume of fluid solvers:</p>
-						<ul>
-							<li>Computationally efficient and robust</li>
-							<li>Relatively easy to implement</li>
-							<li>fields are phase-averaged</li>
-							<li>bad accuracy close to the interface</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Idea</h3>
-						<p>combine computational efficiency of volume of fluid and the accuracy of surface-aligned meshes</p>
-					</section>
-					<section>
-						<div class=row_img style="width:100%">
-							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-								<img src="images/snap_shot_vof.png" alt="vof_sol" height="400px" style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>1. Two-phase flow simulation (Volume-of-Fluid)</small>
-								</p>
-							</div>
-							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-								<img src="images/snap_shot_shape.png" alt="shape" height="400px" style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>2. Parametrization of shape and interfacial velocity</small>
-								</p>
-							</div>
-							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-								<img src="images/snap_shot_stl_clean.png" alt="stl" height="400px" style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>3. Geometry generation and export (STL format)</small>
-								</p>
-							</div>
-						</div>
-					</section>
-					<section>
-						<div class=row_img style="width:100%">
-							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-								<img src="images/snap_shot_mesh_clean.png" alt="mesh" height="400px" style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>4. Single phase mesh</small>
-								</p>
-							</div>
-							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-								<img src="images/snap_shot_hydro.png" alt="flow" height="400px" style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>5. Flow solution</small>
-								</p>
-							</div>
-							<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-								<img src="images/snap_shot_transport.png" alt="species" height="400px" style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>6. Species transport</small>
-								</p>
-							</div>
-						</div>
-					</section>
-					<section>
-						<h3>Problem</h3>
-						<p>Missing boundary conditions for</p>
-						<ul>
-							<li>velocity at the interface</li>
-							<li>shape/mesh deformation</li>
-							<li>rise/inlet velocity</li>
-						</ul>
-					</section>
-					<section>
-						<img src="images/hybrid_overview.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
-					</section>
-					<section>
-						<img src="images/hybrid_approach.png" alt="two-phase" width="80%" style="background:none; border:none; box-shadow:none;">
-					</section>
 				</section>
 				<section>
-					<section>
-						<h2>Data-processing and visualization</h2>
-					</section>
-					<section>
-						<video height="500" controls mute autoplay loop>
-							<source src="images/ellipsoidal_bubble.mp4">
-						</video>
-						<p>Tow-phase flow simulation providing the data.</p>
-					</section>
-					<section>
-						<p>Overview of the available data:</p>
-						<ul>
-							<li>log file with center of mass information</li>
-							<li>individual snapshots of interface data</li>
-						</ul>
-					</section>
-					<section>
-						<p>Problem: spurious rows in log file</p>
-						<pre class="python"><code>
+					<p>Mass conservation:</p>
+					<p>
+						$$
+						\frac{\partial \rho}{\partial t} + \nabla \cdot \left( \rho\mathbf{u} \right) = 0
+						$$
+					</p>
+					<p>in $\Omega^\pm (t)$ - two equations!</p>
+				</section>
+				<section>
+					<p>Conservation of momentum:</p>
+					<p>
+						$$
+						\frac{\partial \rho \mathbf{u}}{\partial t} + \nabla \cdot \left( \rho \mathbf{u} \otimes
+						\mathbf{u} \right) = -\nabla p + \nabla \cdot \left( \eta \left( \nabla \mathbf{u} + \nabla
+						\mathbf{u}^\mathsf{T} \right) \right) + \rho\mathbf{b}
+						$$
+					</p>
+					<p>in $\Omega^\pm (t)$ - two equations!</p>
+				</section>
+				<section>
+					<p>What happens at the interface? Definition of <b>jump brackets</b> for a generic variable
+						$\varphi$:</p>
+					<p>
+						$$
+						[\![ \varphi (t,\mathbf{x}) ]\!] = \lim_{h\to+0}\left(\varphi^+ (t,\mathbf{x} +
+						h\mathbf{n}_\Sigma) - \varphi^- (t,\mathbf{x} - h\mathbf{n}_\Sigma)\right)
+						$$
+					</p>
+					<p>
+						for $\mathbf{x}\in \Sigma (t)$
+					</p>
+				</section>
+				<section>
+					<p>Which quantity jumps at $\Sigma$ due to surface tension?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">interface normal velocity</li>
+						<li style="list-style-type: upper-latin;">interface tangential velocity</li>
+						<li style="list-style-type: upper-latin;">pressure</li>
+						<li style="list-style-type: upper-latin;">shear stress</li>
+					</ol>
+				</section>
+				<section>
+					<p>Which quantity jumps at $\Sigma$ due to mass transfer?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">interface normal velocity</li>
+						<li style="list-style-type: upper-latin;">interface tangential velocity</li>
+						<li style="list-style-type: upper-latin;">pressure</li>
+						<li style="list-style-type: upper-latin;">shear stress</li>
+					</ol>
+				</section>
+				<section>
+					<p>mass jump condition:</p>
+					<p>
+						$$
+						[\![ \rho \left( \mathbf{u} - \mathbf{u}^\Sigma \right) ]\!] \cdot \mathbf{n}_\Sigma = 0\quad
+						\text{on}\quad \Sigma (t)
+						$$
+					</p>
+					<p>
+						$$
+						\left[ \rho^+ \left( \mathbf{u}^+ - \mathbf{u}^\Sigma \right) - \rho^- \left( \mathbf{u}^- -
+						\mathbf{u}^\Sigma \right)\right] \cdot \mathbf{n}_\Sigma = 0\quad \text{on}\quad \Sigma (t)
+						$$
+					</p>
+					<p>
+						$$
+						\dot{m}^+ - \dot{m}^- = 0\quad \text{on}\quad \Sigma (t)
+						$$
+					</p>
+					<p>$\mathbf{u}^\Sigma$ - interface velocity</p>
+				</section>
+				<section>
+					<p>neglecting mass transfer:</p>
+					<p>
+						$$ \dot{m}^+ = \dot{m}^- = 0\quad \text{on}\quad \Sigma (t) $$
+					</p>
+					<p>$\mathbf{u}^+\cdot \mathbf{n}_\Sigma = \mathbf{u}^\Sigma\cdot \mathbf{n}_\Sigma$ and
+						$\mathbf{u}^-\cdot \mathbf{n}_\Sigma = \mathbf{u}^\Sigma\cdot \mathbf{n}_\Sigma$</p>
+				</section>
+				<section>
+					<p>typical assumption for tangential velocity component (not a consequence of mass conservation):
+					</p>
+					<p>
+						$$
+						[\![ \mathbf{u} ]\!] \cdot \mathbf{t}_\Sigma = 0
+						$$
+					</p>
+					<p>$$\mathbf{u}^+\cdot \mathbf{t}_\Sigma = \mathbf{u}^-\cdot \mathbf{t}_\Sigma$$</p>
+					<p>
+						$\mathbf{t}_\Sigma$ - unit vector tangential to interface
+					</p>
+				</section>
+				<section>
+					<p>momentum jump conditions ...</p>
+				</section>
+				<section>
+					<img src="images/mesh_b.png" alt="two-phase" width="50%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Closest numerical approach to sharp interface model: <b>interface tracking</b></p>
+				</section>
+				<section>
+					<p>Advantages and disadvantages of interface tracking:</p>
+					<ul>
+						<li>possibility to combine physical phenomena</li>
+						<li>interface-aligned meshes</li>
+						<li>very good accuracy at the interface</li>
+						<li>extremely high complexity</li>
+						<li>very slow</li>
+						<li>stability issues</li>
+					</ul>
+				</section>
+				<section>
+					<p>A one-field approach to two-phase flow simulations: the <b>volume of fluid method</b></p>
+					<img src="images/basilisk_volume_fraction_mesh_plic.png" alt="two-phase" width="80%"
+						style="background:none; border:none; box-shadow:none;">
+				</section>
+				<section>
+					<p>Advantages and disadvantages of volume of fluid solvers:</p>
+					<ul>
+						<li>Computationally efficient and robust</li>
+						<li>Relatively easy to implement</li>
+						<li>fields are phase-averaged</li>
+						<li>bad accuracy close to the interface</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Idea</h3>
+					<p>combine computational efficiency of volume of fluid and the accuracy of surface-aligned meshes
+					</p>
+				</section>
+				<section>
+					<div class=row_img style="width:100%">
+						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+							<img src="images/snap_shot_vof.png" alt="vof_sol" height="400px"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>1. Two-phase flow simulation (Volume-of-Fluid)</small>
+							</p>
+						</div>
+						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+							<img src="images/snap_shot_shape.png" alt="shape" height="400px"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>2. Parametrization of shape and interfacial velocity</small>
+							</p>
+						</div>
+						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+							<img src="images/snap_shot_stl_clean.png" alt="stl" height="400px"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>3. Geometry generation and export (STL format)</small>
+							</p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class=row_img style="width:100%">
+						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+							<img src="images/snap_shot_mesh_clean.png" alt="mesh" height="400px"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>4. Single phase mesh</small>
+							</p>
+						</div>
+						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+							<img src="images/snap_shot_hydro.png" alt="flow" height="400px"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>5. Flow solution</small>
+							</p>
+						</div>
+						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
+							<img src="images/snap_shot_transport.png" alt="species" height="400px"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>6. Species transport</small>
+							</p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h3>Problem</h3>
+					<p>Missing boundary conditions for</p>
+					<ul>
+						<li>velocity at the interface</li>
+						<li>shape/mesh deformation</li>
+						<li>rise/inlet velocity</li>
+					</ul>
+				</section>
+				<section>
+					<img src="images/hybrid_approach.png" alt="two-phase" width="80%"
+						style="background:none; border:none; box-shadow:none;">
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Data-processing and visualization</h2>
+				</section>
+				<section>
+					<video height="500" controls mute autoplay loop>
+						<source src="images/ellipsoidal_bubble.mp4">
+					</video>
+					<p>Tow-phase flow simulation providing the data.</p>
+				</section>
+				<section>
+					<p>Overview of the available data:</p>
+					<ul>
+						<li>log file with center of mass information</li>
+						<li>individual snapshots of interface data</li>
+					</ul>
+				</section>
+				<section>
+					<p>Problem: spurious rows in log file</p>
+					<pre class="python"><code>
 # print the first 15 rows to the terminal
 head -n 15 log.solver
 # output
@@ -574,44 +626,48 @@ sh: 1: gnuplot: not found
 0.00247720 0.08330640 3.50000837 0.29245794 0.00000000 0.00511770 -0.00010853 0.00000000 1.57182925 
 0.00404440 0.08330699 3.50001471 0.29215884 0.00000000 0.00856596 -0.00001476 0.00000000 1.57162112 
 						</code></pre>
-					</section>
-					<section>
-						<img src="images/bubble_position.svg" alt="position" width="75%" style="background:none; border:none; box-shadow:none;">
-						<p>Bubble center of mass over time - $x$-component.</p>
-					</section>
-					<section>
-						<img src="images/bubble_speed.svg" alt="speed" width="75%" style="background:none; border:none; box-shadow:none;">
-						<p>Bubble center of mass velocity over time - $x$-component.</p>
-					</section>
-					<section>
-						<img src="images/shape_over_time.svg" alt="position" width="75%" style="background:none; border:none; box-shadow:none;">
-						<p>Bubble shape in a moving reference frame; Cartesian and polar coordinates.</p>
-					</section>
-					<section>
-						<img src="images/velocity_projected_over_time.svg" alt="position" width="75%" style="background:none; border:none; box-shadow:none;">
-						<p>Projected interface velocity in a moving reference frame.</p>
-					</section>
 				</section>
 				<section>
-					<section>
-						<h2>Creating models for deformation and velocity</h2>
-					</section>
-					<section>
-						<p>Inlet boundary condition - first model:</p>
-						<p>
-							$$
-							  \mathbf{u}_{in} = -\tilde{U}_b\mathbf{e}_y
-							$$
-						</p>
-						<p>
-							$$
-							  \tilde{U}_b = f(\tilde{t})
-							$$
-						</p>
-					</section>
-					<section>
-						<p>Baseline fully connected neural network.</p>
-						<pre class="python"><code>
+					<img src="images/bubble_position.svg" alt="position" width="75%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Bubble center of mass over time - $x$-component.</p>
+				</section>
+				<section>
+					<img src="images/bubble_speed.svg" alt="speed" width="75%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Bubble center of mass velocity over time - $x$-component.</p>
+				</section>
+				<section>
+					<img src="images/shape_over_time.svg" alt="position" width="75%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Bubble shape in a moving reference frame; Cartesian and polar coordinates.</p>
+				</section>
+				<section>
+					<img src="images/velocity_projected_over_time.svg" alt="position" width="75%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Projected interface velocity in a moving reference frame.</p>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Creating models for deformation and velocity</h2>
+				</section>
+				<section>
+					<p>Inlet boundary condition - first model:</p>
+					<p>
+						$$
+						\mathbf{u}_{in} = -\tilde{U}_b\mathbf{e}_y
+						$$
+					</p>
+					<p>
+						$$
+						\tilde{U}_b = f(\tilde{t})
+						$$
+					</p>
+				</section>
+				<section>
+					<p>Baseline fully connected neural network.</p>
+					<pre class="python"><code>
 class BaseNN(pt.nn.Module):
     """Simple fully-connected neural network.
     """
@@ -638,42 +694,45 @@ class BaseNN(pt.nn.Module):
             x = self.activation(self.layers[i_layer](x))
         return self.layers[-1](x)
 						</code></pre>
-					</section>
-					<section>
-						<img src="images/rise_loss.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Training loss for the rise velocity.</p>
-					</section>
-					<section>
-						<img src="images/rise_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Comparison of model prediction and reference data for the rise velocity.</p>
-					</section>
-					<section>
-						<p>Interface velocity boundary condition - second model:</p>
-						<p>
-							$$
-							  \mathbf{u}_s = \tilde{u}_t\mathbf{t}
-							$$
-						</p>
-						<p>
-							$$
-							  \tilde{u}_t = f(\tilde{t}, \vartheta)
-							$$
-						</p>
-					</section>
-					<section>
-						<p>What applies to the tangential interface velocity?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">line symmetry rise axis</li>
-							<li style="list-style-type: upper-latin;">point symmetry $\vartheta = 0$, $\vartheta = \pi$</li>
-							<li style="list-style-type: upper-latin;">no symmetry</li>
-						</ol>
-					</section>
-					<section>
-						<img src="images/sin_symmetry.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Sin and cosine functions with vertical lines at $0$ and $\pi$.</p>
-					</section>
-					<section>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<img src="images/rise_loss.svg" alt="position" width="75%" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Training loss for the rise velocity.</p>
+				</section>
+				<section>
+					<img src="images/rise_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Comparison of model prediction and reference data for the rise velocity.</p>
+				</section>
+				<section>
+					<p>Interface velocity boundary condition - second model:</p>
+					<p>
+						$$
+						\mathbf{u}_s = \tilde{u}_t\mathbf{t}
+						$$
+					</p>
+					<p>
+						$$
+						\tilde{u}_t = f(\tilde{t}, \vartheta)
+						$$
+					</p>
+				</section>
+				<section>
+					<p>What applies to the tangential interface velocity?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">line symmetry rise axis</li>
+						<li style="list-style-type: upper-latin;">point symmetry $\vartheta = 0$, $\vartheta = \pi$</li>
+						<li style="list-style-type: upper-latin;">no symmetry</li>
+					</ol>
+				</section>
+				<section>
+					<img src="images/sin_symmetry.svg" alt="position" width="75%" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Sin and cosine functions with vertical lines at $0$ and $\pi$.</p>
+				</section>
+				<section>
+					<pre class="python"><code>
 class VelocityModel(BaseNN):
     """Velocity NN with modified forward pass.
     """
@@ -687,10 +746,10 @@ class VelocityModel(BaseNN):
             x = self.activation(self.layers[i_layer](x))
         return self.layers[-1](x)*sin
 						</code></pre>
-					</section>
-					<section>
-						<p>Creating training and validation data.</p>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<p>Creating training and validation data.</p>
+					<pre class="python"><code>
 def split_train_test(feature: List[pt.Tensor], label: List[pt.Tensor],
                      times: pt.Tensor, train_ratio: float
                     ) -> Tuple[pt.Tensor, pt.Tensor, pt.Tensor, pt.Tensor]:
@@ -712,38 +771,40 @@ def split_train_test(feature: List[pt.Tensor], label: List[pt.Tensor],
     # snip
     return f_train, l_train, f_test, l_test
 						</code></pre>
-					</section>
-					<section>
-						<img src="images/vt_loss.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Training and validation loss for the interface velocity.</p>
-					</section>
-					<section>
-						<img src="images/vt_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Comparison of model prediction and reference data for the interface velocity.</p>
-					</section>
-					<section>
-						<p>Interface deformation - third model:</p>
-						<p>
-							$$
-							  \Delta \mathbf{x} = (\tilde{r} - r_0)\mathbf{e}_r
-							$$
-						</p>
-						<p>
-							$$
-							  \tilde{r} = f(\tilde{t}, \vartheta)
-							$$
-						</p>
-					</section>
-					<section>
-						<p>What applies to the radius?</p>
-						<ol>
-							<li style="list-style-type: upper-latin;">line symmetry rise axis</li>
-							<li style="list-style-type: upper-latin;">point symmetry $\vartheta = 0$, $\vartheta = \pi$</li>
-							<li style="list-style-type: upper-latin;">no symmetry</li>
-						</ol>
-					</section>
-					<section>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<img src="images/vt_loss.svg" alt="position" width="75%" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Training and validation loss for the interface velocity.</p>
+				</section>
+				<section>
+					<img src="images/vt_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Comparison of model prediction and reference data for the interface velocity.</p>
+				</section>
+				<section>
+					<p>Interface deformation - third model:</p>
+					<p>
+						$$
+						\Delta \mathbf{x} = (\tilde{r} - r_0)\mathbf{e}_r
+						$$
+					</p>
+					<p>
+						$$
+						\tilde{r} = f(\tilde{t}, \vartheta)
+						$$
+					</p>
+				</section>
+				<section>
+					<p>What applies to the radius?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">line symmetry rise axis</li>
+						<li style="list-style-type: upper-latin;">point symmetry $\vartheta = 0$, $\vartheta = \pi$</li>
+						<li style="list-style-type: upper-latin;">no symmetry</li>
+					</ol>
+				</section>
+				<section>
+					<pre class="python"><code>
 class RadiusModel(BaseNN):
     """Radius NN with modified forward pass.
     """
@@ -756,18 +817,20 @@ class RadiusModel(BaseNN):
             x = self.activation(self.layers[i_layer](x))
         return self.layers[-1](x)
 						</code></pre>
-					</section>
-					<section>
-						<img src="images/rad_loss.svg" alt="position" width="75%" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Training and validation loss for the interface velocity.</p>
-					</section>
-					<section>
-						<img src="images/rad_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden" style="background:none; border:none; box-shadow:none;">
-						<p>Comparison of model prediction and reference data for the bubble radius.</p>
-					</section>
-					<section>
-						<p>Simple tracing example</p>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<img src="images/rad_loss.svg" alt="position" width="75%" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Training and validation loss for the interface velocity.</p>
+				</section>
+				<section>
+					<img src="images/rad_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Comparison of model prediction and reference data for the bubble radius.</p>
+				</section>
+				<section>
+					<p>Simple tracing example</p>
+					<pre class="python"><code>
 def add(a, b):
     return a + b
 
@@ -781,20 +844,20 @@ graph(%a : Double(3, strides=[1], requires_grad=0, device=cpu),
       %3 : Double(3, strides=[1], requires_grad=0, device=cpu) = aten::add(%a, %b, %2) # <ipython-input-56-0277e3bdb226>:2:0
   	  return (%3)
 						</code></pre>
-					</section>
-					<section>
-						<p>Tracing the models - interface velocity</p>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<p>Tracing the models - interface velocity</p>
+					<pre class="python"><code>
 traced_vel = pt.jit.trace(vel_model, pt.rand((1,2)))
 traced_vel.save(f"{output}velocity_model.pt")
 						</code></pre>
-					</section>
-					<section>
-						<p>Practical tips - combining models/modules</p>
-					</section>
-					<section>
-						<p>Building scaling into the model:</p>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<p>Practical tips - combining models/modules</p>
+				</section>
+				<section>
+					<p>Building scaling into the model:</p>
+					<pre class="python"><code>
 class WrapperModel(pt.nn.Module):
     def __init__(self, model, xmin, xmax):
         super(WrapperModel, self).__init__()
@@ -828,10 +891,10 @@ wrapper(5)
 1.0
 5.0
 						</code></pre>
-					</section>
-					<section>
-						<p>Combining multiple models:</p>
-						<pre class="python"><code>
+				</section>
+				<section>
+					<p>Combining multiple models:</p>
+					<pre class="python"><code>
 class CombinedModel(pt.nn.Module):
     def __init__(self, model1, model2):
         super(CombinedModel, self).__init__()
@@ -846,23 +909,23 @@ class CombinedModel(pt.nn.Module):
 cmodel = CombinedModel(model, wrapper)
 cmodel(5)
 						</code></pre>
-					</section>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Single-phase simulations with mass transfer</h2>
 				</section>
 				<section>
-					<section>
-						<h2>Single-phase simulations with mass transfer</h2>
-					</section>
-					<section>
-						<p>Implementation in OpenFOAM:</p>
-						<ul>
-							<li>ptBoundaryDisplacement</li>
-							<li>ptInletVelocity</li>
-							<li>ptSurfaceVelocity</li>
-						</ul>
-					</section>
-					<section>
-						<p>Boundary condition definition in 0/U.</p>
-						<pre class="cpp"><code>
+					<p>Implementation in OpenFOAM:</p>
+					<ul>
+						<li>ptBoundaryDisplacement</li>
+						<li>ptInletVelocity</li>
+						<li>ptSurfaceVelocity</li>
+					</ul>
+				</section>
+				<section>
+					<p>Boundary condition definition in 0/U.</p>
+					<pre class="cpp"><code>
     bubble
     {
        type            ptSurfaceVelocity;
@@ -872,10 +935,10 @@ cmodel(5)
         modelName       "tv_CB1.ts";
     }
 						</code></pre>
-					</section>
-					<section>
-						<p>Surface velocity constructor.</p>
-						<pre class="cpp"><code>
+				</section>
+				<section>
+					<p>Surface velocity constructor.</p>
+					<pre class="cpp"><code>
 Foam::ptSurfaceVelocityFvPatchVectorField::
 ptSurfaceVelocityFvPatchVectorField
 (
@@ -897,10 +960,10 @@ ptSurfaceVelocityFvPatchVectorField
     }
 }
 						</code></pre>
-					</section>
-					<section>
-						<p>Update of the coefficients (source vector).</p>
-						<pre class="cpp"><code>
+				</section>
+				<section>
+					<p>Update of the coefficients (source vector).</p>
+					<pre class="cpp"><code>
 void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 {
     // compute tangent vector
@@ -938,65 +1001,94 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
     fixedValueFvPatchVectorField::updateCoeffs();
 }
 						</code></pre>
-					</section>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Analyzing the results</h2>
 				</section>
 				<section>
-					<section>
-						<h2>Analyzing the results</h2>
-					</section>
-					<section>
-						<video height="500" controls mute autoplay loop>
-							<source src="images/all_cases_sc100.ogv">
-						</video>
-						<p>Results for four different $Eo$ numbers; $Sc=100$.</p>
-					</section>
-					<section>
-						<video height="500" controls mute autoplay loop>
-							<source src="images/mesh_zoom_bl.ogv">
-						</video>
-						<p>Mesh deformation and boundary layer zoom view.</p>
-					</section>
-					<section>
-						<img src="images/glob_sh_cb4.png" alt="position" width="100%" style="background:none; border:none; box-shadow:none;">
-						<p>Dimensionless global mass transfer - Sherwood number $Sh$.</p>
-					</section>
-					<section>
-						<img src="images/sh_loc_comparison.png" alt="position" width="80%" style="background:none; border:none; box-shadow:none;">
-						<p>Dimensionless local mass transfer - slip vs. ML.</p>
-					</section>
-					<section>
-						<img src="images/wake_slip_comparison.png" alt="position" width="80%" style="background:none; border:none; box-shadow:none;">
-						<p>Wake concentration - slip vs. ML.</p>
-					</section>
+					<video height="500" controls mute autoplay loop>
+						<source src="images/all_cases_sc100.ogv">
+					</video>
+					<p>Results for four different $Eo$ numbers; $Sc=100$.</p>
 				</section>
-
-			</div>
+				<section>
+					<video height="500" controls mute autoplay loop>
+						<source src="images/mesh_zoom_bl.ogv">
+					</video>
+					<p>Mesh deformation and boundary layer zoom view.</p>
+				</section>
+				<section>
+					<img src="images/glob_sh_cb4.png" alt="position" width="100%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Dimensionless global mass transfer - Sherwood number $Sh$.</p>
+				</section>
+				<section>
+					<img src="images/sh_loc_comparison.png" alt="position" width="80%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Dimensionless local mass transfer - slip vs. ML.</p>
+				</section>
+				<section>
+					<img src="images/wake_slip_comparison.png" alt="position" width="80%"
+						style="background:none; border:none; box-shadow:none;">
+					<p>Wake concentration - slip vs. ML.</p>
+				</section>
+			</section>
 
 		</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/zoom/zoom.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/search/search.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script src="plugin/math/math.js"></script>
-		<script>
+	</div>
 
-			// Also available as an ES module, see:
-			// https://revealjs.com/initialization/
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+	<script src="plugin/chalkboard/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+	<script>
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
-			});
-			Reveal.configure({ slideNumber: true });
+		// Also available as an ES module, see:
+		// https://revealjs.com/initialization/
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			center: true,
+			hash: true,
+			chalkboard: {
+				boardmarkerWidth: 4,
+				chalkWidth: 4,
+				chalkEffect: 0.01,
+				theme: "chalkboard",
+				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
+				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
+				eraser: { src: path + 'img/sponge.png', radius: 20 }
+			},
+			customcontrols: {
+				controls: [
+					{
+						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
+						title: 'Toggle chalkboard (B)',
+						action: 'RevealChalkboard.toggleChalkboard();'
+					},
+					{
+						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
+						title: 'Toggle notes canvas (C)',
+						action: 'RevealChalkboard.toggleNotesCanvas();'
+					}
+				]
+			},
 
-		</script>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+		});
+		Reveal.configure({ slideNumber: true });
 
-	</body>
+	</script>
+
+</body>
+
 </html>
