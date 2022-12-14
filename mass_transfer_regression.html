@@ -659,49 +659,61 @@ sh: 1: gnuplot: not found
 						\mathbf{u}_{in} = -\tilde{U}_b\mathbf{e}_y
 						$$
 					</p>
-					<p>
-						$$
-						\tilde{U}_b = f(\tilde{t})
-						$$
-					</p>
+					<p>$\tilde{U}_b$ - the bubble's terminal velocity</p>
 				</section>
 				<section>
-					<p>Baseline fully connected neural network.</p>
+					<p>What would be a more suitable Ansatz for $\tilde{U}_b$?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">$\tilde{U}_b = f_\vartheta(\tilde{t})$</li>
+						<li style="list-style-type: upper-latin;">$\tilde{U}_b = f_\vartheta(\tilde{t})\tilde{t}$</li>
+					</ol>
+					<p>$f_\vartheta(\tilde{t})$ is a neural network model.</p>
+				</section>
+				<section>
+					<p>Which normalization is suitable for $\tilde{t}$?</p>
+					<ol>
+						<li style="list-style-type: upper-latin;">Min-Max, $\tilde{t}\in [-1, 1]$</li>
+						<li style="list-style-type: upper-latin;">Min-Max, $\tilde{t}\in [0, 1]$</li>
+						<li style="list-style-type: upper-latin;">Mean-Std.</li>
+					</ol>
+				</section>
+				<section>
+					<p>Rise velocity model - normalized features and labels.</p>
 					<pre class="python"><code>
-class BaseNN(pt.nn.Module):
-    """Simple fully-connected neural network.
-    """
-    def __init__(self, **kwargs):
-        super().__init__()
-        self.n_inputs = kwargs.get("n_inputs", 1)
-        self.n_outputs = kwargs.get("n_outputs", 1)
-        self.n_layers = kwargs.get("n_layers", 1)
-        self.n_neurons = kwargs.get("n_neurons", 10)
-        self.activation = kwargs.get("activation", pt.sigmoid)
-        self.layers = pt.nn.ModuleList()
-        # input layer to first hidden layer
-        self.layers.append(pt.nn.Linear(self.n_inputs, self.n_neurons))
-        # add more hidden layers if specified
-        if self.n_layers > 1:
-            for hidden in range(self.n_layers-1):
-                self.layers.append(pt.nn.Linear(
-                    self.n_neurons, self.n_neurons))
-        # last hidden layer to output layer
-        self.layers.append(pt.nn.Linear(self.n_neurons, self.n_outputs))
+class RVModelNorm(pt.nn.Module):
+    def __init__(self, n_neurons=100, n_hidden=2, activation=pt.nn.Tanh):
+        super(RVModelNorm, self).__init__()
+        self._model = create_simple_network(1, 1, n_neurons, n_hidden, activation)
 
     def forward(self, x):
-        for i_layer in range(len(self.layers)-1):
-            x = self.activation(self.layers[i_layer](x))
-        return self.layers[-1](x)
+        return self._model(x) * x
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/rise_loss.svg" alt="position" width="75%" overflow="hidden"
+					<img src="images/rv_mse_loss.svg" alt="position" width="75%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
-					<p>Training loss for the rise velocity.</p>
+					<p>MSE loss for the normalized rise velocity.</p>
 				</section>
 				<section>
-					<img src="images/rise_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+					<p>Rise velocity model - final model</p>
+					<pre class="python"><code>
+class RVModel(pt.nn.Module):
+    def __init__(self, rv_model_norm, rv_min, rm_max, t_min, t_max):
+        super(RVModel, self).__init__()
+        self._model = rv_model_norm
+        self._rv_min = rv_min
+        self._rv_max = rv_max
+        self._t_min = t_min
+        self._t_max = t_max
+
+    def forward(self, x):
+        x_norm = (x.unsqueeze(1) - self._t_min) / (self._t_max - self._t_min)
+        rv_norm = self._model(x_norm)
+        return (rv_norm * (self._rv_max - self._rv_min) + self._rv_min).squeeze()
+						</code></pre>
+				</section>
+				<section>
+					<img src="images/rv_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Comparison of model prediction and reference data for the rise velocity.</p>
 				</section>
@@ -714,9 +726,10 @@ class BaseNN(pt.nn.Module):
 					</p>
 					<p>
 						$$
-						\tilde{u}_t = f(\tilde{t}, \vartheta)
+						\tilde{u}_t = \tilde{u}_t(\vartheta, \tilde{t})
 						$$
 					</p>
+					<p>$\tilde{u}_t$ - tangential component of interface velocity vector.</p>
 				</section>
 				<section>
 					<p>What applies to the tangential interface velocity?</p>
@@ -729,58 +742,40 @@ class BaseNN(pt.nn.Module):
 				<section>
 					<img src="images/sin_symmetry.svg" alt="position" width="75%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
-					<p>Sin and cosine functions with vertical lines at $0$ and $\pi$.</p>
+					<p>Sine and cosine functions with vertical lines at $0$ and $\pi$.</p>
 				</section>
 				<section>
+					<p>How can we enforce the correct symmetry in the model?</p>
+					<ol>
+					<li style="list-style-type: upper-latin;">$\tilde{u}_t = f_\vartheta (\vartheta, \tilde{t})\mathrm{sin}(\vartheta)$ </li>
+					<li style="list-style-type: upper-latin;">$\tilde{u}_t = f_\vartheta (\vartheta, \tilde{t})\mathrm{cos}(\vartheta)$</li>
+					<li style="list-style-type: upper-latin;">$\tilde{u}_t = f_\vartheta (\mathrm{sin}(\vartheta), \tilde{t})\mathrm{sin}(\vartheta)$</li>
+					<li style="list-style-type: upper-latin;">$\tilde{u}_t = f_\vartheta (\mathrm{cos}(\vartheta), \tilde{t})\mathrm{sin}(\vartheta)$</li>
+				</ol>
+				</section>
+				<section>
+					<p>Model for the normalized tangential velocity component.</p>
 					<pre class="python"><code>
-class VelocityModel(BaseNN):
-    """Velocity NN with modified forward pass.
-    """
-    def __init__(self, **kwargs):
-        super(VelocityModel, self).__init__(**kwargs)
+class TVVelocityNorm(pt.nn.Module):
+    def __init__(self, n_neurons=100, n_hidden=5, activation=pt.nn.ReLU):
+        super(TVVelocityNorm, self).__init__()
+        self._model_norm = create_simple_network(2, 1, n_neurons, n_hidden, activation)
 
     def forward(self, x):
         sin = pt.sin(x[:, 0]).unsqueeze(-1)
         x = pt.stack((pt.cos(x[:, 0]), x[:, 1])).T
-        for i_layer in range(len(self.layers)-1):
-            x = self.activation(self.layers[i_layer](x))
-        return self.layers[-1](x)*sin
-						</code></pre>
+        return self._model_norm(x) * sin * x[:, 1].unsqueeze(-1)
+				</code></pre>
 				</section>
 				<section>
-					<p>Creating training and validation data.</p>
-					<pre class="python"><code>
-def split_train_test(feature: List[pt.Tensor], label: List[pt.Tensor],
-                     times: pt.Tensor, train_ratio: float
-                    ) -> Tuple[pt.Tensor, pt.Tensor, pt.Tensor, pt.Tensor]:
-    n_train = int(len(feature)*train_ratio)
-    probs = pt.ones_like(times)
-    train_idx = pt.multinomial(probs, n_train)
-    probs[train_idx] = 0.0
-	# snip
-    total_train = sum([len(feature[i]) for i in train_idx])
-    f_train, l_train = pt.zeros((total_train, 2)), pt.zeros(total_train)
-    start = 0
-    for i in train_idx:
-        end = start+len(feature[i])
-        f_train[start:end, 0] = feature[i]
-        f_train[start:end, 1] = times[i]
-        l_train[start:end] = label[i]
-        start = end
-    start = 0
-    # snip
-    return f_train, l_train, f_test, l_test
-						</code></pre>
-				</section>
-				<section>
-					<img src="images/vt_loss.svg" alt="position" width="75%" overflow="hidden"
+					<img src="images/tv_mse_loss.svg" alt="position" width="60%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
-					<p>Training and validation loss for the interface velocity.</p>
+					<p>Training and validation loss for the normalized tangential velocity component.</p>
 				</section>
 				<section>
 					<img src="images/vt_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
-					<p>Comparison of model prediction and reference data for the interface velocity.</p>
+					<p>Comparison of model prediction and reference data.</p>
 				</section>
 				<section>
 					<p>Interface deformation - third model:</p>
@@ -791,7 +786,7 @@ def split_train_test(feature: List[pt.Tensor], label: List[pt.Tensor],
 					</p>
 					<p>
 						$$
-						\tilde{r} = f(\tilde{t}, \vartheta)
+						\tilde{r} = \tilde{r}(\vartheta, \tilde{t})
 						$$
 					</p>
 				</section>
@@ -804,24 +799,22 @@ def split_train_test(feature: List[pt.Tensor], label: List[pt.Tensor],
 					</ol>
 				</section>
 				<section>
+					<p>Model for normalized bubble radius.</p>
 					<pre class="python"><code>
-class RadiusModel(BaseNN):
-    """Radius NN with modified forward pass.
-    """
-    def __init__(self, **kwargs):
-        super(RadiusModel, self).__init__(**kwargs)
+class RadNorm(pt.nn.Module):
+    def __init__(self, n_neurons=100, n_hidden=5, activation=pt.nn.ReLU):
+        super(RadNorm, self).__init__()
+        self._model_norm = create_simple_network(2, 1, n_neurons, n_hidden, activation)
 
     def forward(self, x):
         x = pt.stack((pt.cos(x[:, 0]), x[:, 1])).T
-        for i_layer in range(len(self.layers)-1):
-            x = self.activation(self.layers[i_layer](x))
-        return self.layers[-1](x)
+        return self._model_norm(x) * x[:, 1].unsqueeze(-1)
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/rad_loss.svg" alt="position" width="75%" overflow="hidden"
+					<img src="images/rad_mse_loss.svg" alt="position" width="75%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
-					<p>Training and validation loss for the interface velocity.</p>
+					<p>Training and validation loss for the normalized radius.</p>
 				</section>
 				<section>
 					<img src="images/rad_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
@@ -829,85 +822,91 @@ class RadiusModel(BaseNN):
 					<p>Comparison of model prediction and reference data for the bubble radius.</p>
 				</section>
 				<section>
-					<p>Simple tracing example</p>
+					<h3>Exporting the models from Python to C++ with scripting and tracing</h3>
+				</section>
+				<section>
+					<p>Tracing a simple function</p>
 					<pre class="python"><code>
-def add(a, b):
+def do_computation_0(a, b):
     return a + b
 
-a, b = pt.ones(3)*4, pt.ones(3)*2
-trace = pt.jit.trace(add, (a, b))
-print(trace.graph)
+a, b = pt.ones(10), pt.ones(10)
+comp_trace = pt.jit.trace(do_computation_0, example_inputs=(a, b))
+comp_trace.graph
 # output
-graph(%a : Double(3, strides=[1], requires_grad=0, device=cpu),
-      %b : Double(3, strides=[1], requires_grad=0, device=cpu)):
-      %2 : int = prim::Constant[value=1]() # <ipython-input-56-0277e3bdb226>:2:0
-      %3 : Double(3, strides=[1], requires_grad=0, device=cpu) = aten::add(%a, %b, %2) # <ipython-input-56-0277e3bdb226>:2:0
-  	  return (%3)
+graph(%a : Double(10, strides=[1], requires_grad=0, device=cpu),
+      %b : Double(10, strides=[1], requires_grad=0, device=cpu)):
+  %2 : int = prim::Constant[value=1]()
+  %3 : Double(10, strides=[1], requires_grad=0, device=cpu) = aten::add(%a, %b, %2)
+  return (%3)
 						</code></pre>
+						<p>See also <a href="https://pytorch.org/docs/stable/generated/torch.add.html">torch.add()</a></p>
 				</section>
 				<section>
-					<p>Tracing the models - interface velocity</p>
+					<p>Tracing a function with additional arguments</p>
 					<pre class="python"><code>
-traced_vel = pt.jit.trace(vel_model, pt.rand((1,2)))
-traced_vel.save(f"{output}velocity_model.pt")
-						</code></pre>
-				</section>
-				<section>
-					<p>Practical tips - combining models/modules</p>
-				</section>
-				<section>
-					<p>Building scaling into the model:</p>
-					<pre class="python"><code>
-class WrapperModel(pt.nn.Module):
-    def __init__(self, model, xmin, xmax):
-        super(WrapperModel, self).__init__()
-        self._model = model
-        self._xmin = xmin
-        self._xmax = xmax
-        self._range = xmax - xmin
-    
-    def scale(self, x):
-        return (x-self._xmin) / self._range
+def do_computation_1(a, b, take_abs):
+    if take_abs:
+        return a.abs() + b.abs()
+    else:
+        return a + b
 
-    def inverse_scale(self, x):
-        return x*self._range + self._xmin
-
-    def forward(self, x):
-        x = self.scale(x)
-        x = self._model(x)
-        print(x)
-        return self.inverse_scale(x)
-
-class IdentityModel(pt.nn.Module):
-    def __init__(self):
-        super(IdentityModel, self).__init__()
-    def forward(self, x):
-        return x
-
-model = IdentityModel()
-wrapper = WrapperModel(model, 0, 5)
-wrapper(5)
+comp_trace = pt.jit.trace(do_computation_1, example_inputs=(a, b, True))
 # output
-1.0
-5.0
+Type 'Tuple[Tensor, Tensor, bool]' cannot be traced. Only Tensors and (possibly nested) Lists, Dicts, and Tuples of Tensors can be traced
 						</code></pre>
 				</section>
 				<section>
-					<p>Combining multiple models:</p>
+					<p>Tracing a function with additional arguments</p>
 					<pre class="python"><code>
-class CombinedModel(pt.nn.Module):
-    def __init__(self, model1, model2):
-        super(CombinedModel, self).__init__()
-        self._model1 = model1
-        self._model2 = model2
+def do_computation_2(a, b, take_abs=True):
+    # snip
 
-    def forward(self, x):
-        x = self._model1(x)
-        x = self._model2(x)
-        return x
+comp_trace = pt.jit.trace(do_computation_2, example_inputs=(a, b))
+comp_trace.graph
+# output
+graph(%a : Double(10, strides=[1], requires_grad=0, device=cpu),
+      %b : Double(10, strides=[1], requires_grad=0, device=cpu)):
+  %2 : Double(10, strides=[1], requires_grad=0, device=cpu) = aten::abs(%a)
+  %3 : Double(10, strides=[1], requires_grad=0, device=cpu) = aten::abs(%b)
+  %4 : int = prim::Constant[value=1]()
+  %5 : Double(10, strides=[1], requires_grad=0, device=cpu) = aten::add(%2, %3, %4)
+  return (%5)
+						</code></pre>
+				</section>
+				<section>
+					<p>Scripting a function with control flow</p>
+					<pre class="python"><code>
+def do_computation_2(a, b, take_abs=True):
+    # snip
 
-cmodel = CombinedModel(model, wrapper)
-cmodel(5)
+	comp_script = pt.jit.script(do_computation_2, example_inputs=(pt.ones(10), pt.ones(10), True))
+	comp_script.graph
+# output
+graph(%a.1 : Tensor,
+      %b.1 : Tensor,
+      %take_abs.1 : Tensor):
+  %10 : int = prim::Constant[value=1]()
+  %5 : bool = aten::Bool(%take_abs.1)
+  %24 : Tensor = prim::If(%5)
+    block0():
+      %7 : Tensor = aten::abs(%a.1)
+      %9 : Tensor = aten::abs(%b.1)
+      %11 : Tensor = aten::add(%7, %9, %10)
+      -> (%11)
+    block1():
+      %15 : Tensor = aten::add(%a.1, %b.1, %10)
+      -> (%15)
+  return (%24)
+						</code></pre>
+						<p>Not all Python language features are supported in scripting.</p>
+				</section>
+				<section>
+					<p>Tracing and saving the final models</p>
+					<pre class="python"><code>
+with pt.no_grad():
+    rv_trace = pt.jit.trace(rv_model.eval(), example_inputs=pt.rand(2))
+rv_trace.save(join(output, "rv_model.pt"))
 						</code></pre>
 				</section>
 			</section>
@@ -932,8 +931,21 @@ cmodel(5)
         origin          (0 0 0);
         axis            (0 1 0);
         normal          (0 0 1);
-        modelName       "tv_CB1.ts";
+        modelName       "tv_model.pt";
     }
+						</code></pre>
+				</section>
+				<section>
+					<p>Surface velocity BC - header file</p>
+					<pre class="cpp"><code>
+class ptSurfaceVelocityFvPatchVectorField
+:
+    public fixedValueFvPatchVectorField
+{
+    // Private data
+
+        //- PyTorch model for the surface velocity
+        torch::jit::script::Module velocity_model_;
 						</code></pre>
 				</section>
 				<section>
@@ -947,18 +959,10 @@ ptSurfaceVelocityFvPatchVectorField
     const dictionary& dict
 )
 :
-    fixedValueFvPatchField<vector>(p, iF, dict, false),
-    origin_(dict.lookup("origin")),
-    axis_(dict.lookup("axis")),
-    normal_(dict.lookup("normal")),
-    model_name_(dict.lookup("modelName"))
-{
-    velocity_model_ = torch::jit::load(model_name_);
-    if (!dict.found("value"))
-    {
-      updateCoeffs();
-    }
-}
+    // snip
+    model_name_(dict.get<word>("modelName")),
+    velocity_model_(torch::jit::load(model_name_))
+{}
 						</code></pre>
 				</section>
 				<section>
@@ -966,24 +970,14 @@ ptSurfaceVelocityFvPatchVectorField
 					<pre class="cpp"><code>
 void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 {
-    // compute tangent vector
-    const vectorField n(patch().nf());
-    const vectorField tau(n ^ (-normal_));
-
-    // face center position vectors
-    const vectorField Cf(patch().Cf() - origin_);
-
+    // snip
     torch::Tensor features = torch::ones({Cf.size(), 2}, torch::kFloat64);
-    const vector xy = vector{1, 1, 1} - normal_;
-    const vector unit_x = xy - axis_;
-
     forAll(Cf, i)
     {
-        vector x = (Cf[i] & unit_x) * unit_x + (Cf[i] & axis_) * axis_  - origin_;
-        scalar r = sqrt(x & x);
+        // snip
         scalar theta = acos((x & axis_) / r);
-        features[i][0] = this->db().time().value();
-        features[i][1] = theta;
+        features[i][0] = theta;
+        features[i][1] = this->db().time().value();
     }
 
     // run forward pass to compute tangential velocity
@@ -991,14 +985,12 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
     torch::Tensor uTensor = velocity_model_.forward(modelFeatures).toTensor();
     auto uAccessor = uTensor.accessor<double,1>();
 
+    // add tangential and normal components
     vectorField surfaceVelocity(Cf.size(), Zero);
     forAll(surfaceVelocity, faceI)
     {
-	    surfaceVelocity[faceI] = tau[faceI] * uAccessor[faceI];
+	    surfaceVelocity[faceI] = tau[faceI] * uAccessor[faceI] + n[faceI]*(Up[faceI] & n[faceI]);
     }
-
-    vectorField::operator=(surfaceVelocity);
-    fixedValueFvPatchVectorField::updateCoeffs();
 }
 						</code></pre>
 				</section>
@@ -1009,13 +1001,13 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 				</section>
 				<section>
 					<video height="500" controls mute autoplay loop>
-						<source src="images/all_cases_sc100.ogv">
+						<source src="images/all_cases_sc100.mp4">
 					</video>
 					<p>Results for four different $Eo$ numbers; $Sc=100$.</p>
 				</section>
 				<section>
 					<video height="500" controls mute autoplay loop>
-						<source src="images/mesh_zoom_bl.ogv">
+						<source src="images/mesh_zoom_bl.mp4">
 					</video>
 					<p>Mesh deformation and boundary layer zoom view.</p>
 				</section>
@@ -1033,6 +1025,9 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 					<img src="images/wake_slip_comparison.png" alt="position" width="80%"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Wake concentration - slip vs. ML.</p>
+				</section>
+				<section>
+					<p>For more details refer to<br> <a href="https://aiche.onlinelibrary.wiley.com/doi/full/10.1002/aic.17641">Assessment of a subgrid-scale model for convection-dominated mass transfer for initial transient rise of a bubble</a></p>
 				</section>
 			</section>
 
