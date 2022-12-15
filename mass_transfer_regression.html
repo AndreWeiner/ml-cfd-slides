@@ -955,12 +955,12 @@ Foam::ptSurfaceVelocityFvPatchVectorField::
 ptSurfaceVelocityFvPatchVectorField
 (
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField&lt;vector, volMesh&gt;& iF,
     const dictionary& dict
 )
 :
     // snip
-    model_name_(dict.get<word>("modelName")),
+    model_name_(dict.get&lt;word&gt;("modelName")),
     velocity_model_(torch::jit::load(model_name_))
 {}
 						</code></pre>
@@ -977,13 +977,13 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
         // snip
         scalar theta = acos((x & axis_) / r);
         features[i][0] = theta;
-        features[i][1] = this->db().time().value();
+        features[i][1] = this-&gt;db().time().value();
     }
 
     // run forward pass to compute tangential velocity
-    std::vector<torch::jit::IValue> modelFeatures{features};
+    std::vector&lt;torch::jit::IValue&gt; modelFeatures{features};
     torch::Tensor uTensor = velocity_model_.forward(modelFeatures).toTensor();
-    auto uAccessor = uTensor.accessor<double,1>();
+    auto uAccessor = uTensor.accessor&lt;double,1&gt;();
 
     // add tangential and normal components
     vectorField surfaceVelocity(Cf.size(), Zero);
