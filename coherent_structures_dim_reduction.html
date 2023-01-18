@@ -14,6 +14,9 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="plugin/chalkboard/style.css">
+		<link rel="stylesheet" href="plugin/customcontrols/style.css">
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
@@ -104,7 +107,20 @@
 						</div>
 					</div>
 				</section>
-
+<!--
+				<section>
+					<h2>ProDigi</h2>
+					<p>
+						This lecture is financed via the program:<br><a href="https://www.tu-braunschweig.de/en/teaching-and-media-education/our-services/international-teaching/prodigi">Promoting digital education through global interconnection</a> (ProDigi).
+					</p>
+					<p>Let's take a moment to give something back!<br>$\rightarrow$ follow the link to the poll</p>
+				</section>
+-->
+				<section>
+					<h2>Evaluation</h2>
+					<p>Learning from data is effective - let's create some for this course!</p>
+					<p>$\rightarrow$ follow the link to the poll</p>
+				</section>
 				<section>
 					<h2>Last lecture</h2>
 					<p>Computing highly accurate mass transfer at rising bubbles</p>
@@ -126,8 +142,8 @@
 						<li>transonic shock buffets</li>
 						<li>principal component analysis (PCA)</li>
 						<li>ways to compute the PCA</li>
-						<li>PCA applied to the flow around an airfoil</li>
 						<hr>
+						<li>PCA applied to the flow around an airfoil</li>
 						<li>dynamic mode decomposition (DMD)</li>
 						<li>DMD applied to the flow around an airfoil</li>
 					</ul>
@@ -137,11 +153,143 @@
 					<section>
 						<h2>Transonic shock buffets</h2>
 					</section>
+					<section>
+						<iframe width="650" height="370" src="https://www.youtube.com/embed/zCJco59tqoQ?start=193" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+						<p>Boeing 737 undergoing buffet/stall - <a href="https://www.youtube.com/watch?v=zCJco59tqoQ&t=193s">source.</a></p>
+					</section>
+					<section>
+						<video height="500" controls muted loop>
+							<source src="images/naca0012_ma_3D.mp4">
+						</video>
+						<p>Slice of local Mach number $Ma=0.75$, <b>3D</b>, $\alpha=4^\circ$.</p>
+					</section>
+					<section>
+						<ul>
+							<li>self-sustained shock-BL-interactions</li>
+							<li>may lead to aeroelastic reaction (buffeting)</li>
+							<li>potentially influenced by acoustic waves</li>
+							<li>very different for profiles (2D) and wings (3D)</li>
+						</ul>
+					</section>
+					<section>
+						<p>Understanding shock buffet enables:</p>
+						<ol>
+							<li>prediction of onset ($Ma$-$\alpha$ envelop)</li>
+							<li>passive or active control strategies</li>
+						</ol>
+					</section>
 				</section>
 
 				<section>
 					<section>
 						<h2>Principal component analysis (PCA)</h2>
+					</section>
+					<section>
+						<video height="500" controls mute autoplay loop>
+							<source src="images/cylinder_short.mp4">
+						</video>
+						<p>Flow past a circular cylinder at $Re=100$.</p>
+					</section>
+					<section>
+						<img src="images/cylinder_mean_var.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Temporal mean and variance of velocity components.</p>
+					</section>
+					<section>
+						<img src="images/cylinder_Ux_var_markers.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Probe locations for velocity fluctuations.</p>
+					</section>
+					<section>
+						<img src="images/Up_probes_vs_time.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Streamwise velocity fluctuations over time.</p>
+					</section>
+					<section>
+						<img src="images/Up1_vs_Up2.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>$u^\prime_1$ plotted  against $u^\prime_2$.</p>
+					</section>
+					<section>
+						<p>Let's organize the data in a matrix:</p>
+						<p>
+							$$
+							\mathbf{X} = \left[
+							\begin{array}{cccc}
+						  |            & |            &     & | \\
+						  \mathbf{u}^\prime_1 & \mathbf{u}^\prime_2 & ... & \mathbf{u}^\prime_{N} \\
+						  |            & |            &     & | \\
+						  \end{array}\right]
+							$$
+						</p>
+						<p>$\mathbf{X}$ has as many rows as we have samples and as many columns as we have snapshots.</p>
+					</section>
+					<section>
+						<p>Projecting all the points ($u^\prime_1$-$u^\prime_2$-pairs) onto a vector:</p>
+						<p>
+							$$
+							\mathbf{y} = \mathbf{\phi}^T \mathbf{X}
+							$$
+						</p>
+						<p>Our vector $\mathbf{\phi}$ has two rows and one column.</p>
+					</section>
+					<section>
+						<img src="images/Up12_proj.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Effect of projection onto $\mathbf{\phi} = (1, -1)^T/\sqrt{2}$.</p>
+					</section>
+					<section>
+						<p>Computing the variance along $\mathbf{\phi}$:</p>
+						<p>
+							$$
+  \mathrm{var}(\mathbf{y}) = \mathbf{yy}^T = \mathbf{\phi}^T \mathbf{X} (\mathbf{\phi}^T \mathbf{X})^T = \mathbf{\phi}^T \mathbf{XX}^T \mathbf{\phi}
+$$
+						</p>
+						<p>Definition of the covariance matrix $\mathbf{C}$:</p>
+						<p>
+							$$
+  \mathbf{C} = \frac{1}{N-1} \mathbf{XX}^T.
+$$
+						</p>
+					</section>
+					<section>
+						<img src="images/cov_org.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Covariance matrix in the natural basis.</p>
+					</section>
+					<section>
+						<img src="images/rotated_data.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Data projected onto rotated coordinate systems.</p>
+					</section>
+					<section>
+						<img src="images/cov_rotated_data.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Covariance matrix in rotated coordinate systems.</p>
+					</section>
+					<section>
+						<p>PCA idea: find new basis such that variance along each axis is maximized.</p>
+						<p>$\mathbf{C} = \mathbf{\Phi \Lambda \Phi}^{-1}\quad\text{given that}\quad \mathbf{\phi}^T_i\mathbf{\phi}_i = 1$</p>
+						<p>(proof in lecture notebook)</p>
+					</section>
+					<section>
+						<img src="images/cov_eigvecs_2D.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Principal components (optimal basis).</p>
+					</section>
+					<section>
+						<p>Mode coefficients $\mathbf{A}$:</p>
+						<p>
+							$$
+  \mathbf{A} = \mathbf{\Phi}^T \mathbf{X}
+$$
+						</p>
+						<p>Applied to snapshots, the coefficients encode the importance of each mode over time.</p>
+					</section>
+					<section>
+						<img src="images/mode_coeffs_2points.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Mode coefficients probe data.</p>
+					</section>
+					<section>
+						<p>What if we take <b>all</b> points instead of two samples?</p>
+					</section>
+					<section>
+						<img src="images/Up_cylinder_eigvecs.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<p>Mode coefficients probe data.</p>
+					</section>
+					<section>
+						<p>Modal decomposition: decomposition of snapshot data into modes (vary in space, const. in time) and temporal behavior (mode coefficients).</p>
 					</section>
 				</section>
 
@@ -609,6 +757,8 @@ tensor([0.5298+0.j, 0.8807+0.j])
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
 		<script src="plugin/math/math.js"></script>
+		<script src="plugin/chalkboard/plugin.js"></script>
+		<script src="plugin/customcontrols/plugin.js"></script>
 		<script>
 
 			// Also available as an ES module, see:
@@ -618,9 +768,32 @@ tensor([0.5298+0.j, 0.8807+0.j])
 				progress: true,
 				center: true,
 				hash: true,
+				chalkboard: {
+				boardmarkerWidth: 4,
+				chalkWidth: 4,
+				chalkEffect: 0.01,
+				theme: "chalkboard",
+				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
+				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
+				eraser: { src: path + 'img/sponge.png', radius: 20 }
+			},
+			customcontrols: {
+				controls: [
+					{
+						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
+						title: 'Toggle chalkboard (B)',
+						action: 'RevealChalkboard.toggleChalkboard();'
+					},
+					{
+						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
+						title: 'Toggle notes canvas (C)',
+						action: 'RevealChalkboard.toggleNotesCanvas();'
+					}
+				]
+			},
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls ]
 			});
 			Reveal.configure({ slideNumber: true });
 
