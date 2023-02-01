@@ -14,6 +14,9 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="plugin/chalkboard/style.css">
+		<link rel="stylesheet" href="plugin/customcontrols/style.css">
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
@@ -104,17 +107,37 @@
 						</div>
 					</div>
 				</section>
+
+				<section>
+					<h2>ProDigi</h2>
+					<p>
+						This lecture is financed via the program:<br><a href="https://www.tu-braunschweig.de/en/teaching-and-media-education/our-services/international-teaching/prodigi">Promoting digital education through global interconnection</a> (ProDigi).
+					</p>
+					<p>Let's take a moment to give something back!<br>$\rightarrow$ follow the link to the poll</p>
+				</section>
+
+				<section>
+					<section>
+						<h3>Course exam</h3>
+						<ul>
+							<li>written exam, ISM lecture room</li>
+							<li>March 30, 2023, 10:00 am</li>
+						</ul>
+						<p>Who plans to take the exam?</p>
+					</section>
+				</section>
 	
 				<section>
-					<h2>Last lecture</h2>
-					<p>Reduced-order modeling of the flow past a cylinder</p>
+					<h2>Outline</h2>
+					<p>Analyzing coherent structures in flows displaying transonic shock buffets</p>
 					<ul>
-						<li>evaluation and exam</li>
+						<li>transonic shock buffets</li>
+						<li>principal component analysis (PCA)</li>
+						<li>ways to compute the PCA</li>
 						<hr>
-						<li>Reduced-order models of dynamical systems</li>
-						<li>Grouping similar data points</li>
-						<li>Modeling the transition between clusters</li>
-						<li>Dealing with high-dimensional data</li>
+						<li>PCA applied to the flow around an airfoil</li>
+						<li>dynamic mode decomposition (DMD)</li>
+						<li>DMD applied to the flow around an airfoil</li>
 					</ul>
 				</section>
 	
@@ -122,9 +145,7 @@
 					<h2>Outline</h2>
 					<p>Controlling the flow past a cylinder</p>
 					<ul>
-						<li>evaluation and exam</li>
-						<hr>
-						<li>Active flow control</li>
+						<li>Flow control</li>
 						<li>Elements of reinforcement learning</li>
 						<li>Q-learning</li>
 						<hr>
@@ -132,30 +153,6 @@
 						<li>Proximal policy optimization</li>
 						<li>Concluding remarks</li>
 					</ul>
-				</section>
-
-				<section>
-					<section>
-						<h3>Course evaluation</h3>
-						<p>Please, take some time for feedback:</p>
-						<ul>
-							<li>link to poll on StudIp - announcements</li>
-							<li>poll open until 7th of Feb</li>
-							<li>poll is anonymous</li>
-							<li>your feedback matters!</li>
-							<li>be fair and constructive</li>
-						</ul>
-						<p>Externals: if you like, send me an email!</p>
-					</section>
-					<section>
-						<h3>Course exam</h3>
-						<ul>
-							<li><span style="color: red;">take home exam</span>, online</li>
-							<li>March 7, 2022, 9:00-10:45 am</li>
-							<li>organized via a dedicated StudIp group</li>
-						</ul>
-						<p><span style="color: red;">Please check your StudIp messages!</span></p>
-					</section>
 				</section>
 
 				<section>
@@ -183,14 +180,10 @@
 					<section>
 						<p>Categories of active flow control:</p>
 						<ol>
-							<li><b>open-loop:</b> actuation fixed; constant or periodic motion, blowing, heating, ...</li>
+							<li><b>open-loop:</b> actuation prescript; constant or periodic motion, blowing, heating, ...</li>
 							<li><b>closed-loop:</b> actuation based on sensor input</li>
 						</ol>
 						<p>Closed-loop flow control can be more effective but defining the control law is extremely challenging.</p>
-					</section>
-					<section>
-						<img src="images/open_vs_closed_loop.png" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
-						<p>Block diagrams of open and closed-loop control; source: figure 1.2 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
 					</section>
 					<section>
 						<video height="500" controls mute autoplay loop>
@@ -340,9 +333,34 @@
 						<p>May be relaxed in practice by adding several time levels to the state.</p>
 					</section>
 					<section>
+						<p>Slippery walk in gym/gym_walk:</p>
+						<pre class="python"><code>
+env = gym.make('SlipperyWalkSeven-v0')
+init_state = env.reset()
+P = env.env.P
+list(P.items())[-2:]
+# output
+[(7,
+  {0: [(0.5000000000000001, 6, 0.0, False),
+    (0.3333333333333333, 7, 0.0, False),
+    (0.16666666666666666, 8, 1.0, True)],
+   1: [(0.5000000000000001, 8, 1.0, True),
+    (0.3333333333333333, 7, 0.0, False),
+    (0.16666666666666666, 6, 0.0, False)]}),
+ (8,
+  {0: [(0.5000000000000001, 8, 0.0, True),
+    (0.3333333333333333, 8, 0.0, True),
+    (0.16666666666666666, 8, 0.0, True)],
+   1: [(0.5000000000000001, 8, 0.0, True),
+    (0.3333333333333333, 8, 0.0, True),
+    (0.16666666666666666, 8, 0.0, True)]})]
+						</code></pre>
+					</section>
+					<section>
 						<ul>
-							<li>state space: $s\in \{0, 1, 2, 3, 4, 5, 6\}$</li>
+							<li>state space: $s\in \{0, 1, 2, 3, 4, 5, 6, 7, 8 \}$</li>
 							<li>action space: $a \in \{0, 1\}$</li>
+							<li>reward space: $r \in \{0, 1\}$</li>
 							<li>experience tuple: $(3, 0, 0, 4)$</li>
 							<li>trajectory: $((5, 0, 0, 6), (6, 1, 0, 7), ...)$</li>
 
@@ -495,30 +513,6 @@
 							$$
 						</p>
 						<p>$v_k$ - value estimate at iteration $k$</p>
-					</section>
-					<section>
-						<p>Slippery walk in gym/gym_walk:</p>
-						<pre class="python"><code>
-env = gym.make('SlipperyWalkSeven-v0')
-init_state = env.reset()
-P = env.env.P
-list(P.items())[-2:]
-# output
-[(7,
-  {0: [(0.5000000000000001, 6, 0.0, False),
-    (0.3333333333333333, 7, 0.0, False),
-    (0.16666666666666666, 8, 1.0, True)],
-   1: [(0.5000000000000001, 8, 1.0, True),
-    (0.3333333333333333, 7, 0.0, False),
-    (0.16666666666666666, 6, 0.0, False)]}),
- (8,
-  {0: [(0.5000000000000001, 8, 0.0, True),
-    (0.3333333333333333, 8, 0.0, True),
-    (0.16666666666666666, 8, 0.0, True)],
-   1: [(0.5000000000000001, 8, 0.0, True),
-    (0.3333333333333333, 8, 0.0, True),
-    (0.16666666666666666, 8, 0.0, True)]})]
-						</code></pre>
 					</section>
 					<section>
 						<p>Value iteration implementation:</p>
@@ -842,6 +836,8 @@ tensor([[0.3704, 0.6668],
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
 		<script src="plugin/math/math.js"></script>
+		<script src="plugin/chalkboard/plugin.js"></script>
+		<script src="plugin/customcontrols/plugin.js"></script>
 		<script>
 
 			// Also available as an ES module, see:
@@ -851,9 +847,32 @@ tensor([[0.3704, 0.6668],
 				progress: true,
 				center: true,
 				hash: true,
+				chalkboard: {
+				boardmarkerWidth: 4,
+				chalkWidth: 4,
+				chalkEffect: 0.01,
+				theme: "chalkboard",
+				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
+				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
+				eraser: { src: path + 'img/sponge.png', radius: 20 }
+			},
+			customcontrols: {
+				controls: [
+					{
+						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
+						title: 'Toggle chalkboard (B)',
+						action: 'RevealChalkboard.toggleChalkboard();'
+					},
+					{
+						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
+						title: 'Toggle notes canvas (C)',
+						action: 'RevealChalkboard.toggleNotesCanvas();'
+					}
+				]
+			},
 
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls ]
 			});
 			Reveal.configure({ slideNumber: true });
 
