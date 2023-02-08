@@ -333,6 +333,21 @@
 						<p>May be relaxed in practice by adding several time levels to the state.</p>
 					</section>
 					<section>
+						<p>Reward function:</p>
+						<p>
+							$$
+							p(s^\prime | s, a) = P(S_{t}=s^\prime | S_{t-1} = s, A_{t-1} = a)
+							$$
+						</p>
+						<p>
+							$$
+							r(s, a) = \mathbb{E}[R_{t} | S_{t-1}=s, A_{t-1}=a]
+							$$
+						</p>
+						<p>Transition function:</p>
+						<p><a href="https://ai.stackexchange.com/questions/21767/why-are-the-value-functions-sometimes-written-with-capital-letters-and-other-tim">What are the upper and lower case letters about?</a></p>
+					</section>
+					<section>
 						<p>Slippery walk in gym/gym_walk:</p>
 						<pre class="python"><code>
 env = gym.make('SlipperyWalkSeven-v0')
