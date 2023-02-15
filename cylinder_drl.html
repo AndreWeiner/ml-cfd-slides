@@ -642,7 +642,7 @@ tensor([[0.3704, 0.6668],
 						<h2>Elements of <span style="color: red;">deep</span> reinforcement learning</h2>
 					</section>
 					<section>
-						<p>Deep RL uses neural networks to lean function approximations of:</p>
+						<p>Deep RL uses neural networks to learn function approximations of:</p>
 						<ul>
 							<li>the action-value function</li>
 							<li>the value function</li>
@@ -656,7 +656,7 @@ tensor([[0.3704, 0.6668],
 						<ul>
 							<li>Value-based methods: approximation of action-value function; NFQ, DQN, DDQN</li>
 							<li>Policy-gradient methods: approximation of policy; REINFORCE, VPG</li>
-							<li>Model-based methods: approximation of environment</li>
+							<li>Model-based methods: approximation of environment; PILCO, METRPO</li>
 							<li>Actor-critic methods: approximation of policy and value function with bootstrapping; A2C, PPO</li>
 						</ul>
 					</section>
@@ -726,6 +726,7 @@ tensor([[0.3704, 0.6668],
 						<p>Was the selected action a good one?</p>
 						<p>
 							$$\delta_t = R_t + \gamma V(s_{t+1}) - V(s_t) $$
+							$$\delta_{t+1} = R_t + \gamma R_{t+1} + \gamma^2 V(s_{t+2}) - V(s_t) $$
 							$$
 							  A_t^{GAE} = \sum\limits_{l=0}^{N_t-t} (\gamma \lambda)^l \delta_{t+l}
 							$$
