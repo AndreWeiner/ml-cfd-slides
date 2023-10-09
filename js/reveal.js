@@ -1,5 +1,6 @@
 import SlideContent from './controllers/slidecontent.js'
 import SlideNumber from './controllers/slidenumber.js'
+import JumpToSlide from './controllers/jumptoslide.js'
 import Backgrounds from './controllers/backgrounds.js'
 import AutoAnimate from './controllers/autoanimate.js'
 import Fragments from './controllers/fragments.js'
@@ -26,7 +27,7 @@ import {
 } from './utils/constants.js'
 
 // The reveal.js version
-export const VERSION = '4.4.0';
+export const VERSION = '4.6.0';
 
 /**
  * reveal.js
@@ -101,6 +102,7 @@ export default function( revealElement, options ) {
 		// may be multiple presentations running in parallel.
 		slideContent = new SlideContent( Reveal ),
 		slideNumber = new SlideNumber( Reveal ),
+		jumpToSlide = new JumpToSlide( Reveal ),
 		autoAnimate = new AutoAnimate( Reveal ),
 		backgrounds = new Backgrounds( Reveal ),
 		fragments = new Fragments( Reveal ),
@@ -253,7 +255,18 @@ export default function( revealElement, options ) {
 
 		if( !config.showHiddenSlides ) {
 			Util.queryAll( dom.wrapper, 'section[data-visibility="hidden"]' ).forEach( slide => {
-				slide.parentNode.removeChild( slide );
+				const parent = slide.parentNode;
+
+				// If this slide is part of a stack and that stack will be
+				// empty after removing the hidden slide, remove the entire
+				// stack
+				if( parent.childElementCount === 1 && /section/i.test( parent.nodeName ) ) {
+					parent.remove();
+				}
+				else {
+					slide.remove();
+				}
+
 			} );
 		}
 
@@ -278,6 +291,7 @@ export default function( revealElement, options ) {
 
 		backgrounds.render();
 		slideNumber.render();
+		jumpToSlide.render();
 		controls.render();
 		progress.render();
 		notes.render();
@@ -438,8 +452,8 @@ export default function( revealElement, options ) {
 		dom.wrapper.setAttribute( 'data-background-transition', config.backgroundTransition );
 
 		// Expose our configured slide dimensions as custom props
-		dom.viewport.style.setProperty( '--slide-width', config.width + 'px' );
-		dom.viewport.style.setProperty( '--slide-height', config.height + 'px' );
+		dom.viewport.style.setProperty( '--slide-width', typeof config.width == 'string' ? config.width :  config.width + 'px' );
+		dom.viewport.style.setProperty( '--slide-height', typeof config.height == 'string' ? config.height :  config.height + 'px' );
 
 		if( config.shuffle ) {
 			shuffle();
@@ -571,6 +585,7 @@ export default function( revealElement, options ) {
 		progress.destroy();
 		backgrounds.destroy();
 		slideNumber.destroy();
+		jumpToSlide.destroy();
 
 		// Remove event listeners
 		document.removeEventListener( 'fullscreenchange', onFullscreenChange );
@@ -1002,11 +1017,18 @@ export default function( revealElement, options ) {
 	 * @param {number} [presentationHeight=dom.wrapper.offsetHeight]
 	 */
 	function getComputedSlideSize( presentationWidth, presentationHeight ) {
+		let width = config.width;
+		let height = config.height;
+
+		if( config.disableLayout ) {
+			width = dom.slides.offsetWidth;
+			height = dom.slides.offsetHeight;
+		}
 
 		const size = {
 			// Slide size
-			width: config.width,
-			height: config.height,
+			width: width,
+			height: height,
 
 			// Presentation size
 			presentationWidth: presentationWidth || dom.wrapper.offsetWidth,
@@ -1191,6 +1213,20 @@ export default function( revealElement, options ) {
 	}
 
 	/**
+	 * Toggles visibility of the jump-to-slide UI.
+	 */
+	function toggleJumpToSlide( override ) {
+
+		if( typeof override === 'boolean' ) {
+			override ? jumpToSlide.show() : jumpToSlide.hide();
+		}
+		else {
+			jumpToSlide.isVisible() ? jumpToSlide.hide() : jumpToSlide.show();
+		}
+
+	}
+
+	/**
 	 * Toggles the auto slide mode on and off.
 	 *
 	 * @param {Boolean} [override] Flag which sets the desired state.
@@ -1233,7 +1269,7 @@ export default function( revealElement, options ) {
 	 */
 	function slide( h, v, f, origin ) {
 
-		// Dispatch an event before hte slide
+		// Dispatch an event before the slide
 		const slidechange = dispatchEvent({
 			type: 'beforeslidechange',
 			data: {
@@ -1453,7 +1489,9 @@ export default function( revealElement, options ) {
 		// Write the current hash to the URL
 		location.writeURL();
 
-		fragments.sortAll();
+		if( config.sortFragmentsOnSync === true ) {
+			fragments.sortAll();
+		}
 
 		controls.update();
 		progress.update();
@@ -1834,7 +1872,7 @@ export default function( revealElement, options ) {
 		}
 
 		// If includeFragments is set, a route will be considered
-		// availalbe if either a slid OR fragment is available in
+		// available if either a slid OR fragment is available in
 		// the given direction
 		if( includeFragments === true ) {
 			let fragmentRoutes = fragments.availableRoutes();
@@ -2176,11 +2214,7 @@ export default function( revealElement, options ) {
 
 		if( currentSlide && config.autoSlide !== false ) {
 
-			let fragment = currentSlide.querySelector( '.current-fragment' );
-
-			// When the slide first appears there is no "current" fragment so
-			// we look for a data-autoslide timing on the first fragment
-			if( !fragment ) fragment = currentSlide.querySelector( '.fragment' );
+			let fragment = currentSlide.querySelector( '.current-fragment[data-autoslide]' );
 
 			let fragmentAutoSlide = fragment ? fragment.getAttribute( 'data-autoslide' ) : null;
 			let parentAutoSlide = currentSlide.parentNode ? currentSlide.parentNode.getAttribute( 'data-autoslide' ) : null;
@@ -2658,6 +2692,9 @@ export default function( revealElement, options ) {
 		// Toggles the auto slide mode on/off
 		toggleAutoSlide,
 
+		// Toggles visibility of the jump-to-slide UI
+		toggleJumpToSlide,
+
 		// Slide navigation checks
 		isFirstSlide,
 		isLastSlide,
@@ -2678,6 +2715,10 @@ export default function( revealElement, options ) {
 		// Slide preloading
 		loadSlide: slideContent.load.bind( slideContent ),
 		unloadSlide: slideContent.unload.bind( slideContent ),
+
+		// Media playback
+		startEmbeddedContent: () => slideContent.startEmbeddedContent( currentSlide ),
+		stopEmbeddedContent: () => slideContent.stopEmbeddedContent( currentSlide, { unloadIframes: false } ),
 
 		// Preview management
 		showPreview,
