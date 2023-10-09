@@ -19,27 +19,9 @@
 	<link rel="stylesheet" href="plugin/customcontrols/style.css">
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
-
-<style>
-	.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-	}
-</style>
 
 <body>
 
@@ -48,11 +30,10 @@
 		<!-- Any section element inside of this container is displayed as a slide -->
 		<div class="slides">
 			<section>
-				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lecture 1</span></h3>
+				<h3><span style="color: red;">Course overview and introduction</span></h3>
 				<p>
 					Andre Weiner<br>
-					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
-						Control Group</small>
+					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
 					<small>
 						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
 								alt="Creative Commons License" style="border-width:0"
@@ -82,7 +63,7 @@
 				<div class="row_logo">
 					<div class="column_logo">
 						<div class="content_logo">
-							<img src="images/tubs_logo.png" alt="tubs_logo"
+							<img src="images/logos/TUD_white.png" alt="tud_logo"
 								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
@@ -92,7 +73,7 @@
 								<tr>
 									<td style="border: 0; padding-right: 5px;">&#9993;</th>
 									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 									<td style="border: 0; padding-right: 5px;">&#9741;</td>
 									<td style="border: 0; padding-right: 0px;"><a
 											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
@@ -114,8 +95,8 @@
 			<section>
 				<h2>Outline</h2>
 				<ul>
-					<li>about this course</li>
-					<li>Github issues</li>
+					<li>course logistics</li>
+					<li>reporting issues</li>
 					<li>combining ML and CFD</li>
 					<li>lecture projects</li>
 					<li>technology stack</li>
@@ -123,22 +104,26 @@
 			</section>
 			<section>
 				<section>
-					<h2>About this course</h2>
+					<h2>Course logistics</h2>
 				</section>
 				<section>
-					<h3>This course is for you $\rightarrow$</h3>
-					<h3><span style="color: red;">ask questions and comment!</span></h3>
-					<h3>I'll ask you a lot ...</h3>
+					<h3>Times and location</h3>
+					<ul>
+						<li>lecture: Tuesdays 7:30-9:00pm</li>
+						<li>exercise: Tuesdays 4:40-6:10pm</li>
+						<li>location: ZEU/114/H</li>
+					</ul>
+					<p>Refer to <a href="https://bildungsportal.sachsen.de/opal/auth/RepositoryEntry/41285910529/CourseNode/93169466939370">OPAL</a> for a detailed schedule of all lecture and exercises.</p>
 				</section>
 				<section>
 					<h3>Workload and requirements</h3>
 					<ul>
-						<li>5 CP, 150h workload</li>
-						<li>15 lectures (1.5h) + 15 exercise sessions (45min)</li>
-						<li>$150h-15*2.25h \approx 116h$ of <b>self-study</b></li>
-						<li>exam most likely written</li>
-						<li>prior knowledge of ML and CFD is a plus</li>
+						<li>5 CP, ~150h workload</li>
+						<li>13 lectures + 13 exercise sessions</li>
+						<li>$150h-13*3h \approx 110h$ of self-study</li>
+						<li>prior ML/CFD knowledge is a plus</li>
 						<li>programming knowledge is essential</li>
+						<li>written exam 1.5h</li>
 					</ul>
 				</section>
 				<section>
@@ -146,64 +131,37 @@
 					<ul>
 						<li>slides and exercises available on <a
 								href="https://github.com/AndreWeiner/ml-cfd-lecture">GitHub</a></li>
-						<li>all resources are <b>updated regularly</b></li>
-						<li>getting help: GitHub issues (preferred), StudIP</li>
-						<li>technical feedback: GitHub issues (preferred)</li>
-						<li>general feedback: mail, StudIP</li>
+						<li>all resources are <span style="color: red;">updated regularly</span></li>
+						<li>getting help: GitHub issues (preferred), mail</li>
+						<li>general feedback: mail/OPAL</li>
 					</ul>
 				</section>
 				<section>
 					<h3>Exercises</h3>
 					<ul>
-						<li>self-study</li>
-						<li>exercise session for Q & A</li>
-						<li><b>exception:</b> "0th" exercise (Oct 27)<br>Introduction to Python</li>
+						<li>exercise session: short introduction and Q & A <br>$\rightarrow$ mostly self-study</li>
+						<li><span style="color: red;">exception:</span> exercise 0 (Python intro)</li>
+						<li>remote support by course assistant</li>
 					</ul>
-				</section>
-				<section>
-					<h3>Times and location</h3>
-					<ul>
-						<li>lecture: Wednesdays 3:30-5:00pm</li>
-						<li>exercise: Thursdays 9:00-9:45am</li>
-						<li>location: ISM seminar room <br> or online via BBB</li>
-					</ul>
-					<p>Physical attendance: please bring a device to participate in polls via BBB!</p>
-				</section>
-				<section>
-					<h3><span style="color: red;">Lecture</span> participation: online or in person?</h3>
-					<ol>
-						<li style="list-style-type: upper-latin;">online</li>
-						<li style="list-style-type: upper-latin;">in person</li>
-					</ol>
-				</section>
-				<section>
-					<h3><span style="color: red;">Exercise</span> participation: online or in person?</h3>
-					<ol>
-						<li style="list-style-type: upper-latin;">online</li>
-						<li style="list-style-type: upper-latin;">in person</li>
-					</ol>
 				</section>
 			</section>
 			<section>
 				<section>
 					<h2>Github issues</h2>
+					<p>learn to communicate professionally</p>
 				</section>
 				<section>
 					<h3>Do you have a Github account?</h3>
-					<ol>
-						<li style="list-style-type: upper-latin;">yes</li>
-						<li style="list-style-type: upper-latin;">no</li>
-					</ol>
 					<p>Note: a Github account is not required but recommended.</p>
 				</section>
 				<section>
 					<p>How to open a new issue:</p>
 					<ol>
 						<li>go to the <a href="https://github.com/AndreWeiner/ml-cfd-lecture">Github repository</a></li>
-						<li>click on <b>Issues</b> (top left)</li>
+						<li>click on <span style="color: red;">Issues</span> (top left)</li>
 						<li>use the search to check if a similar<br> issue has been reported already</li>
-						<li>if not, open a <b>New issue</b> (top left)</li>
-						<li>write the report, attach a suitable label<br> and click on <b>Submit new issue</b></li>
+						<li>if not, open a <span style="color: red;">New issue</span> (top left)</li>
+						<li>report the issue and click on <br><span style="color: red;">Submit new issue</span> (bottom right)</li>
 					</ol>
 				</section>
 				<section>
@@ -213,22 +171,20 @@
 				<section>
 					<p>How to write an issue report:</p>
 					<ol>
-						<li>precise title<br><b>Incorrect eigenvalue formula lecture 2 slides</b></li>
-						<li>short description<br><b>Comparing the formulas between script and slides of lecture 2, I
-								found an inconsistency.</b></li>
-						<li>precise problem description<br><b>The formula reads $\mathbf{XQ}=\mathbf{Q\Lambda}$ in the
-								script and $\mathbf{XQ}=\mathbf{\Lambda Q}$ on the slides.</b></li>
+						<li>precise title<br><span style="color: red;">Incorrect eigenvalue formula lecture 2 slides</span></li>
+						<li>short description<br><span style="color: red;">Comparing the formulas between script and slides of lecture 2, I
+							found an inconsistency.</span></li>
+						<li>precise problem description<br><span style="color: red;">The formula reads $\mathbf{XQ}=\mathbf{Q\Lambda}$ in the
+							script and $\mathbf{XQ}=\mathbf{\Lambda Q}$ on the slides.</span></li>
 					</ol>
 				</section>
 				<section>
 					<p>Optional tips for writing issues:</p>
 					<ul>
-						<li>expected behavior<br><b>I expected a 3x2 tensor but got a 2x3 tensor.</b></li>
-						<li>suggestion for correction<br><b>I believe the correct formula is
-								$\mathbf{XQ}=\mathbf{Q\Lambda}$.</b></li>
-						<li>link related issues using #issue_number<br><b>The problem might be related to issue #6.</b>
-						</li>
-						<li>provide details about your setup<br><b>I am running Ubuntu 20.04 using WSL.</b></li>
+						<li>expected behavior<br><span style="color: red;">I expected a 3x2 tensor but got a 2x3 tensor.</span></li>
+						<li>suggestion for correction<br><span style="color: red;">I believe the correct formula is $\mathbf{XQ}=\mathbf{Q\Lambda}$.</span></li>
+						<li>link related issues using #issue_number<br><span style="color: red;">The problem might be related to issue #6.</span></li>
+						<li>provide details about your setup<br><span style="color: red;">I am running Ubuntu 20.04 using WSL.</span></li>
 					</ul>
 					<p>See also: <a href="https://hackernoon.com/45-github-issues-dos-and-donts-dfec9ab4b612">45 Github
 							Issues Dos and Don't</a></p>
@@ -271,10 +227,7 @@
 					<p>$\rightarrow$ closure models and decision making required</p>
 				</section>
 				<section>
-					<h2>But how exactly can <span style="color: red;">ML</span> help mitigating these problems?</h2>
-				</section>
-				<section>
-					<h2>ML is not a generic problem solver ...</h2>
+					<h3>But how exactly can <span style="color: red;">ML</span> help?</h3>
 				</section>
 				<section>
 					<h3>Problems that ML solves</h3>
@@ -324,37 +277,10 @@
 				</section>
 				-->
 				<section>
-					<h2>What type of ML could be helpful in the following scenarios?</h2>
+					<h3>What type of ML could be helpful in the following scenarios?</h3>
 				</section>
 				<section>
 					<p>Creating a transport model $\mu (T)$ based on experimental data ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>Mapping a flow field between simulations ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">reinforcement learning</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>Finding coherent structures in turbulent flows ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">reinforcement learning</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>Creating a reduced-order model of the velocity field ...</p>
 					<ol>
 						<li style="list-style-type: upper-latin;">regression</li>
 						<li style="list-style-type: upper-latin;">classification</li>
@@ -381,9 +307,9 @@
 					</ol>
 				</section>
 				<section>
-					<p>Predicting the stability regime of rising bubbles ...</p>
+					<p>Finding coherent structures in turbulent flows ...</p>
 					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
+						<li style="list-style-type: upper-latin;">reinforcement learning</li>
 						<li style="list-style-type: upper-latin;">classification</li>
 						<li style="list-style-type: upper-latin;">clustering</li>
 						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
@@ -398,6 +324,12 @@
 						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
 					</ol>
 				</section>
+				<section>
+					<ol>
+						<li>domain knowledge is essential</li>
+						<li>many advanced problems require<br> combination of multiple ML algorithms</li>
+					</ol>
+				</section>
 			</section>
 			<section>
 				<section>
@@ -405,50 +337,45 @@
 				</section>
 				<section>
 					<p>Lectures 2 & 3: write a CFD solver from scratch</p>
-					<img src="images/9x9_solution.svg" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 60%">
+					<img src="images/intro/9x9_solution.svg" alt="data-size"
+						style="background:white; border:none; box-shadow:none; width: 60%">
 				</section>
 				<section>
 					<p>Lectures 4 & 5: learn approximate velocity profiles</p>
-					<img src="images/profile_pred_vs_org.svg" alt="data-size"
+					<img src="images/intro/velocity_profiles.svg" alt="data-size"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 				</section>
 				<section>
 					<p>Lecture 6: predict the stability regime of rising bubbles</p>
-					<img src="images/network_multiclass_prediction.svg" alt="data-size"
+					<img src="images/intro/network_multiclass_prediction.svg" alt="data-size"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 				</section>
 				<section>
-					<p>Lectures 7 & 8: compute mass transfer at high Schmidt numbers</p>
-					<video height="450" controls mute autoplay loop>
-						<source src="images/all_cases_sc100.mp4">
+					<p>Lectures 7: compute mass transfer at high Schmidt numbers</p>
+					<video height="450" controls mute loop>
+						<source src="images/intro/all_cases_sc100.mp4">
 					</video>
 				</section>
 				<section>
-					<p>Lecture 9: constrain learning based on physics</p>
-					<img src="images/ml_fit_ode.svg" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 70%">
-				</section>
-				<section>
-					<p>Lectures 10 & 11: find coherent structures in turbulent flows</p>
-					<video height="450" controls mute autoplay loop>
-						<source src="images/dmd_3D_mode_10_u.mp4">
+					<p>Lectures 8 & 9: find coherent structures in turbulent flows</p>
+					<video height="450" controls mute loop>
+						<source src="images/intro/dmd_3D_mode_10_u.mp4">
 					</video>
 				</section>
 				<section>
-					<p>Lecture 12: create a reduced-order flow model</p>
-					<img src="images/periodic_dataset_clustering.svg" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 60%">
+					<p>Lecture 10: create a reduced-order flow model</p>
+					<img src="images/intro/periodic_dataset_clustering.svg" alt="data-size"
+						style="background:white; border:none; box-shadow:none; width: 60%">
 				</section>
 				<section>
-					<p>Lecture 13: optimize open-loop flow control</p>
-					<img src="images/cylinder_openloop_loss_surface.png" alt="data-size"
+					<p>Lecture 11: optimal open-loop flow control</p>
+					<img src="images/intro/cylinder_openloop_loss_surface.png" alt="data-size"
 						style="background:none; border:none; box-shadow:none; width: 50%">
 				</section>
 				<section>
-					<p>Lectures 14 & 15: learn an agnostic control law from scratch</p>
+					<p>Lectures 12 & 13: learn an agnostic control law from scratch</p>
 					<video height="450" controls mute autoplay loop>
-						<source src="images/variable_inflow_2x.mp4">
+						<source src="images/intro/variable_inflow_2x.mp4">
 					</video>
 				</section>
 			</section>
@@ -457,37 +384,25 @@
 					<h2>Technology stack</h2>
 				</section>
 				<section>
-					<h3>Linux and the command line?</h3>
-					<ol>
-						<li style="list-style-type: upper-latin;">no clue</li>
-						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-						<li style="list-style-type: upper-latin;">basic knowledge</li>
-						<li style="list-style-type: upper-latin;">good command</li>
-					</ol>
+					<h3>Linux and the command line</h3>
 				</section>
 				<section>
-					<h3>Git and GitHub?</h3>
+					<h3>Git and GitHub</h3>
 				</section>
 				<section>
-					<h3>Jupyter labs?</h3>
+					<h3>Jupyter labs</h3>
 				</section>
 				<section>
-					<h3>Python?</h3>
-					<ol>
-						<li style="list-style-type: upper-latin;">no clue</li>
-						<li style="list-style-type: upper-latin;">heard about it, never used it</li>
-						<li style="list-style-type: upper-latin;">basic knowledge</li>
-						<li style="list-style-type: upper-latin;">good command</li>
-					</ol>
+					<h3>Python</h3>
 				</section>
 				<section>
-					<h3>PyTorch?</h3>
+					<h3>PyTorch</h3>
 				</section>
 				<section>
-					<h3>OpenFOAM?</h3>
+					<h3>OpenFOAM</h3>
 				</section>
 				<section>
-					<h3>Apptainer/containers?</h3>
+					<h3>Apptainer/containers</h3>
 				</section>
 			</section>
 			</section>
@@ -509,10 +424,9 @@
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
-			controls: true,
-			progress: true,
-			center: true,
 			hash: true,
+			progress: true,
+			slideNumber: "c",
 			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
@@ -520,7 +434,25 @@
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -540,9 +472,20 @@
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
 		});
-		Reveal.configure({ slideNumber: true });
 
 	</script>
+	<style type="text/css">
+		.reveal .slide-number {
+			font-size: 1em;
+			color: #42affa;
+			right: auto;
+			width: 1.5em;
+			height: 1.5em;
+			background-color: #191919;
+			display: grid !important;
+			place-items: center;
+		}
+	</style>
 
 </body>
 
