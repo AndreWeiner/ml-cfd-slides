@@ -19,26 +19,9 @@
 	<link rel="stylesheet" href="plugin/customcontrols/style.css">
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
-<style>
-	.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-	}
-</style>
 
 <body>
 
@@ -47,12 +30,10 @@
 		<!-- Any section element inside of this container is displayed as a slide -->
 		<div class="slides">
 			<section>
-				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 2 & 3</span>
-				</h3>
+				<h3><span style="color: red;">The finite volume method in a nutshell</span></h3>
 				<p>
 					Andre Weiner<br>
-					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
-						Control Group</small>
+					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
 					<small>
 						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
 								alt="Creative Commons License" style="border-width:0"
@@ -82,7 +63,7 @@
 				<div class="row_logo">
 					<div class="column_logo">
 						<div class="content_logo">
-							<img src="images/tubs_logo.png" alt="tubs_logo"
+							<img src="images/logos/TUD_white.png" alt="tud_logo"
 								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
@@ -92,7 +73,7 @@
 								<tr>
 									<td style="border: 0; padding-right: 5px;">&#9993;</th>
 									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 									<td style="border: 0; padding-right: 5px;">&#9741;</td>
 									<td style="border: 0; padding-right: 0px;"><a
 											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
@@ -114,8 +95,8 @@
 			<section>
 				<h2>Last lecture</h2>
 				<ul>
-					<li>about this course</li>
-					<li>Github issues</li>
+					<li>course logistics</li>
+					<li>reporting issues</li>
 					<li>combining ML and CFD</li>
 					<li>lecture projects</li>
 					<li>technology stack</li>
@@ -126,9 +107,7 @@
 				<h2>Outline</h2>
 				<p>The finite volume method (FVM) in a nutshell</p>
 				<ul>
-					<li>FVM fundamentals
-						<hr>
-					</li>
+					<li>FVM fundamentals</li>
 					<li>FVM in OpenFOAM</li>
 					<li>FVM in Basilisk</li>
 				</ul>
@@ -148,44 +127,37 @@
 					<h2>Mathematical model</h2>
 				</section>
 				<section>
-					<h3>generic <span style="color: red;">convection-diffusion-equation</span> without source</h3>
+					<h3>generic <span style="color: red;">convection-diffusion-equation</span></h3>
 					<span style="display:inline-block; height: 200px"></span>
-					<div class="row_logo">
-						<div class="column_logo">
-							<div class="content_logo">
-								<ul>
-									<li>$\mathbf{u}$ - velocity vector</li>
-									<li>$\Psi$ - generic variable</li>
-									<li>$\Gamma$ - diffusivity</li>
-								</ul>
-							</div>
-						</div>
-						<div class="column_logo">
-							<div class="content_logo">
-								<ul>
-									<li>$t$ - time</li>
-									<li>$\nabla$ - Nabla operator</li>
-									<li>$\langle\cdot\rangle$ - dot-product</li>
-								</ul>
-							</div>
-						</div>
+					<div class="r-hstack items-end justify-around">
+						<ul>
+							<li>$\mathbf{u}$ - velocity vector</li>
+							<li>$\Psi$ - generic variable</li>
+							<li>$\Gamma$ - diffusivity</li>
+							<li>$S_\Psi$ - source term</li>
+						</ul>
+						<ul>
+							<li>$t$ - time</li>
+							<li>$\nabla$ - Nabla operator</li>
+							<li>$\langle\cdot\rangle$ - dot-product</li>
+						</ul>
 					</div>
 				</section>
 				<section>
-					<h3>What are $\Psi$ and $\Gamma$ in pure heat conduction?</h3>
-					<span style="display:inline-block; height: 200px"></span>
+					<h3>What are the in individual terms in <span style="color: red;">transient heat conduction?</span></h3>
+					<span style="display:inline-block; height: 300px"></span>
 				</section>
 				<section>
-					<h3>What are $\Psi$ and $\Gamma$ for chemical species?</h3>
-					<span style="display:inline-block; height: 200px"></span>
+					<h3>What are the in individual terms in a <span style="color: red;">chemically reacting flow?</span></h3>
+					<span style="display:inline-block; height: 300px"></span>
 				</section>
 				<section>
 					<h3>What is missing to be able to solve the equations?</h3>
 					<span style="display:inline-block; height: 200px"></span>
 				</section>
 				<section>
-					<img src="images/fvm_mathematical_model.svg" alt="model"
-						style="background:none; border:none; box-shadow:none; height: 550px">
+					<img src="images/cfd_intro/fvm_mathematical_model.svg" alt="model"
+						style="background:white; border:none; box-shadow:none; height: 550px">
 					<p>Mathematical problem considered in this lecture.</p>
 				</section>
 			</section>
@@ -195,16 +167,20 @@
 				</section>
 				<section>
 					<p><b>Meshing:</b> subdivide domain into a finite number of discrete elements (control volumes)</p>
-					<p>Lecture simplifications:</p>
+					<p>Lecture/notebook simplifications:</p>
 					<ul>
 						<li>structured, Cartesian mesh</li>
 						<li>cell-centered variable arrangement</li>
 					</ul>
 				</section>
 				<section>
+					<img src="images/cfd_intro/5x5_mesh.svg" alt="mesh"
+						style="background:white; border:none; box-shadow:none; height: 550px">
+					<p>5x5 mesh with grading in $x$.</p>
+				</section>
+				<section>
 					<p>A class to store the mesh properties</p>
-					<pre class="python"><code>
-class Mesh(object):
+					<pre class="python"><code data-line-numbers="1-2|4-5|6-7|9-10">class Mesh(object):
 	def __init__(self, L_x, L_y, N_x, N_y, grad_x, grad_y):
 		# snip
 		self.dx = self._compute_cell_width(L_x, N_x, grad_x)
@@ -214,16 +190,11 @@ class Mesh(object):
 	# snip
 	def cell_id(self, i, j) -> int:
 		return self.N_x * j + i
-						</code></pre>
+				</code></pre>
 				</section>
 				<section>
-					<img src="images/5x5_mesh.svg" alt="mesh"
-						style="background:none; border:none; box-shadow:none; height: 550px">
-					<p>5x5 mesh with grading in $x$.</p>
-				</section>
-				<section>
-					<p>Python intermezzo: unit testing</p>
-					<pre class="python"><code>
+					<p>Python intermezzo: (unit) testing</p>
+					<pre class="python"><code data-line-numbers="1-2|3-4">mesh = Mesh(1.0, 1.0, 5, 5, 1.0, 1.0)
 assert pt.allclose(mesh.x, pt.linspace(0.1, 0.9, 5))
 mesh = Mesh(1.0, 1.0, 5, 5, 2.0, 1.0)
 assert pt.isclose(2.0*mesh.dx[0], mesh.dx[-1])
@@ -243,8 +214,7 @@ class VolScalarField(object):
 				</section>
 				<section>
 					<p>Python intermezzo: equality</p>
-					<pre class="python"><code>
-# test one
+					<pre class="python"><code data-line-numbers="1-5|7-10"># test one
 a = [1, 2, 3]
 b = a
 print(a is b, a == b)
@@ -256,13 +226,16 @@ print(a is b, a == b)
 # output?
 						</code></pre>
 				</section>
+				<section>
+					<h3>What changes in an unstructured mesh?</h3>
+				</section>
 			</section>
 			<section>
 				<section>
 					<h2>Equation discretization part I - diffusion</h2>
 				</section>
 				<section>
-					<p><b>Equation discretization:</b> transform PDE + BC/IC into a system of linear equations</p>
+					<p><b>Equation discretization:</b> transform PDE + BC/IC into a system of linear equations by means of mesh-based finite approximations</p>
 					<p>
 						$$
 						F\left(T, \partial_t T, \nabla T, ...\right) \rightarrow \mathbf{Ax} = \mathbf{b}
@@ -278,8 +251,7 @@ print(a is b, a == b)
 				</section>
 				<section>
 					<p>A class to store the linear system of equations</p>
-					<pre class="python"><code>
-class FVMatrix(object):
+					<pre class="python"><code data-line-numbers="1-5|7-11">class FVMatrix(object):
 	def __init__(self, matrix, source, field):
 		self.matrix = matrix
 		self.source = source
@@ -300,8 +272,8 @@ class FVMatrix(object):
 					$$
 				</section>
 				<section>
-					<img src="images/stencil_internal.svg" alt="stencil"
-						style="background:none; border:none; box-shadow:none; height: 400px">
+					<img src="images/cfd_intro/stencil_internal.svg" alt="stencil"
+						style="background:white; border:none; box-shadow:none; height: 400px">
 					<p>
 						$$
 						\mathbf{n}_n = \qquad, \mathbf{n}_s = \qquad, \mathbf{n}_e = \qquad, \mathbf{n}_w = \qquad
@@ -309,8 +281,8 @@ class FVMatrix(object):
 					</p>
 				</section>
 				<section>
-					<img src="images/stencil_internal.svg" alt="stencil"
-						style="background:none; border:none; box-shadow:none; height: 400px">
+					<img src="images/cfd_intro/stencil_internal.svg" alt="stencil"
+						style="background:white; border:none; box-shadow:none; height: 400px">
 					<p>
 						$$
 						\int\limits_{\partial V} \left(\lambda \nabla T\right)\cdot \mathbf{n} \mathrm{d}o =
@@ -329,15 +301,8 @@ class FVMatrix(object):
 					$$
 				</section>
 				<section>
-					<p>
-						$$
-						a_p T_{i,j} + a_n T_{i, j+1} + a_s T_{i, j-1} + a_e T_{i+1, j} + a_w T_{i-1, j} = b
-						$$
-					</p>
-				</section>
-				<section>
-					<img src="images/stencil_boundary.svg" alt="stencil"
-						style="background:none; border:none; box-shadow:none; height: 400px">
+					<img src="images/cfd_intro/stencil_boundary.svg" alt="stencil"
+						style="background:white; border:none; box-shadow:none; height: 400px">
 					<p>
 						<small>
 							$$
@@ -354,17 +319,24 @@ class FVMatrix(object):
 					</p>
 				</section>
 				<section>
+					<p>
+						$$
+						a_p T_{i,j} + a_n T_{i, j+1} + a_s T_{i, j-1} + a_e T_{i+1, j} + a_w T_{i-1, j} = b
+						$$
+					</p>
+					<p>Refer to the lecture notebook for more details.</p>
+				</section>
+				<section>
 					<p>Function to construct the diffusion FVMatrix</p>
-					<pre class="python"><code>
-def fvm_laplace(diffusivity: float, field: VolScalarField) -> FVMatrix:
-    row, col, val = [], [], []
+					<pre class="python"><code data-line-numbers="1|2-4|5-8|9-16|18-19">def fvm_laplace(diffusivity: float, field: VolScalarField) -> FVMatrix:
     dx, dy = field.mesh.dx, field.mesh.dy
+    row, col, val = [], [], []
     source = pt.zeros(field.mesh.N_x*field.mesh.N_y)
     def add_east(i, j):
-	# snip
-	def add_west(i, j):
-	# snip
-	for i in range(field.mesh.N_x):
+    # snip
+    def add_west(i, j):
+    # snip
+    for i in range(field.mesh.N_x):
         for j in range(field.mesh.N_y):
             a_e, b_e = add_east(i, j)
             a_w, b_w = add_west(i, j)
@@ -392,7 +364,7 @@ matrix = fvm_laplace(1.0, T)
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/diff_fv_matrix.svg" alt="matrix"
+					<img src="images/cfd_intro/diff_fv_matrix.svg" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Coefficient matrix and source vector; blue coeff. are negative; coeff. scaled by absolute value.
 					</p>
@@ -423,10 +395,9 @@ matrix = fvm_laplace(1.0, T)
 				<section>
 					<p>problem: does not scale to large systems of equations</p>
 					<p>alternative: (iteratively) guessing the solution</p>
-					<pre class="python"><code>
-x, y = 0, 0
-x_true, y_true = -8, 3
+					<pre class="python"><code data-line-numbers="1-2|5-8|9-14">x, y = 0, 0
 TOL = 1e-3
+x_true, y_true = -8, 3
 res_jacobi = []
 for i in range(50):
     x_new = (2 + 2*y) / (-1)
@@ -442,8 +413,7 @@ Converged after 34 iterations.
 				</section>
 				<section>
 					<p>more effective updates</p>
-					<pre class="python"><code>
-x, y = 0, 0
+					<pre class="python"><code data-line-numbers="1-2|3-6|7-11">x, y = 0, 0
 res_gauss_seidel = []
 for i in range(50):
 	x = (2 + 2*y) / (-1)
@@ -457,8 +427,8 @@ Converged after 17 iterations.
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/jacobi_vs_gauss_seidel.svg" alt="iterative"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/cfd_intro/jacobi_vs_gauss_seidel.svg" alt="iterative"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Gauss-Seidel vs. Jacobi method.</p>
 				</section>
 				<section>
@@ -467,25 +437,17 @@ Converged after 17 iterations.
 					\phi_i^n = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=0}^{i-1}a_{ij}\phi_j^n -
 					\sum\limits_{j=i+1}^{N-1} a_{ij}\phi_j^{n-1}\right)
 					$$
-					<div class="row_logo">
-						<div class="column_logo">
-							<div class="content_logo">
-								<ul>
-									<li>$i$ - cell id</li>
-									<li>$n$ - iteration count</li>
-									<li>$N$ - number of cells</li>
-								</ul>
-							</div>
-						</div>
-						<div class="column_logo">
-							<div class="content_logo">
-								<ul>
-									<li>$\phi_i$ - solution variable</li>
-									<li>$a_{ii}$ - diagonal coefficient</li>
-									<li>$b_i$ - source term</li>
-								</ul>
-							</div>
-						</div>
+					<div class="r-hstack items-end justify-around">
+						<ul>
+							<li>$i$ - cell id</li>
+							<li>$n$ - iteration count</li>
+							<li>$N$ - number of cells</li>
+						</ul>
+						<ul>
+							<li>$\phi_i$ - solution variable</li>
+							<li>$a_{ii}$ - diagonal coefficient</li>
+							<li>$b_i$ - source term</li>
+						</ul>
 					</div>
 				</section>
 				<section>
@@ -509,13 +471,12 @@ tensor([[0, 0, 3],
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/dense_vs_sparse.svg" alt="dense"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/cfd_intro/dense_vs_sparse.svg" alt="dense"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Memory requirement of dense and sparse matrices.</p>
 				</section>
 				<section>
-					<pre class="python"><code>
-def gauss_seidel(A, b, x, tol=1.0e-6, max_iter=1000):
+					<pre class="python"><code data-line-numbers="1|3|4|5-9|10-11">def gauss_seidel(A, b, x, tol=1.0e-6, max_iter=1000):
     res_iter = []
     for it in range(max_iter):
         for i in range(x.shape[0]):
@@ -528,7 +489,7 @@ def gauss_seidel(A, b, x, tol=1.0e-6, max_iter=1000):
         if res_iter[-1] < tol:
             # snip
 						</code></pre>
-					<p>Implementation of a simple Gauss-Seidel solver.</p>
+					<p>Implementation of a simple Gauss-Seidel solver.<br> More efficient: LDU addressing.</p>
 				</section>
 				<section>
 					<p>Putting it all together</p>
@@ -548,17 +509,17 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/5x5_solution.svg" alt="sol"
+					<img src="images/cfd_intro/5x5_solution.svg" alt="sol"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Cell-centered solution.</p>
 				</section>
 				<section>
-					<img src="images/10x10_solution.svg" alt="sol"
+					<img src="images/cfd_intro/10x10_solution.svg" alt="sol"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Refined cell-centered solution.</p>
 				</section>
 				<section>
-					<img src="images/res_coarse_fine.svg" alt="sol"
+					<img src="images/cfd_intro/res_coarse_fine.svg" alt="sol"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Influence of refinement on convergence.</p>
 				</section>
@@ -583,8 +544,8 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
 					$$
 				</section>
 				<section>
-					<img src="images/stencil_internal.svg" alt="stencil"
-						style="background:none; border:none; box-shadow:none; height: 400px">
+					<img src="images/cfd_intro/stencil_internal.svg" alt="stencil"
+						style="background:white; border:none; box-shadow:none; height: 400px">
 					<p>
 						$$
 						\int\limits_{\partial V} \mathbf{u} T \cdot \mathbf{n} \mathrm{d}o =
@@ -604,14 +565,14 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
 					</p>
 				</section>
 				<section>
-					<img src="images/2D_velocity_field.svg" alt="vel"
+					<img src="images/cfd_intro/2D_velocity_field.svg" alt="vel"
 						style="background:none; border:none; box-shadow:none; width: 50%">
 					<p>
 						Stream function $\psi = 2 Axy$ and velocity vector $\mathbf{u}(x,y) = (2Ax, -2Ay)^T$.
 					</p>
 				</section>
 				<section>
-					<img src="images/surface_velocity_corner_flow.svg" alt="vel"
+					<img src="images/cfd_intro/surface_velocity_corner_flow.svg" alt="vel"
 						style="background:none; border:none; box-shadow:none; width: 50%">
 					<p>
 						Velocity vectors in the cell centers and on the surface.
@@ -659,8 +620,8 @@ def create_surface_velocity_field(
 				</section>
 
 				<section>
-					<img src="images/stencil_boundary.svg" alt="stencil"
-						style="background:none; border:none; box-shadow:none; height: 400px">
+					<img src="images/cfd_intro/stencil_boundary.svg" alt="stencil"
+						style="background:white; border:none; box-shadow:none; height: 400px">
 					<p>
 						<small>
 							$$
@@ -700,7 +661,7 @@ matrix = fvm_div(vel, T)
 							</code></pre>
 				</section>
 				<section>
-					<img src="images/conv_fv_matrix.svg" alt="matrix"
+					<img src="images/cfd_intro/conv_fv_matrix.svg" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Coefficient matrix and source vector; blue coeff. are negative; coeff. scaled by absolute
 						value.
@@ -729,7 +690,7 @@ T = VolScalarField(mesh, "T", Tsol.reshape(10, 10), bc)
 							</code></pre>
 				</section>
 				<section>
-					<img src="images/10x10_full_solution_with_inlet.svg" alt="matrix"
+					<img src="images/cfd_intro/10x10_full_solution_with_inlet.svg" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Solution converged to $res=9.53\times 10^{-7}$ in 358 iterations.
 					</p>
@@ -826,7 +787,7 @@ boundary
 							</code></pre>
 				</section>
 				<section>
-					<img src="images/10x10_mesh_wireframe_3d.png" alt="matrix"
+					<img src="images/cfd_intro/10x10_mesh_wireframe_3d.png" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>OpenFOAM mesh created by <b>blockMesh</b>.
 					</p>
@@ -855,7 +816,7 @@ expressions
 							</code></pre>
 				</section>
 				<section>
-					<img src="images/10x10_vel_wireframe_3d.png" alt="matrix"
+					<img src="images/cfd_intro/10x10_vel_wireframe_3d.png" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Velocity field initialized with <b>setExprFields</b>.
 					</p>
@@ -957,25 +918,25 @@ solvers
 					<h3>How can I test the setup for pure convection?</h3>
 				</section>
 				<section>
-					<img src="images/10x10_T_corner_pure_diffusion.png" alt="matrix"
+					<img src="images/cfd_intro/10x10_T_corner_pure_diffusion.png" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>OpenFOAM solution for pure diffusion.
 					</p>
 				</section>
 				<section>
-					<img src="images/10x10_solution.svg" alt="matrix"
+					<img src="images/cfd_intro/10x10_solution.svg" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Python solution for pure diffusion.
 					</p>
 				</section>
 				<section>
-					<img src="images/10x10_T_corner_full.png" alt="matrix"
+					<img src="images/cfd_intro/10x10_T_corner_full.png" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Solution converged to $res=9.75\times 10^{-7}$ in 364 iterations.
 					</p>
 				</section>
 				<section>
-					<img src="images/10x10_full_solution_with_inlet.svg" alt="matrix"
+					<img src="images/cfd_intro/10x10_full_solution_with_inlet.svg" alt="matrix"
 						style="background:none; border:none; box-shadow:none; height: 500px">
 					<p>Python solution for convection and diffusion.
 					</p>
@@ -986,8 +947,8 @@ solvers
 					<h2>The FVM in Basilisk</h2>
 				</section>
 				<section>
-					<video height="450" controls mute autoplay loop>
-						<source src="images/basilisk_2D_spherical_cap.mp4">
+					<video height="450" controls mute loop>
+						<source src="images/cfd_intro/basilisk_2D_spherical_cap.mp4">
 					</video>
 					<p>Axis-symmetric rise of a spherical-cap bubble.</p>
 				</section>
@@ -1025,10 +986,9 @@ solvers
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
-			controls: true,
-			progress: true,
-			center: true,
 			hash: true,
+			progress: true,
+			slideNumber: "c",
 			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
@@ -1036,7 +996,25 @@ solvers
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -1056,9 +1034,20 @@ solvers
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
 		});
-		Reveal.configure({ slideNumber: true });
 
 	</script>
+		<style type="text/css">
+			.reveal .slide-number {
+				font-size: 1em;
+				color: #42affa;
+				right: auto;
+				width: 1.5em;
+				height: 1.5em;
+				background-color: #191919;
+				display: grid !important;
+				place-items: center;
+			}
+		</style>
 
 </body>
 
