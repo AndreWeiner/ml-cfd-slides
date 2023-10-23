@@ -375,7 +375,7 @@ matrix = fvm_laplace(1.0, T)
 					<h2>Solving a sparse linear system of equations</h2>
 				</section>
 				<section>
-					<p>Linear system with two equations and two unknowns</p>
+					<p>linear system with two equations and two unknowns</p>
 					$$
 					\begin{align}
 					-1x-2y &= 2 \\
@@ -385,10 +385,27 @@ matrix = fvm_laplace(1.0, T)
 					<p>high school (direct) solution</p>
 					$$
 					\begin{align}
-					& 1)\quad x= (2 +2y)/(-1) = -2-2y\\
-					& 2)\quad (-2)(-2-2y)-7y = -5 \\
-					& 3)\quad y = -9/(-3) = 3\\
-					& 4)\quad x = (-2-2\times 3) = -8
+					& 1)&x &= (2 +2y)/(-1) = -2-2y\\
+					& 2)&y &= (-5 +2x)/(-7) = 5/7 - 2/7x\\
+					& 3)&x &= -2 - 2 (5/7 - 2/7x) \\
+					& &  &= -24/7 + 4/7x \rightarrow x = -8\\
+					& 4) &y &= 5/7 + 16/7  = 3
+					\end{align}
+					$$
+				</section>
+				<section>
+					<p>re-ordered linear system</p>
+					$$
+					\begin{align}
+					-1x-2y -2 &= 0 \\
+					-2x-7y +5 &= 0
+					\end{align}
+					$$
+					<p>testing the solution</p>
+					$$
+					\begin{align}
+					& 1) -1x-2y -2 = -1(-8)-2(3) -2 = 0 \\
+					& 2) -2x-7y +5 = -2(-8)-7(3)+5 = 0
 					\end{align}
 					$$
 				</section>
@@ -453,9 +470,9 @@ Converged after 17 iterations.
 				<section>
 					<p>Avoiding to store zeros: sparse matrices/tensors</p>
 					<ol>
-						<li>store non-zero value in a 1D array</li>
-						<li>store row id non-zero value in a 1D array</li>
-						<li>store column id non-zero value in a 1D array</li>
+						<li>store non-zero values in a 1D array</li>
+						<li>store row ids of non-zero values in a 1D array</li>
+						<li>store column ids non-zeros values in a 1D array</li>
 					</ol>
 					<pre class="python"><code>
 # sparse tensor in PyTorch
@@ -580,8 +597,7 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
 				</section>
 				<section>
 					<p>A field type for surface vector fields</p>
-					<pre class="python"><code>
-class SurfaceVectorField(object):
+					<pre class="python"><code data-line-numbers="1|2-6|8-12">class SurfaceVectorField(object):
     def __init__(self, mesh, name, value_x, value_y):
         self.mesh = mesh
         self.name = name
@@ -598,15 +614,14 @@ class SurfaceVectorField(object):
 				</section>
 				<section>
 					<p>Initializing the surface velocity</p>
-					<pre class="python"><code>
-def create_surface_velocity_field(
-			mesh: Mesh, A: float) -> SurfaceVectorField:
+					<pre class="python"><code data-line-numbers="1-2|3-6|7">def create_surface_velocity_field(
+    mesh: Mesh, A: float) -> SurfaceVectorField:
     xx, yy = pt.meshgrid(mesh.xf, mesh.y, indexing="ij")
     u_x, _ = velocity_field(xx, yy, A)
     xx, yy = pt.meshgrid(mesh.x, mesh.yf, indexing="ij")
     _, u_y = velocity_field(xx, yy, A)
     return SurfaceVectorField(mesh, "U", u_x, u_y)
-							</code></pre>
+				</code></pre>
 				</section>
 				<section>
 					$$
@@ -647,8 +662,7 @@ def fvm_div(vel: SurfaceVectorField,
 				</section>
 				<section>
 					<p>Combining domain and equation discretization</p>
-					<pre class="python"><code>
-mesh = Mesh(1.0, 1.0, 5, 5, 1.0, 1.0)
+					<pre class="python"><code data-line-numbers="1-2|3-8|9-10">mesh = Mesh(1.0, 1.0, 5, 5, 1.0, 1.0)
 vel = create_surface_velocity_field(mesh, 1.0)
 bc = {
     "left" : ("fixedValue", 2.0),
@@ -658,7 +672,7 @@ bc = {
 }
 T = VolScalarField(mesh, "T", 0.0, bc)
 matrix = fvm_div(vel, T)
-							</code></pre>
+				</code></pre>
 				</section>
 				<section>
 					<img src="images/cfd_intro/conv_fv_matrix.svg" alt="matrix"
@@ -669,8 +683,7 @@ matrix = fvm_div(vel, T)
 				</section>
 				<section>
 					<p>Putting it all together</p>
-					<pre class="python"><code>
-mesh = Mesh(1.0, 1.0, 10, 10, 1.0, 1.0)
+					<pre class="python"><code data-line-numbers="1-2|3-8|9-10|12-17">mesh = Mesh(1.0, 1.0, 10, 10, 1.0, 1.0)
 vel = create_surface_velocity_field(mesh, 0.05)
 bc = {
     "left" : ("fixedValue", 2.0),
@@ -716,8 +729,7 @@ T = VolScalarField(mesh, "T", Tsol.reshape(10, 10), bc)
 				</section>
 				<section>
 					<p>system/blockMeshDict</p>
-					<pre class="python"><code>
-scale   1.0;
+					<pre class="python"><code data-line-numbers="3-13|15-18|24-66">scale   1.0;
 
 vertices
 (
@@ -794,8 +806,7 @@ boundary
 				</section>
 				<section>
 					<p>system/exprFieldsDict</p>
-					<pre class="python"><code>
-expressions
+					<pre class="python"><code data-line-numbers="3-6|8-16">expressions
 (
     U
     {
@@ -823,8 +834,7 @@ expressions
 				</section>
 				<section>
 					<p>0.org/T</p>
-					<pre class="python"><code>
-dimensions      [0 0 0 1 0 0 0];
+					<pre class="python"><code data-line-numbers="3|5-35">dimensions      [0 0 0 1 0 0 0];
 
 internalField   uniform 0;
 
@@ -869,8 +879,7 @@ DT              0.1;
 				</section>
 				<section>
 					<p>system/fvSchemes</p>
-					<pre class="python"><code>
-ddtSchemes
+					<pre class="python"><code data-line-numbers="1-4|6-9|11-15|17-21">ddtSchemes
 {
     default         steadyState;
 }
@@ -909,7 +918,7 @@ solvers
 							</code></pre>
 				</section>
 				<section>
-					<p>Compare the source code of <a href="https://www.openfoam.com/documentation/guides/latest/doc/guide-applications-solvers-basic-scalarTransportFoam.html">scalarTransportFoam</a> with the Python implementation.</p>
+					<p>Compare the source code of <a href="https://doc.openfoam.com/2306/tools/processing/solvers/rtm/basic/scalarTransportFoam/">scalarTransportFoam</a> with the Python implementation.</p>
 				</section>
 				<section>
 					<h3>How can I test the setup for pure diffusion?</h3>
@@ -947,6 +956,16 @@ solvers
 					<h2>The FVM in Basilisk</h2>
 				</section>
 				<section>
+					<p>A minimal list of keywords and properties</p>
+					<ul>
+						<li>adaptive quadtree/octree meshes</li>
+						<li>2nd order FVM (space and time)</li>
+						<li>geometric convective transport (VoF)</li>
+						<li>very accurate approximation of surface tension</li>
+					</ul>
+					<p>$\rightarrow$ more information at <a href="http://basilisk.fr/">basilisk.fr</a></p>
+				</section>
+				<section>
 					<video height="450" controls mute loop>
 						<source src="images/cfd_intro/basilisk_2D_spherical_cap.mp4">
 					</video>
@@ -954,17 +973,6 @@ solvers
 				</section>
 				<section>
 					<p>Check <a href="http://basilisk.fr/src/examples/bubble.c">this example</a> for 3D simulations.</p>
-				</section>
-				<section>
-					<h3>What makes bubbles/drops spherical?</h3>
-				</section>
-				<section>
-					<ul>
-						<li>adaptive quadtree/octree meshes</li>
-						<li>2nd order FVM (space and time)</li>
-						<li>geometric convective transport (VoF)</li>
-						<li>very accurate approximation of surface tension</li>
-					</ul>
 				</section>
 			</section>
 			</section>
