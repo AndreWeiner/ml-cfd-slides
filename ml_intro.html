@@ -19,29 +19,9 @@
 	<link rel="stylesheet" href="plugin/customcontrols/style.css">
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
-
-	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
-
-<style>
-	.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-	}
-</style>
 
 <body>
 
@@ -50,12 +30,10 @@
 		<!-- Any section element inside of this container is displayed as a slide -->
 		<div class="slides">
 			<section>
-				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 4 & 5</span>
-				</h3>
+				<h3><span style="color: red;">Introduction to machine learning</span></h3>
 				<p>
 					Andre Weiner<br>
-					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
-						Control Group</small>
+					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
 					<small>
 						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
 								alt="Creative Commons License" style="border-width:0"
@@ -85,7 +63,7 @@
 				<div class="row_logo">
 					<div class="column_logo">
 						<div class="content_logo">
-							<img src="images/tubs_logo.png" alt="tubs_logo"
+							<img src="images/logos/TUD_white.png" alt="tud_logo"
 								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
@@ -95,7 +73,7 @@
 								<tr>
 									<td style="border: 0; padding-right: 5px;">&#9993;</th>
 									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 									<td style="border: 0; padding-right: 5px;">&#9741;</td>
 									<td style="border: 0; padding-right: 0px;"><a
 											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
@@ -140,31 +118,6 @@
 			</section>
 			<section>
 				<section>
-					<p><b>Online only</b> lectures and exercises:</p>
-					<ul>
-						<li><b>Dec 14 2022</b> lecture</li>
-						<li><b>Dec 15 2022</b> exercise</li>
-						<li><b>Dec 21 2022</b> lecture</li>
-						<li><b>Dec 22 2022</b> exercise</li>
-					</ul>
-				</section>
-				<section>
-					<p>Advice: always run <b>git pull</b> before working with the lecture material.</p>
-				</section>
-				<section>
-					<p>Update flowTorch in the <b>ml-cfd</b> environment:</p>
-					<pre class="python"><code>
-# enter the Python environment
-source ml-cfd/bin/activate
-# remove the old version of flowTorch
-pip uninstall flowtorch
-# install the latest version
-pip install git+https://github.com/FlowModelingControl/flowtorch.git@aweiner
-					</code></pre>
-				</section>
-			</section>
-			<section>
-				<section>
 					<h2>Floating point numbers</h2>
 				</section>
 				<section>
@@ -181,8 +134,7 @@ pip install git+https://github.com/FlowModelingControl/flowtorch.git@aweiner
 				</section>
 				<section>
 					<p>How are bits distributed among $S$, $M$, $E$?</p>
-					<pre class="python"><code>
-for dtype in [np.float32, np.float64]:
+					<pre class="python"><code data-line-numbers="1-6|7-16">for dtype in [np.float32, np.float64]:
 	finfo = np.finfo(dtype)
 	print(f"dtype: {finfo.dtype}")
 	print(f"Number of bits: {finfo.bits}")
@@ -201,9 +153,12 @@ Bits reserved for exponent: 11
 						</code></pre>
 				</section>
 				<section>
+					<p>Exercise: represent <span style="color: red;">85.125</span> as 32 bit float.</p>
+					<p><a href="https://www.geeksforgeeks.org/ieee-standard-754-floating-point-numbers/">reference</a></p>
+				</section>
+				<section>
 					<p>Which numbers can we represent?</p>
-					<pre class="python"><code>
-for dtype in [np.float32, np.float64]:
+					<pre class="python"><code data-line-numbers="1-6|7-16">for dtype in [np.float32, np.float64]:
 	finfo = np.finfo(dtype)
 	print("Largest representable number: {:e}".format(finfo.max))
 	print("Smallest representable number: {:e}".format(finfo.min))
@@ -222,6 +177,9 @@ Approximately accurate up to 15 decimal digits
 						</code></pre>
 				</section>
 				<section>
+					<p>Can I represent <span style="color: red;">123'456'789</span> as 32 bit float?</p>
+				</section>
+				<section>
 					<p>What is the preferred floating point type in</p>
 					<ul>
 						<li>CFD?</li>
@@ -231,8 +189,7 @@ Approximately accurate up to 15 decimal digits
 				</section>
 				<section>
 					<p>Setting the default floating point type in PyTorch:</p>
-					<pre class="python"><code>
-x = pt.tensor(1.0)
+					<pre class="python"><code data-line-numbers="1-5|6-8">x = pt.tensor(1.0)
 print(x.dtype)
 pt.set_default_dtype(pt.float64)
 x = pt.tensor(1.0)
@@ -247,8 +204,7 @@ torch.float64
 				</section>
 				<section>
 					<p>Experiment: adding a small number to one</p>
-					<pre class="python"><code>
-a = pt.tensor(1.0, dtype=pt.float32)
+					<pre class="python"><code data-line-numbers="1-4|5-6|7|8|9|10|11|12|13|14|15">a = pt.tensor(1.0, dtype=pt.float32)
 for b in [10**i for i in range(-1, -11, -1)]:
     print("1.0 + {:1.1e} = {:10.10f}".format(b, a+b))
 # output
@@ -276,8 +232,7 @@ for b in [10**i for i in range(-1, -11, -1)]:
 				</section>
 				<section>
 					<p>Roundoff errors affect you sooner than you think!</p>
-					<pre class="python"><code>
-for x in pt.arange(-0.01, 0.011, 0.0025):
+					<pre class="python"><code data-line-numbers="1-3|4-12">for x in pt.arange(-0.01, 0.011, 0.0025):
     print("x={:+1.4e}, x**2={:1.4e}, x**3={:+1.4e}, x**4={:1.4e}".format(x, x**2, x**3, x**4))
 # expected output
 x=-1.0000e-02, x**2=1.0000e-04, x**3=-1.0000e-06, x**4=1.0000e-08
@@ -309,8 +264,7 @@ a=0.9999999404
 				</section>
 				<section>
 					<p>Roundoff errors accumulate!</p>
-					<pre class="python"><code>
-def iterate(n_iter: float = 1):
+					<pre class="python"><code data-line-numbers="1-6|8-9|10-19">def iterate(n_iter: float = 1):
     a = pt.tensor(1.0)
     for _ in range(n_iter):
         b = a - 2/3
@@ -333,14 +287,14 @@ a=0.9994134307 after 9 iteration(s)
 				</section>
 				<section>
 					<h3>Truncation error</h3>
-					<p>Results from <b>discrete approximations</b> of <b>continuous variables</b>.</p>
+					<p>Results from <b style="color: red;">discrete approximations</b> of <b style="color: red;">continuous variables</b>.</p>
 					$$
 					\int\limits_0^1 x^2 \mathrm{d}x = 1/3
 					$$
 					<p>Cannot be avoided even with perfectly accurate floating point numbers.</p>
 				</section>
 				<section>
-					<img src="images/residual_trapezoidal_rule.svg" alt="truncation"
+					<img src="images/ml_intro/residual_trapezoidal_rule.svg" alt="truncation"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Truncation error of the trapezoidal rule with increasing number of integration steps.</p>
 				</section>
@@ -355,21 +309,21 @@ a=0.9994134307 after 9 iteration(s)
 				<section>
 					<p>Sampling a parameter space may be expensive, so drawing samples should be:</p>
 					<ul>
-						<li><b>efficient</b> - not more samples then necessary</li>
-						<li><b>homogeneous</b> - good coverage of the entire space</li>
-						<li><b>unbiased$^*$</b> - equal sampling probability for all points</li>
+						<li><b style="color: red;">efficient</b> - not more samples then necessary</li>
+						<li><b style="color: red;">homogeneous</b> - good coverage of the entire space</li>
+						<li><b style="color: red;">unbiased$^*$</b> - equal sampling probability for all points</li>
 					</ul>
-					<p>$^*$ assuming there is no <b>prior</b> knowledge about the parameter space</p>
+					<p>$^*$ assuming there is <b style="color: red;">no prior</b> knowledge about the parameter space</p>
 				</section>
 				<section>
-					<p>Task: establish relation between Reynolds number and $c_D$; assumptions:</p>
+					<p>Task: establish relation between $Re$ and $c_d$; assumptions:</p>
 					<ul>
 						<li>no prior knowledge of dependency</li>
 						<li>lower bound $Re=10$</li>
 						<li>upper bound $Re=100$</li>
 						<li>$N_s = 10$ simulation are affordable</li>
 					</ul>
-					<p><b>How do we draw the samples?</b></p>
+					<p><b style="color: red;">How do we draw the samples?</b></p>
 				</section>
 				<section>
 					<p>Equally spaced samples:</p>
@@ -381,9 +335,9 @@ a=0.9994134307 after 9 iteration(s)
 					</ul>
 				</section>
 				<section>
-					<img src="images/biased_sampling.svg" alt="biased"
-						style="background:none; border:none; box-shadow:none; width: 80%">
-					<p>Bias introduced by sampling.</p>
+					<img src="images/ml_intro/biased_sampling.svg" alt="biased"
+						style="background:white; border:none; box-shadow:none; width: 80%">
+					<p>Effect of bias on sampling.</p>
 				</section>
 				<section>
 					<p>How does the number of required samples $N_t$ scale with the number of parameters $d$ if we treat
@@ -413,8 +367,7 @@ a=0.9994134307 after 9 iteration(s)
 				</section>
 				<section>
 					<p>LHS sampling in Python/PyTorch</p>
-					<pre class="python"><code>
-def lhs_sampling(x_min: list, x_max: list, n_samples: int) -> pt.Tensor:
+					<pre class="python"><code data-line-numbers="1-3|4|5-9">def lhs_sampling(x_min: list, x_max: list, n_samples: int) -> pt.Tensor:
 	assert len(x_min) == len(x_max)
 	n_parameters = len(x_min)
 	samples = pt.zeros((n_parameters, n_samples))
@@ -426,8 +379,8 @@ def lhs_sampling(x_min: list, x_max: list, n_samples: int) -> pt.Tensor:
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/lhs_sampling.svg" alt="lhs"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/ml_intro/lhs_sampling.svg" alt="lhs"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 				</section>
 			</section>
 			<section>
@@ -460,15 +413,14 @@ def lhs_sampling(x_min: list, x_max: list, n_samples: int) -> pt.Tensor:
 					<p>In the individual simulation setups, do we have to change only $Re$?</p>
 				</section>
 				<section>
-					<p><b>sed</b> - Stream EDitor: replace text in files</p>
+					<p><b style="color: red;">sed</b> - Stream EDitor: replace text in files</p>
 					<pre class="python"><code>
 sed -i 's/old_text/new_text/' exampleDict
 						</code></pre>
 				</section>
 				<section>
-					<p>Running external programs with <b>system</b> and <b>Popen</b>:</p>
-					<pre class="python"><code>
-# with os.system
+					<p>Running external programs with <b style="color: red;">system</b> and <b style="color: red;">Popen</b>:</p>
+					<pre class="python"><code data-line-numbers="1-3|4-8"># with os.system
 cmd = "sed -i 's/old_text/new_text/' exampleDict"
 os.system(cmd)
 # with subprocess.Popen
@@ -480,8 +432,7 @@ print(p.poll())
 				</section>
 				<section>
 					<p>Leveraging the hardware's full potential:</p>
-					<pre class="python"><code>
-def run_simulation(path: str):
+					<pre class="python"><code data-line-numbers="1-6|8-11">def run_simulation(path: str):
     return_code = Popen(["./Allrun"], cwd=path).wait()
     if return_code == 0:
         print(f"Simulation {path} completed successfully.")
@@ -529,8 +480,8 @@ with pool:
 					</ul>
 				</section>
 				<section>
-					<img src="images/sigmoid_function.svg" alt="sigmoid"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/ml_intro/sigmoid_function.svg" alt="sigmoid"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Sigmoid function $\sigma (x) = 1/(1+e^{-x})$.</p>
 				</section>
 				<section data-markdown>
@@ -622,12 +573,12 @@ with pool:
 					</ul>
 				</section>
 				<section>
-					<img src="images/cylinder_sensors.png" alt="lhs"
+					<img src="images/ml_intro/cylinder_sensors.png" alt="lhs"
 						style="background:none; border:none; box-shadow:none; width: 100%">
 					<p>Question: which sensors are suitable for drag/lift prediction?</p>
 				</section>
 				<section>
-					<img src="images/corr_map.png" alt="lhs"
+					<img src="images/ml_intro/corr_map.png" alt="lhs"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Example for correlation heatmap.</p>
 				</section>
@@ -672,7 +623,7 @@ with pool:
 					<p>$\tilde{u}_{x} = u_x/\bar{U}_{max}$, $\tilde{y} = y/(2\delta)$</p>
 				</section>
 				<section>
-					<img src="images/developed_1d_profile_normalized.svg" alt="prediction"
+					<img src="images/ml_intro/developed_1d_profile_normalized.svg" alt="prediction"
 						style="background:none; border:none; box-shadow:none; width: 60%">
 					<p>Streamwise velocity component for various $Re$.</p>
 				</section>
@@ -785,7 +736,7 @@ with pool:
 					</p>
 				</section>
 				<section>
-					<img src="images/example_nn.png" alt="network"
+					<img src="images/ml_intro/example_nn.png" alt="network"
 						style="background:none; border:none; box-shadow:none; width: 50%">
 					<ul>
 						<li>neuron: weighted sum + nonlinear map</li>
@@ -1029,37 +980,37 @@ def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
 				</code></pre>
 				</section>
 				<section>
-					<img src="images/loss_lecture_4_model_0.svg" alt="activations"
+					<img src="images/ml_intro/loss_lecture_4_model_0.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Training, validation and test loss - 2 hidden layers, ReLU activation.</p>
 				</section>
 				<section>
-					<img src="images/prediction_lecture_4_model_0.svg" alt="activations"
+					<img src="images/ml_intro/prediction_lecture_4_model_0.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Prediction - first attempt.</p>
 				</section>
 				<section>
-					<img src="images/loss_lecture_4_model_0_raw.svg" alt="activations"
+					<img src="images/ml_intro/loss_lecture_4_model_0_raw.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Influence of normalization on training performance.</p>
 				</section>
 				<section>
-					<img src="images/batch_size_lecture_4.svg" alt="activations"
+					<img src="images/ml_intro/batch_size_lecture_4.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Influence of batch size on training performance.</p>
 				</section>
 				<section>
-					<img src="images/lr_bs128_lecture_4.svg" alt="activations"
+					<img src="images/ml_intro/lr_bs128_lecture_4.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Influence of learning rate - batch size 128.</p>
 				</section>
 				<section>
-					<img src="images/lr_scheduler_bs128_lecture_4.svg" alt="activations"
+					<img src="images/ml_intro/lr_scheduler_bs128_lecture_4.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Comparison of learning rate schedulers - batch size 128.</p>
 				</section>
 				<section>
-					<img src="images/prediction_lecture_4_model_pl.svg" alt="activations"
+					<img src="images/ml_intro/prediction_lecture_4_model_pl.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Model prediction with batch size 128 and learning rate scheduling.</p>
 				</section>
@@ -1079,22 +1030,22 @@ def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
 					</ul>
 				</section>
 				<section>
-					<img src="images/activation_functions.svg" alt="activations"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/ml_intro/activation_functions.svg" alt="activations"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Comparison of common activation functions.</p>
 				</section>
 				<section>
-					<img src="images/activation_slopes.svg" alt="activation_slopes"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/ml_intro/activation_slopes.svg" alt="activation_slopes"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Derivatives of common activation functions.</p>
 				</section>
 				<section>
-					<img src="images/activations_plateau_bs128_lecture_4.svg" alt="activation_slopes"
+					<img src="images/ml_intro/activations_plateau_bs128_lecture_4.svg" alt="activation_slopes"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Training/validation loss for different activation functions; batch size 128; plateau-based learning rate adjustment.</p>
 				</section>
 				<section>
-					<img src="images/prediction_act_lecture_4.svg" alt="activation_slopes"
+					<img src="images/ml_intro/prediction_act_lecture_4.svg" alt="activation_slopes"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Prediction of trained model with $\mathrm{tanh}$ activation.</p>
 				</section>
@@ -1176,7 +1127,7 @@ class ResidualBlock(pt.nn.Module):
 				</code></pre>
 				</section>
 				<section>
-					<img src="images/adv_networks_lecture_4.svg" alt="activation_slopes"
+					<img src="images/ml_intro/adv_networks_lecture_4.svg" alt="activation_slopes"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Comparison of network architectures; note that the number of weights varies between the architectures.</p>
 				</section>
@@ -1230,7 +1181,7 @@ for i in range(n_repeat):
 					</ul>
 				</section>
 				<section>
-					<img src="images/uncertainty_arch_lecture_4.svg" alt="activations"
+					<img src="images/ml_intro/uncertainty_arch_lecture_4.svg" alt="activations"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Boxplots comparing different activation functions.</p>
 				</section>
@@ -1240,17 +1191,17 @@ for i in range(n_repeat):
 					<h3>Visualizing prediction errors</h3>
 				</section>
 				<section>
-					<img src="images/final_prediction_lecture_4_model_pl.svg" alt="histogram"
+					<img src="images/ml_intro/final_prediction_lecture_4_model_pl.svg" alt="histogram"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Final model prediction compared against true velocity profiles.</p>
 				</section>
 				<section>
-					<img src="images/profile_error_hist.svg" alt="histogram"
+					<img src="images/ml_intro/profile_error_hist.svg" alt="histogram"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Difference between predicted and true label depicted as histogram.</p>
 				</section>
 				<section>
-					<img src="images/profile_error_heatmap.svg" alt="heatmap"
+					<img src="images/ml_intro/profile_error_heatmap.svg" alt="heatmap"
 						style="background:none; border:none; box-shadow:none; width: 70%">
 					<p>Maximum prediction errors in discrete subsections of the feature space.</p>
 				</section>
@@ -1273,10 +1224,9 @@ for i in range(n_repeat):
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
-			controls: true,
-			progress: true,
-			center: true,
 			hash: true,
+			progress: true,
+			slideNumber: "c",
 			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
@@ -1284,7 +1234,25 @@ for i in range(n_repeat):
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -1304,9 +1272,22 @@ for i in range(n_repeat):
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
 		});
-		Reveal.configure({ slideNumber: true });
 
 	</script>
+
+</script>
+<style type="text/css">
+	.reveal .slide-number {
+		font-size: 1em;
+		color: #42affa;
+		right: auto;
+		width: 1.5em;
+		height: 1.5em;
+		background-color: #191919;
+		display: grid !important;
+		place-items: center;
+	}
+</style>
 
 </body>
 
