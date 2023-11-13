@@ -699,7 +699,7 @@ with pool:
 								</tr>
 							</tbody>
 						</table>
-						<p>ML models often map <b>multiple inputs</b> to <b>multiple outputs!</b></p>
+						<p>ML models often map <b style="color: red;">multiple inputs</b> to <b style="color: blue;">multiple outputs!</b></p>
 					</section>
 				</section>
 				<section>
@@ -807,7 +807,7 @@ $$
 $$
 				</section>
 				<section>
-					<p>Short reminder: function composition:</p>
+					<p>Short reminder - function composition:</p>
 					<ul>
 						<li>$f(x) = 2x+1$</li>
 						<li>$g(x) = x^2$</li>
@@ -827,8 +827,7 @@ $$
 					<h3>Preparing the dataset</h3>
 				</section>
 				<section>
-					<pre class="python"><code>
-def reshape_data(u_x_norm, y_norm, Re) -> pt.Tensor:
+					<pre class="python"><code data-line-numbers="1-2|3-8">def reshape_data(u_x_norm, y_norm, Re) -> pt.Tensor:
     data = pt.zeros((u_x_norm.shape[0]*u_x_norm.shape[1], 3))
     for i in range(u_x_norm.shape[1]):
         start, end = i*u_x_norm.shape[0], (i+1)*u_x_norm.shape[0]
@@ -842,15 +841,14 @@ def reshape_data(u_x_norm, y_norm, Re) -> pt.Tensor:
 				<section>
 					<p>Splitting the data</p>
 					<ul>
-						<li><b>training data:</b> optimization of model weights</li>
-						<li><b>validation data:</b> sanity check during training</li>
-						<li><b>testing data:</b> final performance evaluation</li>
+						<li><b style="color: red;">training data:</b> optimization of model weights</li>
+						<li><b style="color: red;">validation data:</b> sanity check during training</li>
+						<li><b style="color: red;">testing data:</b> final performance evaluation</li>
 					</ul>
 				</section>
 				<section>
 					<p>Splitting the data</p>
-					<pre class="python"><code>
-n_Re = len(Re)
+					<pre class="python"><code data-line-numbers="1-4|5|6-7|8-9|10-11">n_Re = len(Re)
 probs = pt.ones(u_x.shape[-1])
 probs[0] = 0.0
 probs[-1] = 0.0
@@ -865,8 +863,7 @@ train_idx = pt.cat((train_idx, pt.tensor([0, n_Re-1], dtype=pt.int64)))
 				</section>
 				<section>
 					<p>The PyTorch dataloader</p>
-					<pre class="python"><code>
-	train_loader = pt.utils.data.DataLoader(train_dataset, batch_size=500, shuffle=True)
+					<pre class="python"><code data-line-numbers="1|2-3|4-6">train_loader = pt.utils.data.DataLoader(train_dataset, batch_size=500, shuffle=True)
 	for features, labels in train_loader:
 		print(features.shape, labels.shape)
 	# expected output
@@ -912,8 +909,7 @@ train_idx = pt.cat((train_idx, pt.tensor([0, n_Re-1], dtype=pt.int64)))
 				</section>
 				<section>
 					<p>Epoch - one loop over the entire (training) dataset</p>
-					<pre class="python"><code>
-def run_epoch(
+					<pre class="python"><code data-line-numbers="1-3|6-8|9|10|11|12-13|14">def run_epoch(
     model, optimizer, data_loader, loss_func, device,
     # snip
     ) -> float:
@@ -932,8 +928,7 @@ def run_epoch(
 				</section>
 				<section>
 					<p>Model training and evaluation</p>
-					<pre class="python"><code>
-def train_model(...):
+					<pre class="python"><code data-line-numbers="1-4|6-7|9-10|13">def train_model(...):
     # snip
     model.to(device)
     for e in range(epochs):
@@ -966,8 +961,7 @@ if checkpoint_file is not None:
 				</section>
 				<section>
 					<p>Function to create network with multiple fully-connected layers</p>
-					<pre class="python"><code>
-def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
+					<pre class="python"><code data-line-numbers="1|2-5|6-10">def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
     layers = [
         pt.nn.Linear(n_in, n_neurons),
         activation()
@@ -1057,8 +1051,8 @@ def create_simple_network(n_in, n_out, n_neurons, n_hidden, activation):
 						$$
 					</p>
 					<ul>
-						<li><b>batch:</b> mean etc. across batch</li>
-						<li><b>layer:</b> mean etc. across layer</li>
+						<li><b style="color: red;">batch:</b> mean etc. across batch</li>
+						<li><b style="color: red;">layer:</b> mean etc. across layer</li>
 					</ul>
 				</section>
 				<section>
@@ -1087,8 +1081,7 @@ simple_network = pt.nn.Sequential(
 				</section>
 				<section>
 					<p>Skip connections</p>
-					<pre class="python"><code>
-class SkipBlock(pt.nn.Module):
+					<pre class="python"><code data-line-numbers="1-6|8-11">class SkipBlock(pt.nn.Module):
     def __init__(self, n_in, n_out, activation):
         super(SkipBlock, self).__init__()
         self._layer_1 = pt.nn.Linear(n_in, n_in)
@@ -1113,8 +1106,7 @@ skip_network = pt.nn.Sequential(
 				</section>
 				<section>
 					<p>Residual blocks</p>
-					<pre class="python"><code>
-class ResidualBlock(pt.nn.Module):
+					<pre class="python"><code data-line-numbers="1-7|9-10">class ResidualBlock(pt.nn.Module):
     def __init__(self, n_in, n_out, activation):
         super(ResidualBlock, self).__init__()
         self.F = pt.nn.Sequential(
