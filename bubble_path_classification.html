@@ -19,44 +19,9 @@
 	<link rel="stylesheet" href="plugin/customcontrols/style.css">
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
-
-	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
-
-<style>
-	.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-	}
-
-	.row_img {
-		display: table;
-	}
-
-	.column_img {
-		display: table-cell;
-		vertical-align: middle;
-		text-align: center;
-		width: 50%;
-	}
-
-	.content_img {
-		display: inline-block;
-	}
-</style>
 
 <body>
 
@@ -65,11 +30,10 @@
 		<!-- Any section element inside of this container is displayed as a slide -->
 		<div class="slides">
 			<section>
-				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lecture 6</span></h3>
+				<h3><span style="color: red;">Surrogate models for discrete predictions</span></h3>
 				<p>
 					Andre Weiner<br>
-					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
-						Control Group</small>
+					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
 					<small>
 						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
 								alt="Creative Commons License" style="border-width:0"
@@ -99,7 +63,7 @@
 				<div class="row_logo">
 					<div class="column_logo">
 						<div class="content_logo">
-							<img src="images/tubs_logo.png" alt="tubs_logo"
+							<img src="images/logos/TUD_white.png" alt="tud_logo"
 								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
@@ -109,7 +73,7 @@
 								<tr>
 									<td style="border: 0; padding-right: 5px;">&#9993;</th>
 									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 									<td style="border: 0; padding-right: 5px;">&#9741;</td>
 									<td style="border: 0; padding-right: 0px;"><a
 											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
@@ -145,7 +109,7 @@
 				<h2>Outline</h2>
 				<p>Predicting the stability regime of rising bubbles</p>
 				<ul>
-					<li>Motivation</li>
+					<li>Scale-up approach</li>
 					<li>Forces acting on rising bubbles</li>
 					<li>Loading, inspecting, and preparing the data</li>
 					<li>Binary classification</li>
@@ -155,27 +119,25 @@
 
 			<section>
 				<section>
-					<h2>Motivation</h2>
+					<h2>Scale-up approach</h2>
 				</section>
 				<section>
 					<h3>Gas-liquid reactors</h3>
-					<div class=row_img>
-						<div class=column_img style="width:20%">
-							<div class=content_img>
-								<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400"
-									style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>
-										<b>micro reactor</b><br>
-										size: millimeter<br>
-										source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
-									</small>
-								</p>
-							</div>
-						</div>
-						<div class=column_img style="width:35%">
+					<div class="r-hstack justify-around">
+						<div style="width: 33%;">
+							<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400"
+								style="background:none; border:none; box-shadow:none;">
 							<p>
-								<b>prediction</b> of
+								<small>
+									<b>micro reactor</b><br>
+									size: millimeter<br>
+									source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
+								</small>
+							</p>
+						</div>
+						<div style="width: 33%;">
+							<p>
+								<b style="color: red;">prediction</b> of
 							</p>
 							<ul>
 								<li>mass transfer</li>
@@ -187,19 +149,17 @@
 								<li>...</li>
 							</ul>
 						</div>
-						<div class=column_img style="width:25%">
-							<div class=content_img>
-								<img src="images/eni_fischer_tropsch.png" alt="bubble_column" height="400"
-									style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>
-										<b>bubble column reactor</b><br>
-										size: meter<br>
-										source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M.
-											Raimundo, ENI</a>
-									</small>
-								</p>
-							</div>
+						<div style="width: 33%;">
+							<img src="images/bubble_path/eni_fischer_tropsch.png" alt="bubble_column" height="300"
+								style="background:none; border:none; box-shadow:none;">
+							<p>
+								<small>
+									<b>bubble column reactor</b><br>
+									size: meter<br>
+									source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M.
+										Raimundo, ENI</a>
+								</small>
+							</p>
 						</div>
 					</div>
 				</section>
@@ -251,7 +211,7 @@
 					</div>
 				</section>
 				<section>
-					<img src="images/path_regimes.png" alt="path_regimes" width="700"
+					<img src="images/bubble_path/path_regimes.png" alt="path_regimes" width="700"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
 						figure 1.</p>
@@ -266,7 +226,7 @@
 					</ul>
 				</section>
 				<section>
-					<p>Potential solution: supervised learning</p>
+					<h3>Potential solution:<br> <span style="color: red;">supervised learning</span></h3>
 				</section>
 			</section>
 
@@ -327,7 +287,7 @@
 					<p>Tells us how stable/unstable the rise is going to be.</p>
 				</section>
 				<section>
-					<img src="images/path_regimes.png" alt="path_regimes" width="700"
+					<img src="images/bubble_path/path_regimes.png" alt="path_regimes" width="700"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
 						figure 1.</p>
@@ -339,7 +299,7 @@
 					<h2>Loading, inspecting, and preparing the data</h2>
 				</section>
 				<section>
-					<img src="images/path_regimes.png" alt="path_regimes" width="700"
+					<img src="images/bubble_path/path_regimes.png" alt="path_regimes" width="700"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
 						figure 1.</p>
@@ -360,8 +320,7 @@
 				</section>
 				<section>
 					<p>Loading and processing the data.</p>
-					<pre class="python"><code>
-data_path = "../datasets/path_shape_regimes/"
+					<pre class="python"><code data-line-numbers="1-4|5-6|7-15">data_path = "../datasets/path_shape_regimes/"
 regimes = ["I", "II", "III", "IV", "V"]
 raw_data_files = [f"regime_{regime}.csv" for regime in regimes]
 files = [pd.read_csv(data_path + file_name, header=0, names=["Ga", "Eo"]) for file_name in raw_data_files]
@@ -379,23 +338,23 @@ Ga	Eo	regime
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/ga_eo_data_raw.svg" alt="raw"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/ga_eo_data_raw.svg" alt="raw"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Raw extracted data.</p>
 				</section>
 				<section>
-					<img src="images/ga_eo_raw_histogram.svg" alt="raw_hist"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/ga_eo_raw_histogram.svg" alt="raw_hist"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>$Ga$ and $Eo$ histograms of raw data.</p>
 				</section>
 				<section>
-					<img src="images/ga_eo_log.svg" alt="log_data"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/ga_eo_log.svg" alt="log_data"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Data transformed using logarithm and $[-1, 1]$ scaling.</p>
 				</section>
 				<section>
-					<img src="images/ga_eo_log_histogram.svg" alt="log_hist"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/ga_eo_log_histogram.svg" alt="log_hist"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>$\tilde{Ga}$ and $\tilde{Eo}$ histograms of transformed data.</p>
 				</section>
 				<section>
@@ -414,8 +373,8 @@ for i, r in enumerate(regimes):
 					<h2>Binary classification</h2>
 				</section>
 				<section>
-					<img src="images/ga_eo_log.svg" alt="log_data"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/ga_eo_log.svg" alt="log_data"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Goal: distinguish between region I and II.</p>
 				</section>
 				<section>
@@ -432,23 +391,23 @@ for i, r in enumerate(regimes):
 					</p>
 				</section>
 				<section>
-					<img src="images/weighted_sum_ga_var.svg" alt="gavar"
-						style="background:none; border:none; box-shadow:none; width: 100%">
+					<img src="images/bubble_path/weighted_sum_ga_var.svg" alt="gavar"
+						style="background:white; border:none; box-shadow:none; width: 100%">
 					<p>Variation of weight for $\tilde{Ga}$.</p>
 				</section>
 				<section>
-					<img src="images/weighted_sum_eo_var.svg" alt="eovar"
-						style="background:none; border:none; box-shadow:none; width: 100%">
+					<img src="images/bubble_path/weighted_sum_eo_var.svg" alt="eovar"
+						style="background:white; border:none; box-shadow:none; width: 100%">
 					<p>Variation of weight for $\tilde{Eo}$.</p>
 				</section>
 				<section>
-					<img src="images/weighted_sum_bias_var.svg" alt="bvar"
-						style="background:none; border:none; box-shadow:none; width: 100%">
+					<img src="images/bubble_path/weighted_sum_bias_var.svg" alt="bvar"
+						style="background:white; border:none; box-shadow:none; width: 100%">
 					<p>Variation of weight for bias $b$.</p>
 				</section>
 				<section>
-					<img src="images/heaviside_prediction.svg" alt="H"
-						style="background:none; border:none; box-shadow:none; width: 100%">
+					<img src="images/bubble_path/heaviside_prediction.svg" alt="H"
+						style="background:white; border:none; box-shadow:none; width: 100%">
 					<p>Heaviside function applied to $z(\tilde{Ga} , \tilde{Eo})$.</p>
 				</section>
 				<section>
@@ -512,8 +471,7 @@ for i, r in enumerate(regimes):
 				</section>
 				<section>
 					<p>Implementation of the perceptron algorithm.</p>
-					<pre class="python"><code>
-class Perceptron(object):
+					<pre class="python"><code data-line-numbers="1-3|5-6|8-10|12-23|25-27">class Perceptron(object):
     def __init__(self, n_weights: int):
         self._p = pt.rand(n_weights)*2.0 - 1.0
 
@@ -543,13 +501,13 @@ class Perceptron(object):
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/perceptron_loss.svg" alt="perceptron_loss"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/perceptron_loss.svg" alt="perceptron_loss"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Perceptron learning rule - loss over epochs.</p>
 				</section>
 				<section>
-					<img src="images/perceptron_prediction.svg" alt="perceptron_pred"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/perceptron_prediction.svg" alt="perceptron_pred"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Perceptron algorithm - weighted sum of inputs and prediction.</p>
 				</section>
 				<section>
@@ -612,13 +570,13 @@ class Perceptron(object):
 					</ol>
 				</section>
 				<section>
-					<img src="images/sigmoid_prob.svg" alt="sigmoid"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/sigmoid_prob.svg" alt="sigmoid"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Sigmoid function $\sigma = 1 / (1+\mathrm{exp}(-z))$.</p>
 				</section>
 				<section>
-					<img src="images/binary_proabilities.svg" alt="probs"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/binary_proabilities.svg" alt="probs"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Probabilities $p(II|\tilde{Ga},\tilde{Eo}) = \sigma (z(\tilde{Ga},\tilde{Eo}))$.</p>
 				</section>
 				<section>
@@ -655,8 +613,7 @@ class Perceptron(object):
 				</section>
 				<section>
 					<p>Implementation of logistic regression.</p>
-					<pre class="python"><code>
-class LogisticRegression(object):
+					<pre class="python"><code data-line-numbers="1-3|5-8|10-13|15-18|23-25|27-28">class LogisticRegression(object):
     def __init__(self, n_weights):
         self._p = pt.rand(n_weights)*2.0 - 1.0
 
@@ -687,28 +644,28 @@ class LogisticRegression(object):
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/log_regression_loss.svg" alt="log_loss"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/log_regression_loss.svg" alt="log_loss"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Binary cross entropy vs. epochs.</p>
 				</section>
 				<section>
-					<img src="images/entropy_loss_landscape.svg" alt="entropy"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/entropy_loss_landscape.svg" alt="entropy"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Landscape around the optima of binary cross entropy and joint probability.</p>
 				</section>
 				<section>
-					<img src="images/log_regression_prediction.svg" alt="logreg"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/log_regression_prediction.svg" alt="logreg"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>Probability and prediction with logistic regression.</p>
 				</section>
 				<section>
-					<img src="images/ga_eo_log.svg" alt="log_data"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/ga_eo_log.svg" alt="log_data"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>New goal: separate regime I from II and III.</p>
 				</section>
 				<section>
-					<img src="images/log_regression_I_II_II.svg" alt="logcomb"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/log_regression_I_II_II.svg" alt="logcomb"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Logistic regression classifiers separating regions I-II and I-III.</p>
 				</section>
 				<section>
@@ -723,13 +680,13 @@ class LogisticRegression(object):
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/log_combined_prob.svg" alt="logcomb"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/log_combined_prob.svg" alt="logcomb"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Combination of two logistic regression classifiers.</p>
 				</section>
 				<section>
-					<img src="images/example_nn.png" alt="nn_example"
-						style="background:none; border:none; box-shadow:none; width: 50%">
+					<img src="images/ml_intro/example_nn.png" alt="nn_example"
+						style="background:white; border:none; box-shadow:none; width: 50%">
 					<p>Generic neural network with fully connected layers.</p>
 				</section>
 			</section>
@@ -738,8 +695,8 @@ class LogisticRegression(object):
 					<h2>Multi-class classification</h2>
 				</section>
 				<section>
-					<img src="images/one_hot_encoding.png" alt="encoding"
-						style="background:none; border:none; box-shadow:none; width: 80%">
+					<img src="images/bubble_path/one_hot_encoding.png" alt="encoding"
+						style="background:white; border:none; box-shadow:none; width: 80%">
 					<p>One hot encoding of path regimes.</p>
 				</section>
 				<section>
@@ -797,8 +754,7 @@ regime_model = pt.nn.Sequential(
 				</section>
 				<section>
 					<p>Training loop definition.</p>
-					<pre class="python"><code>
-dataset = pt.utils.data.TensorDataset(
+					<pre class="python"><code data-line-numbers="1-4|5-9|11-12">dataset = pt.utils.data.TensorDataset(
     pt.tensor(logData[["Ga", "Eo"]].values, dtype=pt.float32),
     pt.tensor(logData.ordinal.values, dtype=pt.int64)
 )
@@ -813,13 +769,13 @@ results = train_model(regime_model, pt.nn.CrossEntropyLoss(), train_loader, val_
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/network_classification_loss.svg" alt="network_loss"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/bubble_path/network_classification_loss.svg" alt="network_loss"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Categorical cross entropy vs. epochs.</p>
 				</section>
 				<section>
-					<img src="images/network_multiclass_prediction.svg" alt="multi"
-						style="background:none; border:none; box-shadow:none; width: 70%">
+					<img src="images/intro/network_multiclass_prediction.svg" alt="multi"
+						style="background:white; border:none; box-shadow:none; width: 70%">
 					<p>Prediction of classification network.</p>
 				</section>
 			</section>
@@ -841,10 +797,9 @@ results = train_model(regime_model, pt.nn.CrossEntropyLoss(), train_loader, val_
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
-			controls: true,
-			progress: true,
-			center: true,
 			hash: true,
+			progress: true,
+			slideNumber: "c",
 			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
@@ -852,7 +807,25 @@ results = train_model(regime_model, pt.nn.CrossEntropyLoss(), train_loader, val_
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -869,13 +842,23 @@ results = train_model(regime_model, pt.nn.CrossEntropyLoss(), train_loader, val_
 				]
 			},
 
-
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
 		});
-		Reveal.configure({ slideNumber: true });
 
 	</script>
+	<style type="text/css">
+		.reveal .slide-number {
+			font-size: 1em;
+			color: #42affa;
+			right: auto;
+			width: 1.5em;
+			height: 1.5em;
+			background-color: #191919;
+			display: grid !important;
+			place-items: center;
+		}
+	</style>
 
 </body>
 
