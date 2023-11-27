@@ -19,45 +19,9 @@
 	<link rel="stylesheet" href="plugin/customcontrols/style.css">
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/white.css" id="theme">
-
-	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
-
-
-<style>
-	.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-	}
-
-	.row_img {
-		display: table;
-	}
-
-	.column_img {
-		display: table-cell;
-		vertical-align: middle;
-		text-align: center;
-		width: 50%;
-	}
-
-	.content_img {
-		display: inline-block;
-	}
-</style>
 
 <body>
 
@@ -66,12 +30,10 @@
 		<!-- Any section element inside of this container is displayed as a slide -->
 		<div class="slides">
 			<section>
-				<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 7 & 8</span>
-				</h3>
+				<h3><span style="color: red;">Surrogate models for continuous predictions</span></h3>
 				<p>
 					Andre Weiner<br>
-					<small>TU Braunschweig, <a href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and
-						Control Group</small>
+					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
 					<small>
 						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
 								alt="Creative Commons License" style="border-width:0"
@@ -101,7 +63,7 @@
 				<div class="row_logo">
 					<div class="column_logo">
 						<div class="content_logo">
-							<img src="images/tubs_logo.png" alt="tubs_logo"
+							<img src="images/logos/TUD_white.png" alt="tud_logo"
 								style="background:none; border:none; box-shadow:none;">
 						</div>
 					</div>
@@ -111,7 +73,7 @@
 								<tr>
 									<td style="border: 0; padding-right: 5px;">&#9993;</th>
 									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 									<td style="border: 0; padding-right: 5px;">&#9741;</td>
 									<td style="border: 0; padding-right: 0px;"><a
 											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
@@ -135,7 +97,7 @@
 				<h2>Last lecture</h2>
 				<p>Predicting the stability regime of rising bubbles</p>
 				<ul>
-					<li>Motivation</li>
+					<li>Scale-up approach</li>
 					<li>Forces acting on rising bubbles</li>
 					<li>Loading, inspecting, and preparing the data</li>
 					<li>Binary classification</li>
@@ -144,14 +106,15 @@
 			</section>
 			<section>
 				<h2>Outline</h2>
-				<p>Computing highly accurate mass transfer at rising bubbles</p>
+				<p>Surrogate models for continuous predictions</p>
 				<ul>
 					<li>The high Schmidt number problem</li>
 					<li>Decoupling two-phase flow and species transport</li>
-					<hr>
+					<!--
 					<li>Data processing and visualization</li>
-					<li>Creating models for deformation and velocity</li>
 					<li>Single-phase simulations with mass transfer</li>
+					-->
+					<li>Creating models for deformation and velocity</li>
 					<li>Analyzing the results</li>
 				</ul>
 			</section>
@@ -167,10 +130,9 @@
 				</section>
 				<section>
 					<h3>Gas-liquid reactors</h3>
-					<div class=row_img>
-						<div class=column_img style="width:20%">
-							<div class=content_img>
-								<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400"
+					<div class="r-hstack justify-around">
+						<div>
+							<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400"
 									style="background:none; border:none; box-shadow:none;">
 								<p>
 									<small>
@@ -179,11 +141,10 @@
 										source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
 									</small>
 								</p>
-							</div>
 						</div>
-						<div class=column_img style="width:35%">
+						<div>
 							<p>
-								<b>prediction</b> of
+								<b style="color: red;">prediction</b> of
 							</p>
 							<ul>
 								<li>mass transfer</li>
@@ -195,32 +156,13 @@
 								<li>...</li>
 							</ul>
 						</div>
-						<div class=column_img style="width:25%">
-							<div class=content_img>
-								<img src="images/eni_fischer_tropsch.png" alt="bubble_column" height="400"
-									style="background:none; border:none; box-shadow:none;">
-								<p>
-									<small>
-										<b>bubble column reactor</b><br>
-										size: meter<br>
-										source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M.
-											Raimundo, ENI</a>
-									</small>
-								</p>
-							</div>
-						</div>
 					</div>
 				</section>
 				<section>
-					<img src="images/kueck_bl_bubble.png" alt="bl" width="100%"
+					<img src="images/species/kueck_bl_bubble.png" alt="bl" width="100%"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Source: <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/cite.200900034">U. D. Kück et
 							al. 2009</a></p>
-				</section>
-				<section>
-					<img src="images/g14168.png" alt="scale" width="100%"
-						style="background:none; border:none; box-shadow:none;">
-					<p>The bigger picture: scale-up strategy.</p>
 				</section>
 				<section>
 					<h3>Reynolds number</h3>
@@ -259,7 +201,7 @@
 					</ol>
 				</section>
 				<section>
-					<img src="images/ub_vs_db_water.png" alt="bl" width="100%"
+					<img src="images/species/ub_vs_db_water.png" alt="bl" width="100%"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Rise velocity of air bubbles in water.</p>
 				</section>
@@ -334,6 +276,16 @@
 					</p>
 				</section>
 				<section>
+					<img src="images/g14168.png" alt="scale" width="100%"
+						style="background:white; padding: 10px; border:none; box-shadow:none;">
+					<p>The bigger picture: scale-up strategy.</p>
+				</section>
+				<section>
+					<p>How can we approximate the species boundary layer with reasonable computational effort?</p>
+					<p><span style="color: red;">Solution:</span> decoupling of two-phase flow problem and species transport.</p>
+				</section>
+				<!--
+				<section>
 					<p>Practical solution to overcome the high Schmidt/Péclet number problem:<br> <b>boundary layer
 							models</b></p>
 					<ul>
@@ -376,7 +328,9 @@
 					</ul>
 					<p>Solution: decoupling of two-phase flow problem and species transport by means of regression.</p>
 				</section>
+				-->
 			</section>
+
 			<section>
 				<section>
 					<h2>Decoupling two-phase flow and species transport</h2>
@@ -405,11 +359,15 @@
 				<section>
 					<p>Conservation of momentum:</p>
 					<p>
-						$$
+						$
+						\begin{align}
 						\frac{\partial \rho \mathbf{u}}{\partial t} + \nabla \cdot \left( \rho \mathbf{u} \otimes
-						\mathbf{u} \right) = -\nabla p + \nabla \cdot \left( \eta \left( \nabla \mathbf{u} + \nabla
-						\mathbf{u}^\mathsf{T} \right) \right) + \rho\mathbf{b}
-						$$
+						\mathbf{u} \right) &=\\
+						&-\nabla p\\
+						&+ \nabla \cdot \left( \eta \left( \nabla \mathbf{u} + \nabla\mathbf{u}^\mathsf{T} \right) \right)\\
+						&+ \rho\mathbf{b}
+						\end{align}
+						$
 					</p>
 					<p>in $\Omega^\pm (t)$ - two equations!</p>
 				</section>
@@ -427,29 +385,10 @@
 					</p>
 				</section>
 				<section>
-					<p>Which quantity jumps at $\Sigma$ due to surface tension?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">interface normal velocity</li>
-						<li style="list-style-type: upper-latin;">interface tangential velocity</li>
-						<li style="list-style-type: upper-latin;">pressure</li>
-						<li style="list-style-type: upper-latin;">shear stress</li>
-					</ol>
-				</section>
-				<section>
-					<p>Which quantity jumps at $\Sigma$ due to mass transfer?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">interface normal velocity</li>
-						<li style="list-style-type: upper-latin;">interface tangential velocity</li>
-						<li style="list-style-type: upper-latin;">pressure</li>
-						<li style="list-style-type: upper-latin;">shear stress</li>
-					</ol>
-				</section>
-				<section>
 					<p>mass jump condition:</p>
 					<p>
 						$$
-						[\![ \rho \left( \mathbf{u} - \mathbf{u}^\Sigma \right) ]\!] \cdot \mathbf{n}_\Sigma = 0\quad
-						\text{on}\quad \Sigma (t)
+						\dot{m}^+ - \dot{m}^- = 0\quad \text{on}\quad \Sigma (t)
 						$$
 					</p>
 					<p>
@@ -460,7 +399,8 @@
 					</p>
 					<p>
 						$$
-						\dot{m}^+ - \dot{m}^- = 0\quad \text{on}\quad \Sigma (t)
+						[\![ \rho \left( \mathbf{u} - \mathbf{u}^\Sigma \right) ]\!] \cdot \mathbf{n}_\Sigma = 0\quad
+						\text{on}\quad \Sigma (t)
 						$$
 					</p>
 					<p>$\mathbf{u}^\Sigma$ - interface velocity</p>
@@ -492,7 +432,7 @@
 				<section>
 					<img src="images/mesh_b.png" alt="two-phase" width="50%"
 						style="background:none; border:none; box-shadow:none;">
-					<p>Closest numerical approach to sharp interface model: <b>interface tracking</b></p>
+					<p>Closest numerical approach to sharp interface model: <b style="color: red;">interface tracking</b></p>
 				</section>
 				<section>
 					<p>Advantages and disadvantages of interface tracking:</p>
@@ -506,7 +446,7 @@
 					</ul>
 				</section>
 				<section>
-					<p>A one-field approach to two-phase flow simulations: the <b>volume of fluid method</b></p>
+					<p>A one-field approach to two-phase flow simulations: the <b style="color: red;">volume of fluid method</b></p>
 					<img src="images/basilisk_volume_fraction_mesh_plic.png" alt="two-phase" width="80%"
 						style="background:none; border:none; box-shadow:none;">
 				</section>
@@ -525,51 +465,26 @@
 					</p>
 				</section>
 				<section>
-					<div class=row_img style="width:100%">
-						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-							<img src="images/snap_shot_vof.png" alt="vof_sol" height="400px"
-								style="background:none; border:none; box-shadow:none;">
+					<div class="r-hstack justify-around">
+						<div style="width: 33%;">
+							<img src="images/species/snap_shot_vof.png" alt="vof_sol" height="400px"
+								style="background:white; border:none; box-shadow:none;">
 							<p>
 								<small>1. Two-phase flow simulation (Volume-of-Fluid)</small>
 							</p>
 						</div>
-						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-							<img src="images/snap_shot_shape.png" alt="shape" height="400px"
-								style="background:none; border:none; box-shadow:none;">
+						<div style="width: 33%;">
+							<img src="images/species/snap_shot_hydro.png" alt="flow" height="400px"
+								style="background:white; border:none; box-shadow:none;">
 							<p>
-								<small>2. Parametrization of shape and interfacial velocity</small>
+								<small>2. Single-phase flow solution</small>
 							</p>
 						</div>
-						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-							<img src="images/snap_shot_stl_clean.png" alt="stl" height="400px"
-								style="background:none; border:none; box-shadow:none;">
+						<div style="width: 33%;">
+							<img src="images/species/snap_shot_transport.png" alt="species" height="400px"
+								style="background:white; border:none; box-shadow:none;">
 							<p>
-								<small>3. Geometry generation and export (STL format)</small>
-							</p>
-						</div>
-					</div>
-				</section>
-				<section>
-					<div class=row_img style="width:100%">
-						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-							<img src="images/snap_shot_mesh_clean.png" alt="mesh" height="400px"
-								style="background:none; border:none; box-shadow:none;">
-							<p>
-								<small>4. Single phase mesh</small>
-							</p>
-						</div>
-						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-							<img src="images/snap_shot_hydro.png" alt="flow" height="400px"
-								style="background:none; border:none; box-shadow:none;">
-							<p>
-								<small>5. Flow solution</small>
-							</p>
-						</div>
-						<div class=column_img style="width:33%;padding-right:5px;padding-left:5px">
-							<img src="images/snap_shot_transport.png" alt="species" height="400px"
-								style="background:none; border:none; box-shadow:none;">
-							<p>
-								<small>6. Species transport</small>
+								<small>3. Species transport</small>
 							</p>
 						</div>
 					</div>
@@ -588,6 +503,7 @@
 						style="background:none; border:none; box-shadow:none;">
 				</section>
 			</section>
+			<!--
 			<section>
 				<section>
 					<h2>Data-processing and visualization</h2>
@@ -648,6 +564,7 @@ sh: 1: gnuplot: not found
 					<p>Projected interface velocity in a moving reference frame.</p>
 				</section>
 			</section>
+			-->
 			<section>
 				<section>
 					<h2>Creating models for deformation and velocity</h2>
@@ -662,7 +579,7 @@ sh: 1: gnuplot: not found
 					<p>$\tilde{U}_b$ - the bubble's terminal velocity</p>
 				</section>
 				<section>
-					<p>What would be a more suitable Ansatz for $\tilde{U}_b$?</p>
+					<p>What would be a more suitable ansatz for $\tilde{U}_b$?</p>
 					<ol>
 						<li style="list-style-type: upper-latin;">$\tilde{U}_b = f_\vartheta(\tilde{t})$</li>
 						<li style="list-style-type: upper-latin;">$\tilde{U}_b = f_\vartheta(\tilde{t})\tilde{t}$</li>
@@ -679,8 +596,7 @@ sh: 1: gnuplot: not found
 				</section>
 				<section>
 					<p>Rise velocity model - normalized features and labels.</p>
-					<pre class="python"><code>
-class RVModelNorm(pt.nn.Module):
+					<pre class="python"><code data-line-numbers="1-4|6-7">class RVModelNorm(pt.nn.Module):
     def __init__(self, n_neurons=100, n_hidden=2, activation=pt.nn.Tanh):
         super(RVModelNorm, self).__init__()
         self._model = create_simple_network(1, 1, n_neurons, n_hidden, activation)
@@ -690,14 +606,13 @@ class RVModelNorm(pt.nn.Module):
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/rv_mse_loss.svg" alt="position" width="75%" overflow="hidden"
+					<img src="images/species/rv_mse_loss.svg" alt="position" width="75%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>MSE loss for the normalized rise velocity.</p>
 				</section>
 				<section>
 					<p>Rise velocity model - final model</p>
-					<pre class="python"><code>
-class RVModel(pt.nn.Module):
+					<pre class="python"><code data-line-numbers="1-8|10-13">class RVModel(pt.nn.Module):
     def __init__(self, rv_model_norm, rv_min, rm_max, t_min, t_max):
         super(RVModel, self).__init__()
         self._model = rv_model_norm
@@ -713,7 +628,7 @@ class RVModel(pt.nn.Module):
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/rv_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+					<img src="images/species/rv_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Comparison of model prediction and reference data for the rise velocity.</p>
 				</section>
@@ -740,8 +655,8 @@ class RVModel(pt.nn.Module):
 					</ol>
 				</section>
 				<section>
-					<img src="images/sin_symmetry.svg" alt="position" width="75%" overflow="hidden"
-						style="background:none; border:none; box-shadow:none;">
+					<img src="images/species/sin_symmetry.svg" alt="position" width="75%" overflow="hidden"
+						style="background:white; border:none; box-shadow:none;">
 					<p>Sine and cosine functions with vertical lines at $0$ and $\pi$.</p>
 				</section>
 				<section>
@@ -755,8 +670,7 @@ class RVModel(pt.nn.Module):
 				</section>
 				<section>
 					<p>Model for the normalized tangential velocity component.</p>
-					<pre class="python"><code>
-class TVVelocityNorm(pt.nn.Module):
+					<pre class="python"><code data-line-numbers="1-4|6-9">class TVVelocityNorm(pt.nn.Module):
     def __init__(self, n_neurons=100, n_hidden=5, activation=pt.nn.ReLU):
         super(TVVelocityNorm, self).__init__()
         self._model_norm = create_simple_network(2, 1, n_neurons, n_hidden, activation)
@@ -768,12 +682,12 @@ class TVVelocityNorm(pt.nn.Module):
 				</code></pre>
 				</section>
 				<section>
-					<img src="images/tv_mse_loss.svg" alt="position" width="60%" overflow="hidden"
+					<img src="images/species/tv_mse_loss.svg" alt="position" width="60%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Training and validation loss for the normalized tangential velocity component.</p>
 				</section>
 				<section>
-					<img src="images/vt_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+					<img src="images/species/vt_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Comparison of model prediction and reference data.</p>
 				</section>
@@ -800,8 +714,7 @@ class TVVelocityNorm(pt.nn.Module):
 				</section>
 				<section>
 					<p>Model for normalized bubble radius.</p>
-					<pre class="python"><code>
-class RadNorm(pt.nn.Module):
+					<pre class="python"><code data-line-numbers="1-4|6-9">class RadNorm(pt.nn.Module):
     def __init__(self, n_neurons=100, n_hidden=5, activation=pt.nn.ReLU):
         super(RadNorm, self).__init__()
         self._model_norm = create_simple_network(2, 1, n_neurons, n_hidden, activation)
@@ -812,15 +725,16 @@ class RadNorm(pt.nn.Module):
 						</code></pre>
 				</section>
 				<section>
-					<img src="images/rad_mse_loss.svg" alt="position" width="75%" overflow="hidden"
+					<img src="images/species/rad_mse_loss.svg" alt="position" width="75%" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Training and validation loss for the normalized radius.</p>
 				</section>
 				<section>
-					<img src="images/rad_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
+					<img src="images/species/rad_prediction.svg" alt="position" width="75%" height="500px" overflow="hidden"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Comparison of model prediction and reference data for the bubble radius.</p>
 				</section>
+				<!--
 				<section>
 					<h3>Exporting the models from Python to C++ with scripting and tracing</h3>
 				</section>
@@ -901,6 +815,7 @@ graph(%a.1 : Tensor,
 						</code></pre>
 						<p>Not all Python language features are supported in scripting.</p>
 				</section>
+				-->
 				<section>
 					<p>Tracing and saving the final models</p>
 					<pre class="python"><code>
@@ -910,6 +825,7 @@ rv_trace.save(join(output, "rv_model.pt"))
 						</code></pre>
 				</section>
 			</section>
+			<!--
 			<section>
 				<section>
 					<h2>Single-phase simulations with mass transfer</h2>
@@ -995,34 +911,37 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 						</code></pre>
 				</section>
 			</section>
+			-->
 			<section>
 				<section>
 					<h2>Analyzing the results</h2>
 				</section>
 				<section>
-					<video height="500" controls mute autoplay loop>
-						<source src="images/all_cases_sc100.mp4">
+					<video height="500" controls mute>
+						<source src="images/intro/all_cases_sc100.mp4">
 					</video>
 					<p>Results for four different $Eo$ numbers; $Sc=100$.</p>
 				</section>
 				<section>
-					<video height="500" controls mute autoplay loop>
-						<source src="images/mesh_zoom_bl.mp4">
+					<video height="500" controls mute>
+						<source src="images/species/mesh_zoom_bl.mp4">
 					</video>
 					<p>Mesh deformation and boundary layer zoom view.</p>
 				</section>
 				<section>
-					<img src="images/glob_sh_cb4.png" alt="position" width="100%"
+					<img src="images/species/glob_sh_cb4.png" alt="position" width="100%"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Dimensionless global mass transfer - Sherwood number $Sh$.</p>
 				</section>
+				<!--
 				<section>
-					<img src="images/sh_loc_comparison.png" alt="position" width="80%"
+					<img src="images/species/sh_loc_comparison.png" alt="position" width="80%"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Dimensionless local mass transfer - slip vs. ML.</p>
 				</section>
+				-->
 				<section>
-					<img src="images/wake_slip_comparison.png" alt="position" width="80%"
+					<img src="images/species/wake_slip_comparison.png" alt="position" width="80%"
 						style="background:none; border:none; box-shadow:none;">
 					<p>Wake concentration - slip vs. ML.</p>
 				</section>
@@ -1049,10 +968,9 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
-			controls: true,
-			progress: true,
-			center: true,
 			hash: true,
+			progress: true,
+			slideNumber: "c",
 			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
@@ -1060,7 +978,25 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -1080,9 +1016,20 @@ void Foam::ptSurfaceVelocityFvPatchVectorField::updateCoeffs()
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
 		});
-		Reveal.configure({ slideNumber: true });
 
 	</script>
+	<style type="text/css">
+		.reveal .slide-number {
+			font-size: 1em;
+			color: #42affa;
+			right: auto;
+			width: 1.5em;
+			height: 1.5em;
+			background-color: #191919;
+			display: grid !important;
+			place-items: center;
+		}
+	</style>
 
 </body>
 
