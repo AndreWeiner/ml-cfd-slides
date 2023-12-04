@@ -19,29 +19,9 @@
 		<link rel="stylesheet" href="plugin/customcontrols/style.css">
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
-
-		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
-
-	<style>
-		.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-		}
-	</style>
 
 	<body>
 
@@ -50,14 +30,18 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 10 & 11</span></h3>
+					<h3><span style="color: red;">Analyzing coherent structures</span></h3>
 					<p>
 						Andre Weiner<br>
-						<small>TU Braunschweig, <a
-								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
-					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
-					</small>
+						<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
+						<small>
+							<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+									alt="Creative Commons License" style="border-width:0"
+									src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
+							of the linked resources are licensed under a<br /> <a rel="license"
+								href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+								International License</a>.
+						</small>
 					</p>
 	
 					<style>
@@ -79,7 +63,7 @@
 					<div class="row_logo">
 						<div class="column_logo">
 							<div class="content_logo">
-								<img src="images/tubs_logo.png" alt="tubs_logo"
+								<img src="images/logos/TUD_white.png" alt="tud_logo"
 									style="background:none; border:none; box-shadow:none;">
 							</div>
 						</div>
@@ -89,15 +73,15 @@
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9993;</th>
 										<td style="border: 0; padding-right: 20px;"><a
-												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+												href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 										<td style="border: 0; padding-right: 5px;">&#9741;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
 									</tr>
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9997;</td>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="https://ml-cfd.com/">Blog</a></td>
+										<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
+										</td>
 										<td style="border: 0; padding-right: 5px;">&#10026;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://github.com/AndreWeiner">Github</a></td>
@@ -107,30 +91,13 @@
 						</div>
 					</div>
 				</section>
-<!--
-				<section>
-					<h2>ProDigi</h2>
-					<p>
-						This lecture is financed via the program:<br><a href="https://www.tu-braunschweig.de/en/teaching-and-media-education/our-services/international-teaching/prodigi">Promoting digital education through global interconnection</a> (ProDigi).
-					</p>
-					<p>Let's take a moment to give something back!<br>$\rightarrow$ follow the link to the poll</p>
-				</section>
--->
-				<section>
-					<h2>Evaluation</h2>
-					<p>Learning from data is effective - let's create some for this course!</p>
-					<p>$\rightarrow$ follow the link to the poll</p>
-				</section>
 				<section>
 					<h2>Last lecture</h2>
-					<p>Computing highly accurate mass transfer at rising bubbles</p>
+					<p>Surrogate models for continuous predictions</p>
 					<ul>
 						<li>The high Schmidt number problem</li>
 						<li>Decoupling two-phase flow and species transport</li>
-						<hr>
-						<li>Data processing and visualization</li>
 						<li>Creating models for deformation and velocity</li>
-						<li>Single-phase simulations with mass transfer</li>
 						<li>Analyzing the results</li>
 					</ul>
 				</section>
@@ -139,13 +106,13 @@
 					<h2>Outline</h2>
 					<p>Analyzing coherent structures in flows displaying transonic shock buffets</p>
 					<ul>
-						<li>transonic shock buffets</li>
+						<li>transonic shock buffet</li>
 						<li>principal component analysis (PCA)</li>
 						<li>ways to compute the PCA</li>
 						<hr>
-						<li>PCA applied to the flow around an airfoil</li>
 						<li>dynamic mode decomposition (DMD)</li>
-						<li>DMD applied to the flow around an airfoil</li>
+						<li>optimized DMD</li>
+						<li>DMD applied to shock buffet</li>
 					</ul>
 				</section>
 
@@ -186,24 +153,24 @@
 					</section>
 					<section>
 						<video height="500" controls mute autoplay loop>
-							<source src="images/cylinder_short.mp4">
+							<source src="images/coherent/cylinder_short.mp4">
 						</video>
 						<p>Flow past a circular cylinder at $Re=100$.</p>
 					</section>
 					<section>
-						<img src="images/cylinder_mean_var.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/cylinder_mean_var.svg" alt="probes" width="75%" style="background:white; border:none; box-shadow:none;">
 						<p>Temporal mean and variance of velocity components.</p>
 					</section>
 					<section>
-						<img src="images/cylinder_Ux_var_markers.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/cylinder_Ux_var_markers.svg" alt="probes" width="75%" style="background:white; border:none; box-shadow:none;">
 						<p>Probe locations for velocity fluctuations.</p>
 					</section>
 					<section>
-						<img src="images/Up_probes_vs_time.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/Up_probes_vs_time.svg" alt="probes" width="75%" style="background:white; border:none; box-shadow:none;">
 						<p>Streamwise velocity fluctuations over time.</p>
 					</section>
 					<section>
-						<img src="images/Up1_vs_Up2.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/Up1_vs_Up2.svg" alt="probes" width="75%" style="background:white; border:none; box-shadow:none;">
 						<p>$u^\prime_1$ plotted  against $u^\prime_2$.</p>
 					</section>
 					<section>
@@ -230,7 +197,7 @@
 						<p>Our vector $\mathbf{\phi}$ has two rows and one column.</p>
 					</section>
 					<section>
-						<img src="images/Up12_proj.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/Up12_proj.svg" alt="probes" width="50%" style="background:white; border:none; box-shadow:none;">
 						<p>Effect of projection onto $\mathbf{\phi} = (1, -1)^T/\sqrt{2}$.</p>
 					</section>
 					<section>
@@ -248,24 +215,24 @@ $$
 						</p>
 					</section>
 					<section>
-						<img src="images/cov_org.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/cov_org.svg" alt="probes" width="50%" style="background:white; border:none; box-shadow:none;">
 						<p>Covariance matrix in the natural basis.</p>
 					</section>
 					<section>
-						<img src="images/rotated_data.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/rotated_data.svg" alt="probes" width="100%" style="background:white; border:none; box-shadow:none;">
 						<p>Data projected onto rotated coordinate systems.</p>
 					</section>
 					<section>
-						<img src="images/cov_rotated_data.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/cov_rotated_data.svg" alt="probes" width="100%" style="background:white; border:none; box-shadow:none;">
 						<p>Covariance matrix in rotated coordinate systems.</p>
 					</section>
 					<section>
-						<p>PCA idea: find new basis such that variance along each axis is maximized.</p>
+						<p>PCA idea: find new orthogonal basis such that variance along each axis is maximized.</p>
 						<p>$\mathbf{C} = \mathbf{\Phi \Lambda \Phi}^{-1}\quad\text{given that}\quad \mathbf{\phi}^T_i\mathbf{\phi}_i = 1$</p>
 						<p>(proof in lecture notebook)</p>
 					</section>
 					<section>
-						<img src="images/cov_eigvecs_2D.svg" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/cov_eigvecs_2D.svg" alt="probes" width="50%" style="background:white; border:none; box-shadow:none;">
 						<p>Principal components (optimal basis).</p>
 					</section>
 					<section>
@@ -278,14 +245,14 @@ $$
 						<p>Applied to snapshots, the coefficients encode the importance of each mode over time.</p>
 					</section>
 					<section>
-						<img src="images/mode_coeffs_2points.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/mode_coeffs_2points.svg" alt="probes" width="75%" style="background:white; border:none; box-shadow:none;">
 						<p>Mode coefficients probe data.</p>
 					</section>
 					<section>
 						<p>What if we take <b>all</b> points instead of two samples?</p>
 					</section>
 					<section>
-						<img src="images/Up_cylinder_eigvecs.svg" alt="probes" width="75%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/coherent/Up_cylinder_eigvecs.svg" alt="probes" width="75%" style="background:white; border:none; box-shadow:none;">
 						<p>Mode coefficients probe data.</p>
 					</section>
 					<section>
@@ -366,12 +333,12 @@ $$
 						<p>Direct PCA:</p>
 						<p>
 							$$
-							  \mathbf{C} = \mathbf{\Phi \Lambda \Phi}^{-1}
+							  \mathbf{C} = \mathbf{\Phi \Lambda \Phi}^{T}
 							$$
 						</p>
 						<ul>
-							<li>$\mathbf{\Phi} \in \mathbb{R}^{M\times N}$ ($M$ - number of spatial points)</li>
-							<li>$\mathbf{\Lambda} \in \mathbb{R}^{N\times N}$, diagonal</li>
+							<li>$\mathbf{\Phi} \in \mathbb{R}^{M\times M}$ ($M$ - number of spatial points)</li>
+							<li>$\mathbf{\Lambda} \in \mathbb{R}^{M\times M}$, diagonal</li>
 							<li>column vectors $\mathbf{\phi}_j$ are called principal component or proper orthogonal decomposition (POD) modes</li>
 							<li>$\mathbf{\Phi}$ is orthonormal, $\mathbf{\phi}_j$ form an orthonormal basis</li>
 							<li>eigenvalues $\lambda_j$ are the variance along $\mathbf{\phi}_j$</li>
@@ -449,12 +416,6 @@ $$
 							<li>datasets with noise</li>
 							<li>streaming datasets</li>
 						</ul>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h2>PCA applied to the flow around an airfoil</h2>
 					</section>
 				</section>
 
@@ -764,18 +725,35 @@ tensor([0.5298+0.j, 0.8807+0.j])
 			// Also available as an ES module, see:
 			// https://revealjs.com/initialization/
 			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
-				chalkboard: {
+			hash: true,
+			progress: true,
+			slideNumber: "c",
+			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
 				chalkEffect: 0.01,
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -792,12 +770,24 @@ tensor([0.5298+0.j, 0.8807+0.j])
 				]
 			},
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls ]
-			});
-			Reveal.configure({ slideNumber: true });
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+		});
 
 		</script>
+
+<style type="text/css">
+	.reveal .slide-number {
+		font-size: 1em;
+		color: #42affa;
+		right: auto;
+		width: 1.5em;
+		height: 1.5em;
+		background-color: #191919;
+		display: grid !important;
+		place-items: center;
+	}
+</style>
 
 	</body>
 </html>
