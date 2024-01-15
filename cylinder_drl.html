@@ -19,29 +19,9 @@
 		<link rel="stylesheet" href="plugin/customcontrols/style.css">
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
-
-		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
-
-	<style>
-		.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-		}
-	</style>
 
 	<body>
 
@@ -50,14 +30,18 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lectures 14 & 15</span></h3>
+					<h3><span style="color: red;">Closed-loop flow control enabled by DRL</span></h3>
 					<p>
 						Andre Weiner<br>
-						<small>TU Braunschweig, <a
-								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
-					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
-					</small>
+						<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
+						<small>
+							<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+									alt="Creative Commons License" style="border-width:0"
+									src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
+							of the linked resources are licensed under a<br /> <a rel="license"
+								href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+								International License</a>.
+						</small>
 					</p>
 	
 					<style>
@@ -79,7 +63,7 @@
 					<div class="row_logo">
 						<div class="column_logo">
 							<div class="content_logo">
-								<img src="images/tubs_logo.png" alt="tubs_logo"
+								<img src="images/logos/TUD_white.png" alt="tud_logo"
 									style="background:none; border:none; box-shadow:none;">
 							</div>
 						</div>
@@ -89,15 +73,15 @@
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9993;</th>
 										<td style="border: 0; padding-right: 20px;"><a
-												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+												href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 										<td style="border: 0; padding-right: 5px;">&#9741;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
 									</tr>
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9997;</td>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="https://ml-cfd.com/">Blog</a></td>
+										<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
+										</td>
 										<td style="border: 0; padding-right: 5px;">&#10026;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://github.com/AndreWeiner">Github</a></td>
@@ -107,39 +91,16 @@
 						</div>
 					</div>
 				</section>
-
-				<section>
-					<h2>ProDigi</h2>
-					<p>
-						This lecture is financed via the program:<br><a href="https://www.tu-braunschweig.de/en/teaching-and-media-education/our-services/international-teaching/prodigi">Promoting digital education through global interconnection</a> (ProDigi).
-					</p>
-					<p>Let's take a moment to give something back!<br>$\rightarrow$ follow the link to the poll</p>
-				</section>
-
-				<section>
-					<section>
-						<h3>Course exam</h3>
-						<ul>
-							<li>written exam, ISM lecture room</li>
-							<li>March 30, 2023, 10:00 am</li>
-						</ul>
-						<p>Who plans to take the exam?</p>
-					</section>
-				</section>
 	
-				<section>
-					<h2>Outline</h2>
-					<p>Analyzing coherent structures in flows displaying transonic shock buffets</p>
-					<ul>
-						<li>transonic shock buffets</li>
-						<li>principal component analysis (PCA)</li>
-						<li>ways to compute the PCA</li>
-						<hr>
-						<li>PCA applied to the flow around an airfoil</li>
-						<li>dynamic mode decomposition (DMD)</li>
-						<li>DMD applied to the flow around an airfoil</li>
-					</ul>
-				</section>
+			<section>
+				<h2>Last lecture</h2>
+				<p>Reduced-order modeling of flow fields</p>
+				<ul>
+					<li>reduced-order models for dynamical systems</li>
+					<li>optimized DMD</li>
+					<li>dealing with high-dimensional data</li>
+				</ul>
+			</section>
 	
 				<section>
 					<h2>Outline</h2>
@@ -147,11 +108,9 @@
 					<ul>
 						<li>Flow control</li>
 						<li>Elements of reinforcement learning</li>
-						<li>Q-learning</li>
 						<hr>
 						<li>Elements of deep reinforcement learning</li>
 						<li>Proximal policy optimization</li>
-						<li>Concluding remarks</li>
 					</ul>
 				</section>
 
@@ -187,12 +146,12 @@
 					</section>
 					<section>
 						<video height="500" controls mute autoplay loop>
-							<source src="images/cylinder_short.mp4">
+							<source src="images/coherent/cylinder_short.mp4">
 						</video>
 						<p>Flow past a circular cylinder at $Re=100$.</p>
 					</section>
 					<section>
-						<img src="images/cylinder_drag_lift.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/cylinder_drag_lift.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
 						<p>Drag and lift coefficients for the cylinder surface; source: figure 2.9 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
 					</section>
 					<section>
@@ -219,16 +178,16 @@
 						</ul>
 					</section>
 					<section>
-						<img src="images/cylinder_openloop_loss_surface.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/intro/cylinder_openloop_loss_surface.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
 						<p>Loss landscape for periodic control; source: figure 3.5 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
 					</section>
 					<section>
-						<img src="images/state_action.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/state_action.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
 						<p>Closed-loop example: $\omega = f(\mathbf{p})$.</p>
 					</section>
 					<section>
 						<video height="500" controls mute autoplay loop>
-							<source src="images/variable_inflow_2x.mp4">
+							<source src="images/intro/variable_inflow_2x.mp4">
 						</video>
 						<p>Closed-loop flow control with variable Reynolds number; source: <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
@@ -236,7 +195,7 @@
 						<p>How to find the control law?</p>
 						<ul>
 							<li>careful manual design</li>
-							<li>adjoint optimization</li>
+							<li>Bayesian optimization</li>
 							<li>machine learning control (MLC)</li>
 							<li><b>(deep) reinforcement learning (DRL)</b></li>
 						</ul>
@@ -266,7 +225,7 @@
 						<h2>Elements of reinforcement learning</h2>
 					</section>
 					<section>
-						<img src="images/reinforcement.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/reinforcement.svg" alt="probes" width="100%" style="background:white; padding: 1em; box-shadow:none;">
 						<p>Reinforcement learning cycle.</p>
 					</section>
 					<section>
@@ -280,30 +239,30 @@
 						</ul>
 					</section>
 					<section>
-						<p>The environment:</p>
+						<p>The environment at time step $n$:</p>
 						<ul>
-							<li>is defined by a state $s$</li>
-							<li>transitions from $s$ to $s^\prime$ when acted on</li>
-							<li>returns a reward $r$</li>
+							<li>is defined by a state $S_n$</li>
+							<li>transitions from $S_n$ to $S_{n+1}$ when acted on</li>
+							<li>returns a reward $R_n$</li>
 							<li>defines an extrinsic task expressed by reward</li>
 						</ul>
 					</section>
 					<section>
-						<p>States $s\in S$:</p>
+						<p>State $S_n\in \mathcal{S}$:</p>
 						<ul>
-							<li>define environment</li>
+							<li>defines environment</li>
 							<li>can be discrete, continuous, or mixed</li>
-							<li>lie in the state space $S$</li>
-							<li>are typically not fully available -> observation</li>
+							<li>lies in the state space $\mathcal{S}$</li>
+							<li>are typically not fully available $\rightarrow$ observation</li>
 							<li>change upon action according to transition function</li>
 						</ul>
 						<p>Note that state and observation are typically used as synonyms.</p>
 					</section>
 					<section>
-						<p>Actions $ a\in A(s)$:</p>
+						<p>Action $ A_n\in \mathcal{A}(s)$:</p>
 						<ul>
-							<li>are determined by policy $\pi (s)$</li>
-							<li>lie in the action space $A(s)$</li>
+							<li>is determined by policy $\pi (s)$</li>
+							<li>lies in the action space $\mathcal{A}(s)$</li>
 							<li>may be state-dependent</li>
 							<li>can be discrete, continuous, or mixed</li>
 						</ul>
@@ -312,39 +271,39 @@
 						<p>Even more definitions:</p>
 						<ul>
 							<li>task: overall goal; episodic or continuing</li>
-							<li>time step $t$: one interaction between agent and environment</li>
+							<li>time step $n$: one interaction between agent and environment</li>
 							<li>episode: cumulation of time steps in episodic tasks</li>
 							<li>horizon: time step limit; finite or infinite</li>
-							<li>experience tuple: $\{ S_t, A_t, R_{t+1}, S_{t+1}\}$</li>
+							<li>experience tuple: $\{ S_n, A_n, R_{n+1}, S_{n+1}\}$</li>
 							<li>trajectory: all experience tuples in an episode</li>
 						</ul>
 					</section>
 					<section>
-						<img src="images/slippery_walk_7.png" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/slippery_walk_7.png" alt="probes" width="100%" style="background:white; padding: 1em; border:none; box-shadow:none;">
 						<p>Describing uncertainty: "slippery walk" presented as Markov decision process (MDP). </p>
 					</section>
 					<section>
 						<p>Markov property:</p>
 						<p>
 							$$
-							  P(S_{t+1}|S_t, A_t) = P(S_{t+1}|S_t, A_t, S_{t-1}, A_{t-1}, ...)
+							  P(S_{n+1}|S_n, A_n) = P(S_{n+1}|S_n, A_n, S_{n-1}, A_{n-1}, ...)
 							$$
 						</p>
 						<p>May be relaxed in practice by adding several time levels to the state.</p>
 					</section>
 					<section>
+						<p>Transition function:</p>
+						<p>
+							$$
+							p(s^\prime | s, a) = P(S_{n}=s^\prime | S_{n-1} = s, A_{n-1} = a)
+							$$
+						</p>
 						<p>Reward function:</p>
 						<p>
 							$$
-							p(s^\prime | s, a) = P(S_{t}=s^\prime | S_{t-1} = s, A_{t-1} = a)
+							r(s, a) = \mathbb{E}[R_{n} | S_{n-1}=s, A_{n-1}=a]
 							$$
 						</p>
-						<p>
-							$$
-							r(s, a) = \mathbb{E}[R_{t} | S_{t-1}=s, A_{t-1}=a]
-							$$
-						</p>
-						<p>Transition function:</p>
 						<p><a href="https://ai.stackexchange.com/questions/21767/why-are-the-value-functions-sometimes-written-with-capital-letters-and-other-tim">What are the upper and lower case letters about?</a></p>
 					</section>
 					<section>
@@ -411,26 +370,26 @@ list(P.items())[-2:]
 						<p>Dealing with sequential feedback:</p>
 						<p>return:
 							$$
-							  G_t = R_{t+1} + R_{t+2} + ... + R_T
+							  G_n = R_{n+1} + R_{n+2} + ... + R_N
 							$$
 						</p>
 						<p>discounted return:
 							$$
-							  G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... \gamma^{T-1}R_T
+							  G_n = R_{n+1} + \gamma R_{n+2} + \gamma^2 R_{n+3} + ... \gamma^{N-1}R_N
 							$$
 						</p>
-						<p>$T$ - number of time steps, $\gamma$ - discounting factor, typically $\gamma = 0.99$</p>
+						<p>$N$ - number of time steps, $\gamma$ - discounting factor, typically $\gamma = 0.99$</p>
 					</section>
 					<section>
 						<p>recursive definition:
 							$$
-							  G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... \gamma^{T-1}R_T
+							  G_n = R_{n+1} + \gamma R_{n+2} + \gamma^2 R_{n+3} + ... \gamma^{N-1}R_N
 							$$
 							$$
-							  G_{t+1} = R_{t+2} + \gamma R_{t+3} + \gamma^2 R_{t+4} + ... \gamma^{T-1}R_T
+							  G_{n+1} = R_{n+2} + \gamma R_{n+3} + \gamma^2 R_{n+4} + ... \gamma^{N-1}R_N
 							$$
 							$$
-							  G_t = R_{t+1} + \gamma G_{t+1}
+							  G_n = R_{n+1} + \gamma G_{n+1}
 							$$
 						</p>
 					</section>
@@ -449,19 +408,19 @@ list(P.items())[-2:]
 						<p>Returns combined with uncertainty: the state-value function</p>
 						<p>
 							$$
-							  v_\pi (s) = \mathbb{E}_\pi [G_t| S_t=s] = \mathbb{E}_\pi [R_{t+1} + \gamma G_{t+1}| S_t=s]
+							  v_\pi (s) = \mathbb{E}_\pi [G_n| S_n=s] = \mathbb{E}_\pi [R_{n+1} + \gamma G_{n+1}| S_n=s]
 							$$
-							In words: the value function expresses the expected return at time step $t$ given that $S_t = s$ when following policy $\pi$.
+							In words: the value function expresses the expected return at time step $n$ given that $S_n = s$ when following policy $\pi$.
 						</p>
 					</section>
 					<section>
 						<p>How to compute the value-function if the MDP is known? - Bellman equation</p>
 						<p>
 							$$
-							v_\pi (s) = \mathbb{E}_\pi [R_{t+1} + \gamma G_{t+1}| S_t=s]
+							v_\pi (s) = \mathbb{E}_\pi [R_{n+1} + \gamma G_{n+1}| S_n=s]
 							$$
 							$$
-							v_\pi (s) = \sum\limits_{s^\prime , r, a} p(s^\prime,r| s, a) [r + \gamma \mathbb{E}_\pi [G_{t+1} | S_{t+1} = s^\prime)]]
+							v_\pi (s) = \sum\limits_{s^\prime , r, a} p(s^\prime,r| s, a) [r + \gamma \mathbb{E}_\pi [G_{n+1} | S_{n+1} = s^\prime)]]
 							$$
 							$$
 							v_\pi (s) = \sum\limits_{s^\prime , r, a} p(s^\prime,r| s, a) [r + \gamma v_\pi (s^\prime)]\quad \forall s\in S
@@ -483,10 +442,10 @@ list(P.items())[-2:]
 						<p>What action to take? The state-action function:</p>
 						<p>
 							$$
-							q_\pi (s, a) = \mathbb{E}_\pi [G_t | S_t = s, A_t=a]
+							q_\pi (s, a) = \mathbb{E}_\pi [G_n | S_n = s, A_n=a]
 							$$
 							$$
-							q_\pi (s, a) = \mathbb{E}_\pi [R_{t+1} + \gamma G_{t+1} | S_t = s, A_t=a]
+							q_\pi (s, a) = \mathbb{E}_\pi [R_{n+1} + \gamma G_{n+1} | S_n = s, A_n=a]
 							$$
 							$$
 							q_\pi (s, a) = \sum\limits_{s^\prime , r} p(s^\prime,r| s, a)[r + \gamma v_\pi (s^\prime)]\quad \forall s\in S, \forall a\in A
@@ -513,15 +472,15 @@ list(P.items())[-2:]
 						<p>The optimal policy:</p>
 						<p>
 							$$
-							v_\ast (s) = \underset{\pi}{\mathrm{max}}\ v_\pi (s)\quad \forall s\in S
+							v^\ast (s) = \underset{\pi}{\mathrm{max}}\ v_\pi (s)\quad \forall s\in \mathcal{S}
 							$$
 							$$
-							q_\ast (s, a) = \underset{\pi}{\mathrm{max}}\ q_\pi (s, a)\quad \forall s\in S, \forall a\in A
+							q^\ast (s, a) = \underset{\pi}{\mathrm{max}}\ q_\pi (s, a)\quad \forall s\in \mathcal{S}, \forall a\in \mathcal{A}
 							$$
 						</p>
 					</section>
 					<section>
-						<p>Planning: finding $\pi_\ast$ with value iterations</p>
+						<p>Planning: finding $\pi^\ast$ with value iterations</p>
 						<p>
 							$$
 							v_{k+1}(s) = \underset{a}{\mathrm{max}}\sum\limits_{s^\prime, r} p(s^\prime , r | s, a)[r+\gamma v_k(s^\prime)]
@@ -572,7 +531,7 @@ tensor([[0.3704, 0.6668],
 						</ol>
 					</section>
 				</section>
-
+<!--
 				<section>
 					<section>
 						<h2>Q-learning</h2>
@@ -636,7 +595,7 @@ tensor([[0.3704, 0.6668],
 						<p>Solution: RL with neural networks for function approximation - <b>deep</b> RL</p>
 					</section>
 				</section>
-
+-->
 				<section>
 					<section>
 						<h2>Elements of <span style="color: red;">deep</span> reinforcement learning</h2>
@@ -787,6 +746,7 @@ tensor([[0.3704, 0.6668],
 						<p>Pressure on the cylinder's surface; source: figure 5.7 in <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
 				</section>
+				<!--
 				<section>
 					<section>
 						<h2>Concluding remarks</h2>
@@ -839,6 +799,7 @@ tensor([[0.3704, 0.6668],
 					<h2>Thank you for attending this course!</h2>
 					<p>Any feedback to improve it is welcome!</p>
 				</section>
+				-->
 
 
 			</div>
@@ -859,18 +820,35 @@ tensor([[0.3704, 0.6668],
 			// Also available as an ES module, see:
 			// https://revealjs.com/initialization/
 			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
-				chalkboard: {
+			hash: true,
+			progress: true,
+			slideNumber: "c",
+			chalkboard: {
 				boardmarkerWidth: 4,
 				chalkWidth: 4,
 				chalkEffect: 0.01,
 				theme: "chalkboard",
 				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
 				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 }
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
 			},
 			customcontrols: {
 				controls: [
@@ -887,12 +865,23 @@ tensor([[0.3704, 0.6668],
 				]
 			},
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls ]
-			});
-			Reveal.configure({ slideNumber: true });
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+		});
 
 		</script>
+		<style type="text/css">
+			.reveal .slide-number {
+				font-size: 1em;
+				color: #42affa;
+				right: auto;
+				width: 1.5em;
+				height: 1.5em;
+				background-color: #191919;
+				display: grid !important;
+				place-items: center;
+			}
+		</style>
 
 	</body>
 </html>
