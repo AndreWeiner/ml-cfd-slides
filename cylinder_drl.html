@@ -648,35 +648,35 @@ tensor([[0.3704, 0.6668],
 						<h2>Proximal policy optimization</h2>
 					</section>
 					<section>
-						<img src="images/state_action.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/state_action.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
 						<p>Closed-loop example: $\omega = f(\mathbf{p})$.</p>
 					</section>
 					<section>
-						<img src="images/ppo_overview.png" alt="probes" width="45%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/ppo_overview.png" alt="probes" width="45%" style="background:none; border:none; box-shadow:none;">
 						<p>PPO overview; source: figure 4.6 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
 					</section>
 					<section>
-						<img src="images/policy_network.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/policy_network.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
 						<p>Policy network; source: figure 4.4 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
 					</section>
 					<section>
-						<img src="images/exploration.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/exploration.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
 						<p>Action of example trajectories in training mode; source: figure 5.2 in <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
 					<section>
-						<img src="images/gauss_vs_beta_dist.svg" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/gauss_vs_beta_dist.svg" alt="probes" width="80%" style="background:white; border:none; box-shadow:none;">
 						<p>Comparison of Gauss and Beta distribution.</p>
 					</section>
 					<section>
 						<p>learning what to expect in a given state - value function loss</p>
 						<p>
 							$$
-							  L_V = \frac{1}{N_\tau N_t} \sum\limits_{\tau = 1}^{N_\tau}\sum\limits_{t = 1}^{N_t} \left( V(s_t^\tau) - G_t^\tau \right)^2
+							  L_V = \frac{1}{N_\tau N} \sum\limits_{\tau = 1}^{N_\tau}\sum\limits_{n = 1}^{N} \left( V(s_n^\tau) - G_n^\tau \right)^2
 							$$
 						</p>
 						<ul>
 							<li>$\tau$ - trajectory (single simulation)</li>
-							<li>$s_t$ - state/observation (pressure)</li>
+							<li>$s_n$ - state/observation (pressure)</li>
 							<li>$V$ - parametrized value function</li>
 							<li>clipping not included</li>
 						</ul>
@@ -684,15 +684,15 @@ tensor([[0.3704, 0.6668],
 					<section>
 						<p>Was the selected action a good one?</p>
 						<p>
-							$$\delta_t = R_t + \gamma V(s_{t+1}) - V(s_t) $$
-							$$\delta_{t+1} = R_t + \gamma R_{t+1} + \gamma^2 V(s_{t+2}) - V(s_t) $$
+							$$\delta_n = R_n + \gamma V(s_{n+1}) - V(s_n) $$
+							$$\delta_{n+1} = R_n + \gamma R_{n+1} + \gamma^2 V(s_{n+2}) - V(s_n) $$
 							$$
-							  A_t^{GAE} = \sum\limits_{l=0}^{N_t-t} (\gamma \lambda)^l \delta_{t+l}
+							  A_n^{GAE} = \sum\limits_{l=0}^{N-n} (\gamma \lambda)^l \delta_{n+l}
 							$$
 						</p>
 						<ul>
-							<li>$\delta_t$ - one-step advantage estimate</li>
-							<li>$A_t^{GAE}$ - generalized advantage estimate</li>
+							<li>$\delta_n$ - one-step advantage estimate</li>
+							<li>$A_n^{GAE}$ - generalized advantage estimate</li>
 							<li>$\lambda$ - smoothing parameter</li>
 						</ul>
 					</section>
@@ -700,8 +700,8 @@ tensor([[0.3704, 0.6668],
 						<p>make good actions more likely - policy objective function</p>
 						<p><small>
 							$$
-							  J_\pi = \frac{1}{N_\tau N_t} \sum\limits_{\tau = 1}^{N_\tau}\sum\limits_{t = 1}^{N_t} \mathrm{min}\left[ \frac{\pi(a_t|s_t)}{\pi^{old}(a_t|s_t)} A^{GAE,\tau}_t,
-							  \mathrm{clamp}\left(\frac{\pi(a_t|s_t)}{\pi^{old}(a_t|s_t)}, 1-\epsilon, 1+\epsilon\right) A^{GAE,\tau}_t\right]
+							  J_\pi = \frac{1}{N_\tau N} \sum\limits_{\tau = 1}^{N_\tau}\sum\limits_{n = 1}^{N} \mathrm{min}\left[ \frac{\pi(a_n|s_n)}{\pi^{old}(a_n|s_n)} A^{GAE,\tau}_n,
+							  \mathrm{clamp}\left(\frac{\pi(a_n|s_n)}{\pi^{old}(a_n|s_n)}, 1-\epsilon, 1+\epsilon\right) A^{GAE,\tau}_n\right]
 							$$
 						</small>
 						</p>
@@ -713,7 +713,7 @@ tensor([[0.3704, 0.6668],
 						</ul>
 					</section>
 					<section>
-						<img src="images/ppo_policy_loss_clipping.svg" alt="probes" width="100%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/ppo_policy_loss_clipping.svg" alt="probes" width="100%" style="background:white; border:none; box-shadow:none;">
 						<p>Effect of clipping in the PPO policy loss function.</p>
 					</section>
 					<section>
@@ -728,21 +728,21 @@ tensor([[0.3704, 0.6668],
 						<p>Refer to <a href="https://arxiv.org/abs/2006.11005">R. Paris et al. 2021</a> and the references therein for similar works employing PPO.</p>
 					</section>
 					<section>
-						<img src="images/distributions.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/distributions.png" alt="probes" width="80%" style="background:white; padding:0.5em; border:none; box-shadow:none;">
 						<p>Cumulative reward over the number of training episodes; source: figure 5.8 in <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
 					<section>
 						<video height="500" controls mute autoplay loop>
-							<source src="images/variable_inflow_2x.mp4">
+							<source src="images/intro/variable_inflow_2x.mp4">
 						</video>
 						<p>Closed-loop flow control with variable Reynolds number; source: <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
 					<section>
-						<img src="images/transient_drag.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/transient_drag.png" alt="probes" width="80%" style="background:none; border:none; box-shadow:none;">
 						<p>Drag coefficient with and without control; source: figure 6.5 in <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
 					<section>
-						<img src="images/cylinder_surface_pressure.png" alt="probes" width="45%" style="background:none; border:none; box-shadow:none;">
+						<img src="images/drl/cylinder_surface_pressure.png" alt="probes" width="45%" style="background:none; border:none; box-shadow:none;">
 						<p>Pressure on the cylinder's surface; source: figure 5.7 in <a href="https://doi.org/10.5281/zenodo.5634050">F. Gabriel 2021</a>.</p>
 					</section>
 				</section>
