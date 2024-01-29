@@ -14,31 +14,14 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="plugin/chalkboard/style.css">
+		<link rel="stylesheet" href="plugin/customcontrols/style.css">
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
-
-		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
 	</head>
-
-	<style>
-		.reveal .slide-number {
-		position: absolute;
-		display: block;
-		left: 8px;
-		bottom: 8px;
-		height: 55px;
-		width: 100px;
-		z-index: 31;
-		font-family: Helvetica, sans-serif;
-		font-size: 32px;
-		line-height: 1;
-		color: #000000;
-		background-color: rgba(0, 0, 0, 0);
-		padding: 5px;
-		}
-	</style>
 
 	<body>
 
@@ -47,14 +30,18 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h3>Machine learning in computational fluid dynamics - <span style="color: red;">lecture 13</span></h3>
+					<h3><span style="color: red;">Efficient hyperparameter optimization</span></h3>
 					<p>
 						Andre Weiner<br>
-						<small>TU Braunschweig, <a
-								href="https://www.tu-braunschweig.de/en/ism">ISM</a>, Flow Modeling and Control Group</small>
-					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most of the linked resources are licensed under a<br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
-					</small>
+						<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
+						<small>
+							<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+									alt="Creative Commons License" style="border-width:0"
+									src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
+							of the linked resources are licensed under a<br /> <a rel="license"
+								href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+								International License</a>.
+						</small>
 					</p>
 	
 					<style>
@@ -76,7 +63,7 @@
 					<div class="row_logo">
 						<div class="column_logo">
 							<div class="content_logo">
-								<img src="images/tubs_logo.png" alt="tubs_logo"
+								<img src="images/logos/TUD_white.png" alt="tud_logo"
 									style="background:none; border:none; box-shadow:none;">
 							</div>
 						</div>
@@ -86,15 +73,15 @@
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9993;</th>
 										<td style="border: 0; padding-right: 20px;"><a
-												href="mailto:a.weiner@tu-bs.de">Mail</a></th>
+												href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
 										<td style="border: 0; padding-right: 5px;">&#9741;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
 									</tr>
 									<tr>
 										<td style="border: 0; padding-right: 5px;">&#9997;</td>
-										<td style="border: 0; padding-right: 20px;"><a
-												href="https://ml-cfd.com/">Blog</a></td>
+										<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
+										</td>
 										<td style="border: 0; padding-right: 5px;">&#10026;</td>
 										<td style="border: 0; padding-right: 0px;"><a
 												href="https://github.com/AndreWeiner">Github</a></td>
@@ -104,13 +91,147 @@
 						</div>
 					</div>
 				</section>
-
-				<section>
-					<h2>Last lecture(s)</h2>
-				</section>
 	
 				<section>
 					<h2>Outline</h2>
+					<ul>
+						<li>hyperparameter optimization</li>
+						<li>Gaussian processes (GP)</li>
+						<li>Bayesian optimization (BayesOpt)</li>
+						<li>advanced topics</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>hyperparameter optimization</h2>
+					</section>
+					<section>
+						<p>Some use cases:</p>
+						<ul>
+							<li>ML model settings</li>
+							<li>free parameters of turbulence models</li>
+							<li>linear solver settings</li>
+							<li>control law parameters (open-loop)</li>
+							<li>...</li>
+						</ul>
+						<p>Assumption: we only rely on expensive block-box objective function evaluations.</p>
+					</section>
+					<section>
+						<p>Open-loop example:</p>
+						<ul>
+							<li>periodic cylinder rotation with<br>
+								$$\omega = A \mathrm{sin}(2\pi ft) $$
+							</li>
+							<li>optimization of $A$ and $f$ by searching</li>
+							<li>loss<br> <small>$$\Phi = \sqrt{\bar{C_D}^2 + \bar{C_L}^2 + (C_{D_{max}}-C_{D_{min}})^2 +(C_{L_{max}}-C_{L_{min}})^2}$$</small></li>
+							<li>$\Omega = d/(2\bar{U}) A$ and $S_f = d/\bar{U}f$</li>
+						</ul>
+					</section>
+					<section>
+						<img src="images/intro/cylinder_openloop_loss_surface.png" alt="probes" width="50%" style="background:none; border:none; box-shadow:none;">
+						<p>Loss landscape for periodic control; source: figure 3.5 in <a href="https://doi.org/10.5281/zenodo.4897961">D. Thummar 2021</a>.</p>
+					</section>
+					<section>
+						<p>Bayesian optimization workflow:</p>
+						<ol>
+							<li><span style="color: red;">query</span> the objective function</li>
+							<li>create a probabilistic <span style="color: red;">surrogate model</span></li>
+							<li>compute the <span style="color: red;">acquisition score</span></li>
+							<li>select new parameter set(s) and return to 1.</li>
+						</ol>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Gaussian processes</h2>
+					</section>
+					<section>
+						<p>Multivariate Gaussian distribution:</p>
+						<p><small>
+							$$
+							N(\mathbf{x}\ |\ \mathbf{\mu}, \mathbf{\Sigma}) = \frac{1}{\sqrt{(2\pi)^d \mathrm{det}(\mathbf{\Sigma})}}\mathrm{exp}\left( -\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T\mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu}) \right)
+							$$
+						</small>
+						</p>
+						<p>with $\mathbf{x} \in \mathbb{R}^d$, $\mathbf{\mu} \in \mathbb{R}^{d}$, $\mathbf{\Sigma}\in \mathbb{R}^{d\times d}$</p>
+					</section>
+					<section>
+						<img src="images/bayes_opt/mvp_mean_cov.svg" alt="sh_glob" width="100%" style="background:none; border:none; box-shadow:none;">
+						<p>Influence of mean vector and covariance matrix.</p>
+					</section>
+					<section>
+						<p>Two sets of random variables $\mathbf{x} = \left[\mathbf{x}_A,\mathbf{x}_B\right]^T$ forming a joint multivariate Gaussian:</p>
+						<p>
+							$$
+  \mathbf{\mu}=\begin{bmatrix} \mathbf{\mu}_A \\ \mathbf{\mu}_B  \end{bmatrix}, \quad
+  \mathbf{\Sigma} = \begin{bmatrix} \mathbf{\Sigma}_{AA} & \mathbf{\Sigma}_{AB}\\ \mathbf{\Sigma}_{BA} & \mathbf{\Sigma}_{BB}  \end{bmatrix}
+$$
+						</p>
+					</section>
+					
+					<section>
+						<p><span style="color: red;">Conditioning:</span> fixing a subset of variables</p>
+						<p>
+							<small>
+							$$
+  \mathbf{\mu}_{A|B}= \mathbf{\mu}_A + \mathbf{\Sigma}_{AB}\mathbf{\Sigma}^{-1}_{BB}\left(\mathbf{x}_B-\mathbf{\mu}_B\right), \quad
+  \mathbf{\Sigma}_{A|B} = \mathbf{\Sigma}_{AA} - \mathbf{\Sigma}_{AB} \mathbf{\Sigma}^{-1}_{BB} \mathbf{\Sigma}_{BA}
+$$
+</small>
+						</p>
+						<p>We condition $\mathbf{x}_A$ on $\mathbf{x}_B$.</p>
+					</section>
+					<section>
+						<p><span style="color: red;">Marginalization:</span> considering all possible outcomes of a subset of variables</p>
+						<p>
+							$$
+p(\mathbf{x}_A) = \int p(\mathbf{x}_A, \mathbf{x}_B) \mathrm{d}\mathbf{x}_B
+$$
+						</p>
+						<p>After marginalizing out $\mathbf{x}_B$:</p>
+						<p>
+							$$
+p(\mathbf{x}_A) = N(\mathbf{x}_A\ |\ \mathbf{\mu}_A, \mathbf{\Sigma}_{AA}).
+$$
+						</p>
+					</section>
+					<section>
+						<p>Follow <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/">this link</a> to see these concepts in action.</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Bayesian optimization</h2>
+					</section>
+					<section>
+						<p>Two common methods to compute acquisition scores:</p>
+						<ul>
+							<li>probability of improvement (PoI)</li>
+							<li>expected improvement (EI)</li>
+						</ul>
+						<p>Refer to <a href="https://github.com/KrisNguyen135/bayesian-optimization-in-action/blob/main/CH04/01%20-%20BayesOpt%20loop.ipynb">this notebook</a> for a comparison.</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Advanced topics</h2>
+					</section>
+					<section>
+						<p>What we have not covered:</p>
+						<ul>
+							<li>constrained optimization</li>
+							<li>multifidelity modeling</li>
+							<li>balancing cost and utility</li>
+							<li>multiobjective optimization</li>
+							<li>scaling to large datasets</li>
+							<li>neural networks kernels</li>
+						</ul>
+						<p>Learn more: <a href="https://www.manning.com/books/bayesian-optimization-in-action?ar=true&lpse=A">Bayesian Optimization in Action</a></p>
+					</section>
 				</section>
 
 			</div>
@@ -124,22 +245,74 @@
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
 		<script src="plugin/math/math.js"></script>
+		<script src="plugin/chalkboard/plugin.js"></script>
+		<script src="plugin/customcontrols/plugin.js"></script>
 		<script>
 
 			// Also available as an ES module, see:
 			// https://revealjs.com/initialization/
 			Reveal.initialize({
-				controls: true,
-				progress: true,
-				center: true,
-				hash: true,
+			hash: true,
+			progress: true,
+			slideNumber: "c",
+			chalkboard: {
+				boardmarkerWidth: 4,
+				chalkWidth: 4,
+				chalkEffect: 0.01,
+				theme: "chalkboard",
+				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
+				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
+				eraser: { src: path + 'img/sponge.png', radius: 20 },
+				boardmarkers: [
+					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
+					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
+					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
+					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
+					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
+					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
+					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
+				],
+				chalks: [
+					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
+					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
+					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
+					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
+					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
+					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
+					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
+				],
+			},
+			customcontrols: {
+				controls: [
+					{
+						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
+						title: 'Toggle chalkboard (B)',
+						action: 'RevealChalkboard.toggleChalkboard();'
+					},
+					{
+						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
+						title: 'Toggle notes canvas (C)',
+						action: 'RevealChalkboard.toggleNotesCanvas();'
+					}
+				]
+			},
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath ]
-			});
-			Reveal.configure({ slideNumber: true });
-
-		</script>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+		});
+	</script>
+		<style type="text/css">
+			.reveal .slide-number {
+				font-size: 1em;
+				color: #42affa;
+				right: auto;
+				width: 1.5em;
+				height: 1.5em;
+				background-color: #191919;
+				display: grid !important;
+				place-items: center;
+			}
+		</style>
 
 	</body>
 </html>
