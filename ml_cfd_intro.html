@@ -97,7 +97,7 @@
 				<ul>
 					<li>course logistics</li>
 					<li>reporting issues</li>
-					<li>combining ML and CFD</li>
+					<li>ML in fluid mechanics</li>
 					<li>lecture projects</li>
 					<li>technology stack</li>
 				</ul>
@@ -109,8 +109,8 @@
 				<section>
 					<h3>Times and location</h3>
 					<ul>
-						<li>lecture: Tuesdays 7:30-9:00pm</li>
-						<li>exercise: Tuesdays 4:40-6:10pm</li>
+						<li>lecture: Tuesdays 1:00-2:30pm</li>
+						<li>exercise: Wednesdays 7:30-9:00am</li>
 						<li>location: ZEU/114/H</li>
 					</ul>
 					<p>Refer to <a href="https://bildungsportal.sachsen.de/opal/auth/RepositoryEntry/41285910529/CourseNode/93169466939370">OPAL</a> for a detailed schedule of all lecture and exercises.</p>
@@ -193,20 +193,39 @@
 			</section>
 			<section>
 				<section>
-					<h2>Combing ML and CFD</h2>
+					<h2>Using ML in fluid mechanics</h2>
 				</section>
 				<section>
-					<h3>Why combine CFD and ML?</h3>
-					<p>CFD</p>
+					<p>the study of fluid mechanics ...</p>
 					<ul>
 						<li>produces large amounts of complex data</li>
 						<li>requires data or representations thereof</li>
 					</ul>
-					<p>ML</p>
-					<ul>
-						<li>finds patterns in data</li>
-						<li>creates useful representations of data</li>
-					</ul>
+					<div class="fragment">
+						<p>ML ...</p>
+						<ul>
+							<li>finds patterns in data</li>
+							<li>creates useful representations of data</li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<div>
+						<p>primary (physical) data</p>
+						<ul>
+							<li>flow snapshots (volume, boundaries, slices)</li>
+							<li>derived quantities (averages, force coefficients)</li>
+							<li>...</li>
+						</ul>
+					</div>
+					<div class="fragment">
+						<p>secondary data (the rest)</p>
+						<ul>
+							<li>log files (residuals, quality metrics)</li>
+							<li>setting (numerical schemes, physical models)</li>
+							<li>...</li>
+						</ul>
+					</div>
 				</section>
 				<section>
 					<img src="images/DNS_snapshots_size.png" alt="data-size"
@@ -227,55 +246,85 @@
 					<p>$\rightarrow$ closure models and decision making required</p>
 				</section>
 				<section>
-					<h3>But how exactly can <span style="color: red;">ML</span> help?</h3>
-				</section>
-				<section>
-					<h3>Problems that ML solves</h3>
-				</section>
-				<section>
-					<h3><span style="color: red;">Data</span> is the transmitter between ML and CFD</h3>
-				</section>
-				<!-- 
-				<section>
-					<h3>Problems that ML solves - <span style="color: red;">supervised learning</span> </h3>
-					<img src="images/regression_classification.svg" alt="supervised"
+					<img src="images/intro/cfd_data_ml.svg" alt="data-2"
 						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Examples: surrogate modeling, flow analysis</p>
 				</section>
 				<section>
-					<h3>Problems that ML solves - <span style="color: red;">unsupervised learning</span> </h3>
-					<img src="images/unsupervised.svg" alt="unsupervised"
+					<img src="images/intro/data_ml_cfd.svg" alt="data-1"
 						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Examples: boundary conditions, material models</p>
 				</section>
 				<section>
-					<h3>Problems that ML solves - <span style="color: red;">reinforcement learning</span> </h3>
-					<img src="images/reinforcement.svg" alt="reinforcement"
+					<img src="images/intro/stacked_workflow.svg" alt="data-3"
 						style="background:none; border:none; box-shadow:none; width: 100%">
+					<p>Examples: scale/complexity-reduced modeling</p>
 				</section>
 				<section>
-					<h3>Combing CFD and ML - workflows</h3>
-					<img src="images/data_workflows_1.svg" alt="data-1"
+					<img src="images/intro/cfd_data_ml_loop.svg" alt="data-3"
 						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Example: using experimental data in CFD simulation</p>
+					<p>Examples: flow control, parameter optimization</p>
 				</section>
 				<section>
-					<h3>Combing CFD and ML - workflows</h3>
-					<img src="images/data_workflows_2.svg" alt="data-2"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Example: creating surrogate or reduced-order models based on CFD data</p>
+					<h3>ML is <span style="color: red;">not</span> a magic problem solver</h3>
 				</section>
 				<section>
-					<h3>Combing CFD and ML - workflows</h3>
-					<img src="images/data_workflows_3.svg" alt="data-3"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Example: scale-up modeling</p>
+					<p>matching given inputs and <span style="color: red;">continuous outputs</span></p>
+					<div class="row_logo" style="width: 100%;">
+						<div class="column_logo">
+								<img src="images/intro/linear_regression_raw.svg" alt="raw"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+						<div class="column_logo">
+								<img class="fragment" src="images/intro/linear_regression.svg" alt="model"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+					</div>
 				</section>
 				<section>
-					<h3>Combing CFD and ML - workflows</h3>
-					<img src="images/data_workflows_4.svg" alt="data-3"
-						style="background:none; border:none; box-shadow:none; width: 500px">
-					<p>Example: active flow control or shape optimization</p>
+					<p>matching given inputs and <span style="color: red;">discrete outputs</span></p>
+					<div class="row_logo" style="width: 100%;">
+						<div class="column_logo">
+								<img src="images/intro/linear_classification_raw.svg" alt="raw"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+						<div class="column_logo">
+								<img class="fragment" src="images/intro/linear_classification.svg" alt="model"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+					</div>
 				</section>
-				-->
+				<section>
+					<p>finding <span style="color: red;">low-dimensional</span> representations</p>
+					<div class="row_logo" style="width: 100%;">
+						<div class="column_logo">
+								<img src="images/intro/pca_raw.svg" alt="raw"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+						<div class="column_logo">
+								<img class="fragment" src="images/intro/pca.svg" alt="model"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+					</div>
+				</section>
+				<section>
+					<p>grouping <span style="color: red;">similar</span> data points</p>
+					<div class="row_logo" style="width: 100%;">
+						<div class="column_logo">
+								<img src="images/intro/clustering_raw.svg" alt="raw"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+						<div class="column_logo">
+								<img class="fragment" src="images/intro/clustering.svg" alt="model"
+									style="background:none; border:none; box-shadow:none; width: 90%">
+						</div>
+					</div>
+				</section>
+				<section>
+					<p>learning <span style="color: red;">optimal control</span> in dynamic environments</p>
+					<img src="images/intro/reinforcement.svg" alt="model"
+									style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
 				<section>
 					<h3>What type of ML could be helpful in the following scenarios?</h3>
 				</section>
@@ -325,10 +374,13 @@
 					</ol>
 				</section>
 				<section>
-					<ol>
+					<p>hints to create <span style="color: red;">sensible</span> ML applications</p>
+					<ul>
 						<li>domain knowledge is essential</li>
-						<li>many advanced problems require<br> combination of multiple ML algorithms</li>
-					</ol>
+						<li>ML shines in higher dimensions</li>
+						<li>combination of multiple ML techniques</li>
+						<li>combine the strengths of ML and <br>standard (classical) approaches</li>
+					</ul>
 				</section>
 			</section>
 			<section>
