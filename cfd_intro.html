@@ -163,10 +163,10 @@
 			</section>
 			<section>
 				<section>
-					<h2>Domain discretization (meshing)</h2>
+					<h2>The finite volume mesh</h2>
 				</section>
 				<section>
-					<p><b>Meshing:</b> subdivide domain into a finite number of discrete elements (control volumes)</p>
+					<p><b style="color: red;">Meshing:</b> subdivide domain into a finite number of discrete elements (control volumes)</p>
 					<p>Lecture/notebook simplifications:</p>
 					<ul>
 						<li>structured, Cartesian mesh</li>
@@ -235,10 +235,10 @@ print(a is b, a == b)
 					<h2>Equation discretization part I - diffusion</h2>
 				</section>
 				<section>
-					<p><b>Equation discretization:</b> transform PDE + BC/IC into a system of linear equations by means of mesh-based finite approximations</p>
+					<p><b style="color: red;">Equation discretization:</b> transform PDE + BC/IC into a system of linear equations by means of mesh-based finite PDE approximations for each cell</p>
 					<p>
 						$$
-						F\left(T, \partial_t T, \nabla T, ...\right) \rightarrow \mathbf{Ax} = \mathbf{b}
+						F\left(T, \partial_t T, \nabla T, ...\right) = 0 \rightarrow \mathbf{Ax} = \mathbf{b}
 						$$
 					</p>
 					<span style="display:inline-block; height: 200px"></span>
