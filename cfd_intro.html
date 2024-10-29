@@ -387,60 +387,124 @@ matrix = fvm_laplace(1.0, T)
 					\begin{align}
 					& 1)&x &= (2 +2y)/(-1) = -2-2y\\
 					& 2)&y &= (-5 +2x)/(-7) = 5/7 - 2/7x\\
-					& 3)&x &= -2 - 2 (5/7 - 2/7x) \\
-					& &  &= -24/7 + 4/7x \rightarrow x = -8\\
+					& 3)&x &= -2 - 2 (5/7 - 2/7x) \rightarrow x = -8\\
 					& 4) &y &= 5/7 + 16/7  = 3
 					\end{align}
 					$$
 				</section>
 				<section>
-					<p>re-ordered linear system</p>
+					<p>Is the solution correct?</p>
 					$$
 					\begin{align}
-					-1x-2y -2 &= 0 \\
-					-2x-7y +5 &= 0
+					-1x-2y -2 &\overset{!}{=} 0 \\
+					-2x-7y +5 &\overset{!}{=} 0
 					\end{align}
 					$$
 					<p>testing the solution</p>
 					$$
 					\begin{align}
-					& 1) -1x-2y -2 = -1(-8)-2(3) -2 = 0 \\
-					& 2) -2x-7y +5 = -2(-8)-7(3)+5 = 0
+					& 1) -1x-2y -2 = -1(-8)-2(3) -2 = 0\quad \text{&#10003;}\\
+					& 2) -2x-7y +5 = -2(-8)-7(3)+5 = 0\quad \text{&#10003;}
 					\end{align}
 					$$
 				</section>
 				<section>
 					<p>problem: does not scale to large systems of equations</p>
 					<p>alternative: (iteratively) guessing the solution</p>
-					<pre class="python"><code data-line-numbers="1-2|5-8|9-14">x, y = 0, 0
+					<pre class="python"><code data-line-numbers="1-3|4-7|8-14">x, y = 0, 0
 TOL = 1e-3
-x_true, y_true = -8, 3
 res_jacobi = []
 for i in range(50):
     x_new = (2 + 2*y) / (-1)
     y_new = (-5 + 2*x) / (-7)
     x, y = x_new, y_new
-    res_jacobi.append(abs(x-x_true) + abs(y-y_true))
+    res_1 = -1*x - 2*y - 2
+    res_2 = -2*x - 7*y + 5
+    res_jacobi.append(sqrt(res_1**2 + res_2**2))
+    print(f"it. {i+1:d}: x={x:1.4f}, y={y:1.4f}, res={res_jacobi[-1]:1.5f}")
     if res_jacobi[-1] < TOL:
         print(f"Converged after {i+1} iterations.")
         break
-# output
-Converged after 34 iterations.
 						</code></pre>
 				</section>
 				<section>
+					<p>intermediate solution and residuals</p>
+					<pre class="python"><code>
+it. 1: x=-2.0000, y=0.7143, res=4.24745
+it. 2: x=-3.4286, y=1.2857, res=3.07724
+it. 3: x=-4.5714, y=1.6939, res=2.42711
+it. 4: x=-5.3878, y=2.0204, res=1.75842
+# snip
+it. 31: x=-7.9986, y=2.9995, res=0.00096
+Converged after 31 iterations.
+						</code></pre>
+				</section>
+				<section>
+					<p>Formalizing the Jacobi algorithm</p>
+					$$
+					\phi_i^n = \frac{1}{a_{ii}} \left(b_i - \sum\limits_{j=0,\ j\neq i}^{N-1}a_{ij}\phi_j^{n-1} \right)
+					$$
+					<div class="r-hstack items-end justify-around">
+						<ul>
+							<li>$i$ - cell id</li>
+							<li>$n$ - iteration count</li>
+							<li>$N$ - number of cells</li>
+						</ul>
+						<ul>
+							<li>$\phi_i$ - solution variable</li>
+							<li>$a_{ii}$ - diagonal coefficient</li>
+							<li>$b_i$ - source term</li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<p>LDU-addressing for coefficient matrix $\mathbf{A}$</p>
+					<p>
+						$$
+						\mathbf{A} = \mathbf{L} + \mathbf{D} + \mathbf{U}
+						$$
+					</p>
+					<p>
+						$$
+						\boldsymbol{\phi}^{n} = \mathbf{D}^{-1}\mathbf{b} - \mathbf{D}^{-1} (\mathbf{L}+\mathbf{U}) \boldsymbol{\phi}^{n-1}
+						$$
+					</p>
+				</section>
+				<section>
+					<p>residual in vector-matrix-notation</p>
+					<p>
+						$$
+						r^n = |\mathbf{b}-\mathbf{A}\boldsymbol{\phi}^n|
+						$$
+					</p>
+					<a href="https://doc.openfoam.com/2312/tools/processing/numerics/solvers/residuals/">residual normalization in OpenFOAM</a>
+				</section>
+				<section>
 					<p>more effective updates</p>
-					<pre class="python"><code data-line-numbers="1-2|3-6|7-11">x, y = 0, 0
+					<pre class="python"><code data-line-numbers="1-2|3-5|6-12">x, y = 0, 0
 res_gauss_seidel = []
 for i in range(50):
 	x = (2 + 2*y) / (-1)
 	y = (-5 + 2*x) / (-7)
-	res_gauss_seidel.append(abs(x-x_true) + abs(y-y_true))
+	res_1 = -1*x - 2*y - 2
+	res_2 = -2*x - 7*y + 5
+	res_gauss_seidel.append(sqrt(res_1**2 + res_2**2))
+	print(f"it. {i+1:d}: x={x:1.4f}, y={y:1.4f}, res={res_gauss_seidel[-1]:1.5f}")
 	if res_gauss_seidel[-1] < TOL:
 		print(f"Converged after {i+1} iterations.")
 		break
-# output
-Converged after 17 iterations.
+						</code></pre>
+				</section>
+				<section>
+					<p>intermediate solution and residuals</p>
+					<pre class="python"><code>
+it. 1: x=-2.0000, y=1.2857, res=2.57143
+it. 2: x=-4.5714, y=2.0204, res=1.46939
+it. 3: x=-6.0408, y=2.4402, res=0.83965
+it. 4: x=-6.8805, y=2.6801, res=0.47980
+# snip
+it. 16: x=-7.9986, y=2.9996, res=0.00058
+Converged after 16 iterations.
 						</code></pre>
 				</section>
 				<section>
@@ -466,6 +530,19 @@ Converged after 17 iterations.
 							<li>$b_i$ - source term</li>
 						</ul>
 					</div>
+				</section>
+				<section>
+					<p>Gauss-Seidel algorithm using LDU-addressing</p>
+					<p>
+						$$
+						\mathbf{D}\boldsymbol{\phi}^{n} = \mathbf{b} - \mathbf{L} \boldsymbol{\phi}^{n} - \mathbf{U} \boldsymbol{\phi}^{n-1}
+						$$
+					</p>
+					<p>
+						$$
+						\boldsymbol{\phi}^{n} = (\mathbf{D} + \mathbf{L})^{-1} \mathbf{b} - (\mathbf{D} + \mathbf{L})^{-1} \mathbf{U} \boldsymbol{\phi}^{n-1}
+						$$
+					</p>
 				</section>
 				<section>
 					<p>Avoiding to store zeros: sparse matrices/tensors</p>
@@ -612,6 +689,7 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
 	# snip
 							</code></pre>
 				</section>
+				<!--
 				<section>
 					<p>Initializing the surface velocity</p>
 					<pre class="python"><code data-line-numbers="1-2|3-6|7">def create_surface_velocity_field(
@@ -623,12 +701,13 @@ T = VolScalarField(mesh, "T", Tsol.reshape(5, 5), bc)
     return SurfaceVectorField(mesh, "U", u_x, u_y)
 				</code></pre>
 				</section>
+				-->
 				<section>
 					$$
 					\begin{align}
-					& n:\quad \int\limits_{x_i - \Delta x_i/2}^{x_i + \Delta x_i/2} u_y T|_n \approx
+					& n:\quad \int\limits_{x_i - \Delta x_i/2}^{x_i + \Delta x_i/2} u_y T|_n \mathrm{d}x \approx
 					\qquad\qquad\qquad \\[10pt]
-					& e:\quad \int\limits_{y_j - \Delta y_j/2}^{y_j + \Delta y_j/2} u_x T|_e \approx
+					& e:\quad \int\limits_{y_j - \Delta y_j/2}^{y_j + \Delta y_j/2} u_x T|_e \mathrm{d}y \approx
 					\qquad\qquad\qquad \\
 					\end{align}
 					$$
@@ -723,9 +802,43 @@ T = VolScalarField(mesh, "T", Tsol.reshape(10, 10), bc)
 					<h2>The FVM in OpenFOAM</h2>
 				</section>
 				<section>
-					<p><b>Goal:</b> reproduce simulation results in OpenFOAM</p>
+					<p><b style="color: red;">Goal:</b> reproduce simulation results in OpenFOAM</p>
 					<p>$\rightarrow$ test_cases/corner_flow</p>
 					<p>Instructions provided in the lecture notebook.</p>
+				</section>
+				<section>
+					<p>output of <span style="color: red;">tree -L 3</span></p>
+					<pre class="python"><code data-line-numbers="11-12|25-30|21-23|13-20|1-10">├── 0
+│   ├── T
+│   └── U
+├── 0.org
+│   ├── T
+│   └── U
+├── 1
+│   ├── phi
+│   ├── T
+│   └── U
+├── Allclean
+├── Allrun
+├── constant
+│   ├── polyMesh
+│   │   ├── boundary
+│   │   ├── faces
+│   │   ├── neighbour
+│   │   ├── owner
+│   │   └── points
+│   └── transportProperties
+├── log.blockMesh
+├── log.scalarTransportFoam
+├── log.setExprFields
+├── post.foam
+└── system
+    ├── blockMeshDict
+    ├── controlDict
+    ├── fvSchemes
+    ├── fvSolution
+    └── setExprFieldsDict
+					</code></pre>
 				</section>
 				<section>
 					<p>system/blockMeshDict</p>
