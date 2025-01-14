@@ -91,13 +91,24 @@
 						</div>
 					</div>
 				</section>
+
+				<section>
+					<h2>Last lecture</h2>
+					<p>Reduced-order modeling of flow fields</p>
+					<ul>
+						<li>reduced-order models for dynamical systems</li>
+						<li>optimized DMD</li>
+						<li>dealing with high-dimensional data</li>
+					</ul>
+				</section>
 	
 				<section>
 					<h2>Outline</h2>
 					<ul>
 						<li>hyperparameter optimization</li>
-						<li>Gaussian processes (GP)</li>
-						<li>Bayesian optimization (BayesOpt)</li>
+						<li>Gaussian processes regression</li>
+						<li>navigating the search space</li>
+						<li>tuning model parameters</li>
 						<li>advanced topics</li>
 					</ul>
 				</section>
@@ -145,80 +156,211 @@
 
 				<section>
 					<section>
-						<h2>Gaussian processes</h2>
+						<h2>Gaussian processes regression</h2>
 					</section>
 					<section>
-						<p>Multivariate Gaussian distribution:</p>
-						<p><small>
-							$$
-							N(\mathbf{x}\ |\ \mathbf{\mu}, \mathbf{\Sigma}) = \frac{1}{\sqrt{(2\pi)^d \mathrm{det}(\mathbf{\Sigma})}}\mathrm{exp}\left( -\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T\mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu}) \right)
-							$$
-						</small>
-						</p>
-						<p>with $\mathbf{x} \in \mathbb{R}^d$, $\mathbf{\mu} \in \mathbb{R}^{d}$, $\mathbf{\Sigma}\in \mathbb{R}^{d\times d}$</p>
+						<img src="images/bayes_opt/uvp_gaussian.svg" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
 					</section>
 					<section>
-						<img src="images/bayes_opt/mvp_mean_cov.svg" alt="sh_glob" width="100%" style="background:none; border:none; box-shadow:none;">
-						<p>Influence of mean vector and covariance matrix.</p>
+						<div>
+							<p>process with $d$ random variables</p>
+							<p>$X_1, X_2, \ldots, X_d$</p>
+						</div>
+						<div class="fragment">
+							<p>expectation (mean value)</p>
+							<p>$\mu_i = \mathbb{E}\left[X_i\right]$, $\boldsymbol{\mu} = \left[\mu_1, \mu_2, \ldots, \mu_d\right]^T$, $\boldsymbol{\mu} \in \mathbb{R}^{d\times 1}$</p>
+						</div>
+						<div class="fragment">
+							<p>covariance</p>
+							<p>$\sigma_{ij} = \mathbb{E}\left[(X_i-\mu_i)(X_j-\mu_j)\right]$, $\mathbf{\Sigma} \in \mathbb{R}^{d\times d}$</p>
+						</div>
 					</section>
 					<section>
-						<p>Two sets of random variables $\mathbf{x} = \left[\mathbf{x}_A,\mathbf{x}_B\right]^T$ forming a joint multivariate Gaussian:</p>
-						<p>
-							$$
-  \mathbf{\mu}=\begin{bmatrix} \mathbf{\mu}_A \\ \mathbf{\mu}_B  \end{bmatrix}, \quad
-  \mathbf{\Sigma} = \begin{bmatrix} \mathbf{\Sigma}_{AA} & \mathbf{\Sigma}_{AB}\\ \mathbf{\Sigma}_{BA} & \mathbf{\Sigma}_{BB}  \end{bmatrix}
-$$
-						</p>
+						<img src="images/bayes_opt/euclidian_distance_dist.svg" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
 					</section>
-					
 					<section>
-						<p><span style="color: red;">Conditioning:</span> fixing a subset of variables</p>
+						<img src="images/bayes_opt/mahalanobis_distance_dist.svg" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<p>motivation</p>
+						<p>$\mathbf{y} = \mathbf{x} - \boldsymbol{\mu}$, $\Sigma = \mathbf{Q \Lambda Q}^T$, $\tilde{\mathbf{y}} = \mathbf{Q}^T \mathbf{y}$</p>
+						<div class="fragment">
+							<p>normalization in principal coordinates</p>
+							<p>$\tilde{\mathbf{z}}^T = \tilde{\mathbf{y}}^T \mathbf{\Lambda}^{-1/2}$</p>
+						</div>
+						<div class="fragment">
+							<p>back transformation and substitution</p>
+							<p>$\mathbf{z} = \mathbf{Q}\tilde{\mathbf{z}} = \mathbf{Q}\mathbf{\Lambda}^{-1/2}\mathbf{Q}^T \mathbf{y} = \mathbf{\Sigma}^{-1/2} \mathbf{y} = \mathbf{\Sigma}^{-1/2} (\mathbf{x} - \boldsymbol{\mu})$</p>
+						</div>
+						<div class="fragment">
+							<p>Mahalanobis distance</p>
+							<p style="color: #fa8174;">$d_m^2 = |\mathbf{z}|^2 = \mathbf{z}^T\mathbf{z} = (\mathbf{x} - \boldsymbol{\mu})^T\mathbf{\Sigma}^{-1} (\mathbf{x} - \boldsymbol{\mu})$</p>
+						</div>
+					</section>
+					<section>
+						<p>multivariate Gaussian distribution</p>
 						<p>
 							<small>
 							$$
-  \mathbf{\mu}_{A|B}= \mathbf{\mu}_A + \mathbf{\Sigma}_{AB}\mathbf{\Sigma}^{-1}_{BB}\left(\mathbf{x}_B-\mathbf{\mu}_B\right), \quad
-  \mathbf{\Sigma}_{A|B} = \mathbf{\Sigma}_{AA} - \mathbf{\Sigma}_{AB} \mathbf{\Sigma}^{-1}_{BB} \mathbf{\Sigma}_{BA}
-$$
-</small>
+							  p(\mathbf{x}) = \frac{1}{\sqrt{(2\pi)^d \mathrm{det}(\mathbf{\Sigma})}}\mathrm{exp}\left( -\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\mathbf{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) \right)
+							$$
+							</small>
 						</p>
-						<p>We condition $\mathbf{x}_A$ on $\mathbf{x}_B$.</p>
+						<img src="images/bayes_opt/mvp_mean_cov.png" alt="uvg" class="fragment"
+							style="background:none; border:none; box-shadow:none; width: 100%">
 					</section>
 					<section>
-						<p><span style="color: red;">Marginalization:</span> considering all possible outcomes of a subset of variables</p>
+						<img src="images/bayes_opt/bivariate_gaussian.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<img src="images/bayes_opt/bivariate_gaussian_parallel_coord.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<p>Gaussians are closed under conditioning</p>
 						<p>
 							$$
-p(\mathbf{x}_A) = \int p(\mathbf{x}_A, \mathbf{x}_B) \mathrm{d}\mathbf{x}_B
-$$
+	  \boldsymbol{\mu}=\begin{bmatrix} \boldsymbol{\mu}_A \\ \boldsymbol{\mu}_B  \end{bmatrix}, \quad
+	  \mathbf{\Sigma} = \begin{bmatrix} \mathbf{\Sigma}_{AA} & \mathbf{\Sigma}_{AB}\\ \mathbf{\Sigma}_{BA} & \mathbf{\Sigma}_{BB}  \end{bmatrix}
+							$$
 						</p>
-						<p>After marginalizing out $\mathbf{x}_B$:</p>
-						<p>
+						<p class="fragment">
 							$$
-p(\mathbf{x}_A) = N(\mathbf{x}_A\ |\ \mathbf{\mu}_A, \mathbf{\Sigma}_{AA}).
-$$
+	  \boldsymbol{\mu}_{A|B}= \boldsymbol{\mu}_A + \mathbf{\Sigma}_{AB}\mathbf{\Sigma}^{-1}_{BB}\left(\mathbf{x}_B-\mathbf{\mu}_B\right)
+							$$
+							$$
+	  \mathbf{\Sigma}_{A|B} = \mathbf{\Sigma}_{AA} - \mathbf{\Sigma}_{AB} \mathbf{\Sigma}^{-1}_{BB} \mathbf{\Sigma}_{BA}
+							$$
+							<span style="color: #fa8174;">posterior $\quad\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu}_{A|B}, \mathbf{\Sigma}_{A|B})$</span>
 						</p>
 					</section>
 					<section>
-						<p>Follow <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/">this link</a> to see these concepts in action.</p>
+						<img src="images/bayes_opt/10d_gaussian_parallel_coord.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<p>from multivariate Gaussians
+							$$
+							\mathbf{x} \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{\Sigma})
+							$$
+						</p>
+						<p class="fragment">... to Gaussian processes
+							$$
+								p(x) \sim \mathcal{GP}(m(x), k(x, x^\prime))
+							$$
+						</p>
+					</section>
+					<section>
+						<p>RBF kernel:
+							$
+	  \quad k(x, x^\prime) = \sigma^2 \mathrm{exp}\left(-\frac{|x - x^\prime|^2}{2l^2}\right)
+							$
+						</p>
+						<img src="images/bayes_opt/rbf_kernel.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<img src="images/bayes_opt/10d_mvg_to_gp.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<p>Follow <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/">this link</a> to explore GPs.</p>
 					</section>
 				</section>
 
 				<section>
 					<section>
-						<h2>Bayesian optimization</h2>
+						<h2>navigating the search space</h2>
 					</section>
 					<section>
-						<p>Two common methods to compute acquisition scores:</p>
+						<p>optimization problem</p>
+						<p style="color: #fa8174;">
+							$$
+								x^\ast = \underset{x\in\mathcal{X}}{\mathrm{argmax}}\ f(x)
+							$$
+						</p>
+						<p>
+							$$
+							  f(x) \sim \mathcal{GP}(m(x), k(x,x))
+							$$
+						</p>
+					</section>
+					<section>
+						<p>probability of improvement (POI)</p>
+						<p>$a_\mathrm{POI}(x) = \Phi \left(\frac{m(x) - f(x^\ast)}{\sigma(x)}\right)$</p>
+						<div class="fragment">
+							<p>expected value of improvement (EVI)</p>
+							<p>$a_\mathrm{EVI}(x) = \mathbb{E}\left[\mathrm{max}(f(x)-f(x^\ast), 0)\right]$</p>
+						</div>
+						<div class="fragment">
+							<p>upper confidence interval (UCI)</p>
+							<p>$a_\mathrm{UCB}(x) = m(x) + \beta \sqrt{k(x,x)}$</p>
+						</div>
+					</section>
+					<section>
+						<img src="images/bayes_opt/policy_comparison.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 100%">
+					</section>
+					<section>
+						<p>Bayesian optimization loop</p>
+						<ol>
+							<li>initialize prior distribution</li>
+							<li>sample search space at random</li>
+							<li>evaluate objective function</li>
+							<li style="color: #fa8174;">
+								iterate while improving
+								<ol>
+									<li>update prior distribution</li>
+									<li>evaluate acquisition score</li>
+									<li>evaluate objective function</li>
+								</ol>
+							</li>
+						</ol>
+					</section>
+				</section>
+
+				<!-- tuning model parameters -->
+				<section>
+					<section>
+						<h2>tuning turbulence model parameters</h2>
+						<p>T. Marić et al.: <a href="https://link.springer.com/article/10.1007/s11012-024-01797-z">Combining ML with CFD using OpenFOAM and SmartSim</a></p>
+					</section>
+					<section>
+						<p>optimizing $k$-$\varepsilon$ model parameters</p>
+						$$
+						\underset{\varepsilon, C_\mu, C_1, C_2}{\mathrm{argmin}} \left(\Delta p_\mathrm{RANS}(\epsilon, C_\mu, C_1, C_2) - \Delta p_\mathrm{LES}\right)^2
+						$$
+						<p>subjected to</p>
+						$$
+						\begin{aligned}
+							& 2.97 < \varepsilon < 74.28 \\
+							   & 0.05 < C_\mu < 0.15 \\
+							   & 1.1 < C_1 < 1.5 \\
+							   & 2.3 < C_2 < 3.0
+						\end{aligned}
+						$$
+					</section>
+					<section>
+						<img src="images/bayes_opt/pitzDaily_comparison.png" alt="uvg"
+							style="background:none; border:none; box-shadow:none; width: 70%">
+					</section>
+				 </section>
+
+				<section>
+					<section>
+						<h2>Summary and outlook</h2>
+					</section>
+					<section>
+						<p>Bayesian optimization is suitable if</p>
 						<ul>
-							<li>probability of improvement (PoI)</li>
-							<li>expected improvement (EI)</li>
+							<li>the objective is expensive to evaluate</li>
+							<li>gradients are unavailable/unstable</li>
+							<li>less than $O(10)$ free parameters</li>
 						</ul>
-						<p>Refer to <a href="https://github.com/KrisNguyen135/bayesian-optimization-in-action/blob/main/CH04/01%20-%20BayesOpt%20loop.ipynb">this notebook</a> for a comparison.</p>
-					</section>
-				</section>
-
-				<section>
-					<section>
-						<h2>Advanced topics</h2>
 					</section>
 					<section>
 						<p>What we have not covered:</p>
@@ -230,7 +372,14 @@ $$
 							<li>scaling to large datasets</li>
 							<li>neural networks kernels</li>
 						</ul>
-						<p>Learn more: <a href="https://www.manning.com/books/bayesian-optimization-in-action?ar=true&lpse=A">Bayesian Optimization in Action</a></p>
+					</section>
+					<section>
+						<p>useful resources</p>
+						<ul>
+							<li>C. E. Rasmussen, C. K. I. Williams<br>Gaussian Processes for Machine Learning</li>
+							<li>C. M. Bishop<br>Pattern Recognition and Machine Learning</li>
+							<li>K. Nguyen<br>Bayesian Optimization in Action</li>
+						</ul>
 					</section>
 				</section>
 
