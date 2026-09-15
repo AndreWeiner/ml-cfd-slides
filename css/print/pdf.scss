@@ -5,7 +5,7 @@
  * https://revealjs.com/pdf-export/
  */
 
-html.print-pdf {
+html.reveal-print {
 	* {
 		-webkit-print-color-adjust: exact;
 	}
@@ -70,6 +70,10 @@ html.print-pdf {
 		page-break-after: always;
 	}
 
+	.reveal .slides .pdf-page:last-of-type {
+		page-break-after: avoid;
+	}
+
 	.reveal .slides section {
 		visibility: visible !important;
 		display: block !important;
@@ -131,7 +135,7 @@ html.print-pdf {
 	}
 
 	/* Layout option which makes notes appear on a separate page */
-	.reveal .speaker-notes-pdf[data-layout="separate-page"] {
+	.reveal .speaker-notes-pdf[data-layout='separate-page'] {
 		position: relative;
 		color: inherit;
 		background-color: transparent;
@@ -145,6 +149,7 @@ html.print-pdf {
 		display: block;
 		position: absolute;
 		font-size: 14px;
+		visibility: visible;
 	}
 
 	/* This accessibility tool is not useful in PDF and breaks it visually */
