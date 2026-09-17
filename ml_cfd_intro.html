@@ -21,6 +21,8 @@
 	<link rel="stylesheet" href="dist/reveal.css">
 	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
 	<link rel="stylesheet" href="dist/plugin/highlight/monokai.css">
+	<link rel="stylesheet" href="plugin/ink/dev/ink.css">
+	<link rel="stylesheet" href="plugin/flashcards/dev/flashcards.css">
 </head>
 
 <body>
@@ -456,6 +458,38 @@
 					<h3>Apptainer/containers</h3>
 				</section>
 			</section>
+			<section id="intro-review" data-flashcards>
+				<div data-flashcard data-card-id="regression-output">
+					<div data-question>What kind of output does a regression model predict?</div>
+					<div data-solution>Regression predicts <strong>continuous outputs</strong>, such as drag, pressure, or temperature.</div>
+				</div>
+				<div data-flashcard data-card-id="classification-output">
+					<div data-question>What kind of output does a classification model predict?</div>
+					<div data-solution>Classification predicts <strong>discrete classes</strong> or class probabilities.</div>
+				</div>
+				<div data-flashcard data-card-id="dimensionality-reduction">
+					<div data-question>What is the goal of dimensionality reduction in CFD?</div>
+					<div data-solution>To represent high-dimensional flow data with a much smaller set of informative coordinates or modes.</div>
+				</div>
+				<div data-flashcard data-card-id="domain-knowledge">
+					<div data-question>Name one ingredient of a sensible machine-learning application in CFD.</div>
+					<div data-solution>Examples include domain knowledge, informative features, appropriate data, and physically meaningful validation.</div>
+				</div>
+				<div data-flashcard data-card-id="ml-cfd-workflow-long-example">
+					<div data-question>
+						A team wants a machine-learning surrogate that predicts pressure loss from geometry and operating conditions. Explain how the learning problem should be formulated, how CFD data should be prepared and divided, and how the model should be evaluated on unseen cases. Why is a small average prediction error not enough to establish physically meaningful behavior?
+					</div>
+					<div data-solution>
+						<p>This is <strong>supervised regression</strong>: geometry and operating conditions are inputs, while pressure loss is the continuous target.</p>
+						<ul>
+							<li>Generate quality-controlled CFD data across the relevant parameter space and construct informative features.</li>
+							<li>Use leakage-safe training, validation, and final test sets.</li>
+							<li>Check errors across flow regimes, physical trends, constraints, and domain boundaries.</li>
+						</ul>
+						<p>Low average error can conceal leakage, important local failures, or unphysical predictions; trust needs statistical and physics-based checks.</p>
+					</div>
+				</div>
+			</section>
 			</section>
 		</div>
 
@@ -470,11 +504,14 @@
 	<script src="dist/plugin/math.js"></script>
 	<script src="plugin/chalkboard/plugin.js"></script>
 	<script src="plugin/customcontrols/plugin.js"></script>
+	<script src="plugin/ink/dev/ink.js"></script>
+	<script src="plugin/flashcards/dev/flashcards.js"></script>
 	<script>
 
 		// Also available as an ES module, see:
 		// https://revealjs.com/initialization/
 		Reveal.initialize({
+			ink: { pen: { color: '#ffffff' } },
 			hash: true,
 			progress: true,
 			slideNumber: "c",
@@ -521,7 +558,7 @@
 			},
 
 			// Learn about plugins: https://revealjs.com/plugins/
-			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls, RevealInk, RevealFlashcards]
 		});
 
 	</script>
