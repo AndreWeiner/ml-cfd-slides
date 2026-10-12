@@ -1,0 +1,32 @@
+.reveal .reveal-flashcards {
+  --flashcards-accent: var(--r-link-color, #42affa);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+  margin: 0 auto;
+  max-width: 38em;
+  max-height: var(--flashcards-max-height, 652px);
+  position: relative;
+  text-align: left;
+  width: 100%;
+}
+.reveal .reveal-flashcards__progress { color: var(--r-link-color, #42affa); font-size: 0.46em; padding-top: 0.35em; text-align: right; }
+.reveal .reveal-flashcards__status { min-height: 1.2em; font-size: 0.44em; text-align: center; }
+.reveal .reveal-flashcards__status:empty { display: none; }
+.reveal .reveal-flashcards__progress, .reveal .reveal-flashcards__status, .reveal .reveal-flashcards__actions { flex-shrink: 0; }
+.reveal .reveal-flashcards__status.is-error { color: #ff6b6b; }
+.reveal .reveal-flashcards__card { flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: color-mix(in srgb, var(--r-background-color, #191919) 92%, var(--flashcards-accent)); border: 0.08em solid color-mix(in srgb, var(--flashcards-accent) 55%, transparent); border-radius: 0.35em; padding: 0.6em 0.85em; }
+.reveal .reveal-flashcards__label { color: var(--flashcards-accent); font-size: 0.4em; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.35em; text-transform: uppercase; }
+.reveal .reveal-flashcards__question, .reveal .reveal-flashcards__solution-content { font-size: var(--flashcards-content-size, 0.64em); }
+.reveal .reveal-flashcards__solution { border-top: 0.04em solid color-mix(in srgb, currentColor 25%, transparent); margin-top: 0.55em; padding-top: 0.5em; }
+.reveal .reveal-flashcards__actions, .reveal .reveal-flashcards__ratings { display: flex; flex-wrap: wrap; gap: 0.45em; justify-content: center; }
+.reveal .reveal-flashcards__actions { position: relative; z-index: 50; }
+.reveal .reveal-flashcards button { appearance: none; background: var(--flashcards-accent); border: 0.08em solid var(--flashcards-accent); border-radius: 0.3em; color: var(--r-background-color, #191919); cursor: pointer; font: inherit; font-size: 0.58em; font-weight: 700; padding: 0.45em 0.8em; }
+.reveal .reveal-flashcards button:hover { filter: brightness(1.12); }
+.reveal .reveal-flashcards button:focus-visible { outline: 0.12em solid currentColor; outline-offset: 0.1em; }
+.reveal .reveal-flashcards [data-rating="again"] { background: #fa8174; border-color: #fa8174; }
+.reveal .reveal-flashcards [data-rating="hard"] { background: #feffb3; border-color: #feffb3; }
+.reveal .reveal-flashcards [data-rating="good"] { background: #8dd3c7; border-color: #8dd3c7; }
+.reveal .reveal-flashcards [hidden] { display: none !important; }
+@media (max-width: 600px) { .reveal .reveal-flashcards { width: 94%; } }

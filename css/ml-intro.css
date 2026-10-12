@@ -1,0 +1,22 @@
+/* Sparse lecture canvases, matching the CFD introductory deck. */
+body.reveal-viewport { background: #111111; }
+.reveal { --r-background-color: #111111; --r-heading-text-transform: none; }
+.reveal .slides section.work-slide { height:700px; padding:30px 0 0; box-sizing:border-box; }
+.reveal .work-slide h2 { font-size:1.05em; line-height:1.2; text-transform:none; margin:0 25px 25px; text-align:center; }
+.reveal .lecture-figure { display:block; width:900px; height:530px; object-fit:contain; margin:0 auto; border:0; background:transparent; box-shadow:none; }
+.reveal .title-slide h1 { color:var(--C3); font-size:1.35em; text-transform:none; line-height:1.15; }
+.reveal .title-slide h2 { font-size:.8em; font-weight:normal; text-transform:none; }
+.reveal .title-slide p { font-size:.7em; }
+.reveal .title-slide small { font-size:.5em; }
+.reveal .university-logo { background:transparent; border:0; box-shadow:none; object-fit:contain; }
+.reveal .slide-number { font-size:1em; right:auto; width:1.5em; height:1.5em; display:grid!important; place-items:center; color:var(--C4); background:transparent; }
+/* Reserve a fixed heading area and keep diagrams above the ink toolbar. */
+.reveal .work-slide h2 { position:absolute; left:25px; top:20px; width:910px; height:100px; margin:0; display:flex; align-items:center; justify-content:center; }
+.reveal .work-slide .lecture-figure { position:absolute; left:30px; top:140px; width:900px; height:490px; margin:0; }
+
+/* Match the generative-AI section in the CFD lecture deck. */
+.reveal .ai-slide ul { font-size:.75em; line-height:1.55; text-align:left; }
+.reveal .ai-slide li { margin-bottom:28px; padding-left:10px; }
+
+/* Keep review controls in the lecture canvas above the Ink toolbar. */
+.reveal .review-slide .reveal-flashcards { position:absolute; left:30px; top:140px; width:900px; max-height:min(480px, calc(var(--flashcards-max-height, 620px) - 140px)); }

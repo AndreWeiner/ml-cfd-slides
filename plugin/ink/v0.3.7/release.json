@@ -1,0 +1,12 @@
+{
+  "name": "reveal-ink",
+  "version": "0.3.7",
+  "sha256": {
+    "ink.js": "6c3f410b372f80d093513c074c0d21794252a22980b7137cd63b7d2279b51a87",
+    "ink.mjs": "c965855110f6cee639b04bfd4b2fba85044340f7b5dd99a0e77dd307b387ff32",
+    "ink.css": "cb74dfc3c2553ada3dcb673d6b3dde521cc447a3fd5539ba15c4d5933c49f1aa",
+    "ink.LICENSE.txt": "6a5ac82b42ce0af6a1e5fe39b46f0b52f1368e81e437175e8d9ae21569c8688e",
+    "LICENSE": "19026b70ec0b2544569a1cd670c3ac4266564f1ce46febc3c7aea5d7ce387fdb",
+    "VERSION": "2e376439ec341f14ae018b8aa4796b9336702e6a59d6c42b91f61d84baac9807"
+  }
+}
