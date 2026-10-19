@@ -61,3 +61,13 @@ https://andreweiner.github.io/ml-cfd-slides/ml_cfd_intro.html
 Publish the original HTML and its local assets together. This deck uses classic JavaScript files and local styles, fonts, and figures so it can also be opened directly in Firefox without a development server.
 
 The introductory deck uses its own versioned Reveal.js runtime under `public/libs/reveal/6.0.2/`; other decks retain their existing runtime.
+
+## Lecture 2 — Introduction to machine learning
+
+`ml_intro.html` follows the lecture script with title-only canvases for live derivations and the lecture’s dark-theme sketches. Major sections run horizontally; slides within each section run vertically. It uses the same classic Reveal.js, local editor support, and Ink setup as Lecture 1, with separate annotation storage.
+
+The final review slide contains 20 Lecture 2 flashcards with revealable answers and Again/Hard/Good controls.
+
+GitHub Pages URL: https://andreweiner.github.io/ml-cfd-slides/ml_intro.html
+
+Figures are copied from `ml-cfd-lecture/notebooks/media/` into `public/media/lecture_02/`; regenerate them with that course repository’s `notebooks/lecture_02_figures.py` before refreshing the copies.
