@@ -5,7 +5,7 @@
   const deck = new RevealClass({
     width: 960, height: 700, center: false, hash: true, progress: true,
     slideNumber: 'c', navigationMode: 'default',
-    katex: { local: 'public/libs/katex/dist' },
+    katex: { local: 'public/libs/katex' },
     plugins: [RevealNotes, RevealMath.KaTeX, RevealFlashcards, ...(editor ? [] : [RevealInk])],
     ink: { presentation: 'ml-fluid-mechanics-lecture-02', pen: { color: '#ffffff' }, storage: { type: 'indexeddb', autosave: true } }
   });
