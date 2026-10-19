@@ -1,0 +1,11 @@
+{
+  "name": "reveal-flashcards",
+  "version": "0.1.2",
+  "sha256": {
+    "flashcards.js": "6884c627edc7dc8faf35e5069ece3b84f62173310df4b290cfb17ce4656bc795",
+    "flashcards.mjs": "e14cf3a8f3a95c52a615eb89dabb3e73e2094dba34cdbbe6fba99adae01ee9a7",
+    "flashcards.css": "1403667f681d68d151a89cba013fa7e6857329397b5221ec299804f5091603e4",
+    "LICENSE": "19026b70ec0b2544569a1cd670c3ac4266564f1ce46febc3c7aea5d7ce387fdb",
+    "VERSION": "297b50f08386d3521f8fdaf2f78eb8d9d0acdf452d2e61596905fba37208c792"
+  }
+}

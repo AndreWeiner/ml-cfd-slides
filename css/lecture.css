@@ -1,0 +1,24 @@
+/* Lecture palette from the slides template. */
+:root {
+  --C0: #8dd3c7;
+  --C1: #feffb3;
+  --C2: #bfbbd9;
+  --C3: #fa8174;
+  --C4: #81b1d2;
+  --C5: #fdb462;
+  --C6: #b3de69;
+  --C7: #bc82bd;
+  --C8: #ccebc4;
+}
+
+.reveal .title-logo {
+  width: 50%;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+/* Keep the white logo legible on the PINN deck's light background. */
+.reveal .title-logo-dark {
+  filter: invert(1);
+}
