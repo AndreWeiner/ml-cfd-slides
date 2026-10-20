@@ -3945,7 +3945,7 @@ L 356.066254 22.166376
 " style="fill: none; stroke: #ffffff; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_17">
-    <!-- Euclidian distance $d = |\mathbf{x}-\boldsymbol{\mu}|$ -->
+    <!-- Euclidean distance $d = |\mathbf{x}-\boldsymbol{\mu}|$ -->
     <g style="fill: #ffffff" transform="translate(125.974358 16.166376) scale(0.12 -0.12)">
      <defs>
       <path id="CMSS17-45" d="M 1958 433 

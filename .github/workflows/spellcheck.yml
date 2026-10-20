@@ -19,7 +19,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Codespell
-        uses: codespell-project/actions-codespell@v2
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          skip: ./.git,./dist,package-lock.json,*.css,.codespellrc,./react/
+          python-version: '3.12'
+      - name: Install Codespell
+        run: python -m pip install codespell==2.4.3
+      - name: Codespell
+        run: codespell
