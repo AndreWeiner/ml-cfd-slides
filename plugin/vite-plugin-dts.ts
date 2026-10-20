@@ -6,7 +6,7 @@ export function createPluginDts(pluginName: string) {
 	return dts({
 		include: [`plugin/${pluginName}/index.ts`],
 		entryRoot: 'plugin',
-		outDir: 'dist/plugin',
+		outDirs: 'dist/plugin',
 		beforeWriteFile(filePath, content) {
 			const rewrittenPath = rewriteLegacyPluginDtsPath(filePath, pluginName);
 
