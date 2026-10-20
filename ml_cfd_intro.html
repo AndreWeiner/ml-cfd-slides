@@ -1,580 +1,132 @@
 <!doctype html>
-<html lang="en">
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Machine Learning in Fluid Mechanics — Lecture 1</title>
+<meta name="description" content="Course overview and motivation — Machine Learning in Fluid Mechanics">
+<meta name="author" content="Andre Weiner, Janis Geise">
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
+<link rel="stylesheet" href="public/libs/reveal/6.0.2/reset.css"><link rel="stylesheet" href="public/libs/reveal/6.0.2/reveal.css">
+<link rel="stylesheet" href="public/libs/reveal/6.0.2/theme/black.css"><link rel="stylesheet" href="css/lecture.css">
+<link rel="stylesheet" href="css/ml-intro.css"><link rel="stylesheet" href="plugin/ink/v0.3.7/ink.css">
+<link rel="stylesheet" href="plugin/flashcards/v0.1.2/flashcards.css">
+<link data-rwe-runtime rel="stylesheet" href="editor-assets/rwe-655f8fe933e4.css"></head><body><div class="reveal"><div class="slides">
+<section class="title-slide" id="title" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700" style="height:700px;padding:0;;--rwe-canvas-width:960px;--rwe-canvas-height:700px">
+<h1 style="position:absolute;left:0;top:85px;width:960px;margin:0;">Machine Learning<br>in Fluid Mechanics</h1>
+<h2 style="position:absolute;left:0;top:230px;width:960px;margin:0;">Lecture 1 — Course overview and motivation</h2>
+<p style="position:absolute;left:0;top:312px;width:960px;margin:0;">Andre Weiner</p>
+<small style="position:absolute;left:0;top:356px;width:960px;margin:0;">Chair of Fluid Mechanics</small>
+<img class="university-logo" style="position:absolute;left:180px;top:406px;width:600px;height:200px;margin:0;" src="public/media/lecture_01/TUD-white.svg" alt="TU Dresden">
+</section>
+<section id="learning-with-ai">
+<section class="work-slide ai-slide center" data-fragment="-1" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" id="ai-understanding" style="top: 0px !important; display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;">
+<h2 data-rwe-text-layout="fixed" data-rwe-text-vertical="center" style="position: absolute; left: 0.0000210466px; top: 100px; margin: 0px; width: 960px; height: 100px; white-space: normal; display: flex; flex-direction: column; justify-content: center; font-size: 67.2px !important; font-weight: 600; line-height: 1.2;">Learning with generative AI</h2>
+<ul data-rwe-text-layout="auto-height" style="position: absolute; left: 100px; top: 251.192px; margin: 0px; width: 800px; height: auto; white-space: normal;">
+<li class="fragment" data-fragment-index="0">Use AI to build your own understanding and close the gaps</li>
+<li class="fragment" data-fragment-index="1">Following and understanding the solution is not the same as being able to solve the problem yourself</li>
+<li class="fragment" data-fragment-index="2">Some struggle is essential; you do not need to stay stuck indefinitely</li></ul>
+<aside class="notes">Introduce Topic 0 from the course website. AI can support practice but cannot do the learning for students.</aside>
+</section>
+<section class="work-slide ai-slide center" data-fragment="2" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" id="ai-practice" style="top: 0px; display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;">
+<h2 data-rwe-text-layout="fixed" data-rwe-text-vertical="center" style="position: absolute; left: 0px; top: 100px; margin: 0px; width: 960px; height: 100px; white-space: normal; display: flex; flex-direction: column; justify-content: center; font-size: 67.2px !important; font-weight: 600; line-height: 1.2;">Learning takes time and practice</h2>
+<ul data-rwe-text-layout="fixed" style="position: absolute; left: 100px; top: 247.427px; margin: 0px; width: 800px; height: 300px; white-space: normal;">
+<li class="fragment" data-fragment-index="0">Attempt → ask → examine → practise independently → revisit</li>
+<li class="fragment" data-fragment-index="1">Return repeatedly after longer breaks and recall the reasoning without assistance</li>
+<li class="fragment" data-fragment-index="2">Generate extra exercises when you need more practice</li>
+</ul>
+</section>
+<section class="work-slide ai-slide center" data-fragment="-1" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" id="ai-prompts" style="top: 0px !important; display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;">
+<h2 data-rwe-text-layout="fixed" data-rwe-text-vertical="center" style="position: absolute; left: 0px; top: 100px; margin: 0px; width: 960px; height: 100px; white-space: normal; font-size: 67.2px !important; font-weight: 600; line-height: 1.2; display: flex; flex-direction: column; justify-content: center;">Useful prompts</h2>
+<ul data-rwe-text-layout="auto-height" style="position: absolute; left: 100px; top: 248.78px; margin: 0px; width: 800px; height: auto; white-space: normal;">
+<li class="fragment">“Give me one hint, then wait for my attempt.”</li>
+<li class="fragment">“Identify the first mistake without completing the solution.”</li>
+<li class="fragment">“Quiz me one question at a time and ask me to justify my answer.”</li>
+</ul>
+</section>
+<section class="work-slide ai-slide center" data-fragment="-1" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" id="ai-agents" style="top: 0px !important; display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;">
+<h2 data-rwe-text-layout="fixed" data-rwe-text-vertical="center" style="position: absolute; left: 0px; top: 100px; margin: 0px; width: 960px; height: 100px; white-space: normal; font-size: 67.2px !important; font-weight: 600; line-height: 1.2; display: flex; flex-direction: column; justify-content: center;">Learning with a coding agent</h2>
+<ul data-rwe-text-layout="fixed" style="position: absolute; left: 99.5977px; top: 252.717px; margin: 0px; width: 800px; height: 300px; white-space: normal;">
+<li class="fragment" data-fragment-index="0">Work in small, understandable steps</li>
+<li class="fragment" data-fragment-index="1">Review the code and predict its behavior before running it</li>
+<li class="fragment" data-fragment-index="2">Practise the core reasoning and implementation yourself</li>
+</ul>
+<aside class="notes">Example prompt: Ask for my debugging hypothesis first, suggest a diagnostic check, and wait before editing.</aside>
+</section>
+<section class="work-slide ai-slide center" data-fragment="-1" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" id="ai-checks" style="top: 0px; display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;">
+<h2 data-rwe-text-layout="auto-height" style="position: absolute; left: 0px; top: 100px; margin: 0px; width: 960px; height: auto; white-space: normal; font-size: 67.2px !important; font-weight: 600; line-height: 1.2;">Build your own evidence of correctness</h2>
+<ul data-rwe-text-layout="auto-height" style="position: absolute; left: 100px; top: 300px; margin: 0px; width: 800px; height: auto; white-space: normal;">
+<li class="fragment" data-fragment-index="0"><span style="color: rgb(250, 129, 116);">No reference solutions</span> will be provided in this course</li>
+<li class="fragment" data-fragment-index="1">Check units, signs, boundaries, simple cases, and independent approaches</li>
+<li class="fragment" data-fragment-index="2">Explain what your checks support and what remains uncertain</li>
+</ul>
+<aside class="notes">Students develop and interpret their own verification strategy. Refer to Lecture 0 for learning and independent verification guidance.</aside>
+<div class="fragment" data-fragment-index="3" data-rwe-kind="text" data-rwe-text-layout="auto-height" style="position: absolute; left: 500px; top: 595.129px; width: 187.931px; height: auto; margin: 0px; font-size: 31.5px; line-height: 1.3; text-align: left; white-space: normal;"><p style="margin: 0px; line-height: inherit; font-size: 31.5px;">read <a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/lecture_00.html">lecture 0</a></p></div><svg class="fragment" data-fragment-index="3" data-rwe-kind="arrow" data-rwe-line="{&quot;x1&quot;:18,&quot;y1&quot;:18,&quot;x2&quot;:120.29999735437286,&quot;y2&quot;:19.1495190605566,&quot;color&quot;:&quot;#ffffff&quot;,&quot;width&quot;:6,&quot;startHead&quot;:&quot;none&quot;,&quot;endHead&quot;:&quot;triangle&quot;}" preserveAspectRatio="none" style="position: absolute; left: 355.564px; top: 597.025px; width: 138.3px; height: 37.1495px; transform: none;" viewBox="0 0 138.29999735437286 37.1495190605566" xmlns="http://www.w3.org/2000/svg"><path data-rwe-line-shaft="true" d="M18 18 L120.29999735437286 19.1495190605566" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"></path><path data-rwe-line-head="end" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M120.29999735437286,19.1495190605566 L102.40225795461916,9.947838541297976 L102.20000929911373,27.946702268804394 Z" fill="#ffffff"></path></svg></section>
+</section>
+<section id="motivation">
+<section class="work-slide" id="complementarity"><h2>Why do ML and fluid mechanics complement each other?</h2></section>
 
-<head>
-	<meta charset="utf-8">
 
-	<title>Machine learning in computational fluid dynamics</title>
 
-	<meta name="description" content="Machine learning in computational fluid dynamics">
-	<meta name="author" content="Andre Weiner">
 
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<section class="work-slide" id="relevant-data"><h2>What data are relevant in fluid mechanics?</h2></section>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="plugin/chalkboard/style.css">
-	<link rel="stylesheet" href="plugin/customcontrols/style.css">
-	<link rel="stylesheet" href="dist/reset.css">
-	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
-	<link rel="stylesheet" href="dist/plugin/highlight/monokai.css">
-	<link rel="stylesheet" href="plugin/ink/dev/ink.css">
-	<link rel="stylesheet" href="plugin/flashcards/dev/flashcards.css">
-</head>
 
-<body>
+<section class="work-slide" id="disciplines"><h2>What is required to combine ML and fluid mechanics?</h2><img class="lecture-figure" src="public/media/lecture_01/ml-fluid-mechanics-venn.svg" alt="What is required to combine ML and fluid mechanics?" data-rwe-kind="image"></section>
+</section>
+<section id="learning-categories">
+<section class="work-slide" id="problem-types"><h2>Types of problems that ML solves</h2></section>
+<section class="work-slide" id="supervised"><h2>Supervised learning</h2></section>
+<section class="work-slide" id="regression"><h2>Regression</h2><img class="lecture-figure" src="public/media/lecture_01/supervised-regression.svg" alt="Regression" data-rwe-kind="image"></section>
+<section class="work-slide" id="classification"><h2>Classification</h2><img class="lecture-figure" src="public/media/lecture_01/supervised-classification.svg" alt="Classification" data-rwe-kind="image"></section>
+<section class="work-slide" id="unsupervised"><h2>Unsupervised learning</h2></section>
+<section class="work-slide" id="reduction"><h2>Dimensionality reduction</h2><img class="lecture-figure" src="public/media/lecture_01/unsupervised-reduction.svg" alt="Dimensionality reduction" data-rwe-kind="image"></section>
+<section class="work-slide" id="clustering"><h2>Clustering</h2><img class="lecture-figure" src="public/media/lecture_01/unsupervised-clustering.svg" alt="Clustering" data-rwe-kind="image"></section>
+<section class="work-slide" id="reinforcement"><h2>Reinforcement learning</h2><img class="lecture-figure" src="public/media/lecture_01/reinforcement-learning.svg" alt="Reinforcement learning" data-rwe-kind="image"></section>
+<section class="work-slide" id="combining-categories"><h2>Combining learning categories</h2></section>
 
-	<div class="reveal">
 
-		<!-- Any section element inside of this container is displayed as a slide -->
-		<div class="slides">
-			<section>
-				<h3><span style="color: red;">Course overview and introduction</span></h3>
-				<p>
-					Andre Weiner<br>
-					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
-					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
-								alt="Creative Commons License" style="border-width:0"
-								src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
-						of the linked resources are licensed under a<br /> <a rel="license"
-							href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
-							International License</a>.
-					</small>
-				</p>
 
-				<style>
-					.row_logo {
-						display: table;
-					}
+</section>
+<section id="challenges">
+<section class="work-slide" id="ml-challenges"><h2>Challenges encountered in machine learning</h2></section>
 
-					.column_logo {
-						display: table-cell;
-						vertical-align: middle;
-						text-align: center;
-						width: 50%;
-					}
 
-					.content_logo {
-						display: inline-block;
-					}
-				</style>
-				<div class="row_logo">
-					<div class="column_logo">
-						<div class="content_logo">
-							<img src="images/logos/TUD_white.png" alt="tud_logo"
-								style="background:none; border:none; box-shadow:none;">
-						</div>
-					</div>
-					<div class="column_logo">
-						<div class="content_logo">
-							<table>
-								<tr>
-									<td style="border: 0; padding-right: 5px;">&#9993;</th>
-									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
-									<td style="border: 0; padding-right: 5px;">&#9741;</td>
-									<td style="border: 0; padding-right: 0px;"><a
-											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
-								</tr>
-								<tr>
-									<td style="border: 0; padding-right: 5px;">&#9997;</td>
-									<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
-									</td>
-									<td style="border: 0; padding-right: 5px;">&#10026;</td>
-									<td style="border: 0; padding-right: 0px;"><a
-											href="https://github.com/AndreWeiner">Github</a></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div>
-			</section>
 
-			<section>
-				<h2>Outline</h2>
-				<ul>
-					<li>course logistics</li>
-					<li>reporting issues</li>
-					<li>ML in fluid mechanics</li>
-					<li>lecture projects</li>
-					<li>technology stack</li>
-				</ul>
-			</section>
-			<section>
-				<section>
-					<h2>Course logistics</h2>
-				</section>
-				<section>
-					<h3>Times and location</h3>
-					<ul>
-						<li>lecture: Tuesdays 1:00-2:30pm</li>
-						<li>exercise: Wednesdays 7:30-9:00am</li>
-						<li>location: ZEU/114/H</li>
-					</ul>
-					<p>Refer to <a href="https://bildungsportal.sachsen.de/opal/auth/RepositoryEntry/41285910529/CourseNode/93169466939370">OPAL</a> for a detailed schedule of all lecture and exercises.</p>
-				</section>
-				<section>
-					<h3>Workload and requirements</h3>
-					<ul>
-						<li>5 CP, ~150h workload</li>
-						<li>13 lectures + 13 exercise sessions</li>
-						<li>$150h-13*3h \approx 110h$ of self-study</li>
-						<li>prior ML/CFD knowledge is a plus</li>
-						<li>programming knowledge is essential</li>
-						<li>written exam 1.5h</li>
-					</ul>
-				</section>
-				<section>
-					<h3>Resources and communication</h3>
-					<ul>
-						<li>slides and exercises available on <a
-								href="https://github.com/AndreWeiner/ml-cfd-lecture">GitHub</a></li>
-						<li>all resources are <span style="color: red;">updated regularly</span></li>
-						<li>getting help: GitHub issues (preferred), mail</li>
-						<li>general feedback: mail/OPAL</li>
-					</ul>
-				</section>
-				<section>
-					<h3>Exercises</h3>
-					<ul>
-						<li>exercise session: short introduction and Q & A <br>$\rightarrow$ mostly self-study</li>
-						<li><span style="color: red;">exception:</span> exercise 0 (Python intro)</li>
-						<li>remote support by course assistant</li>
-					</ul>
-				</section>
-			</section>
-			<section>
-				<section>
-					<h2>Github issues</h2>
-					<p>learn to communicate professionally</p>
-				</section>
-				<section>
-					<h3>Do you have a Github account?</h3>
-					<p>Note: a Github account is not required but recommended.</p>
-				</section>
-				<section>
-					<p>How to open a new issue:</p>
-					<ol>
-						<li>go to the <a href="https://github.com/AndreWeiner/ml-cfd-lecture">Github repository</a></li>
-						<li>click on <span style="color: red;">Issues</span> (top left)</li>
-						<li>use the search to check if a similar<br> issue has been reported already</li>
-						<li>if not, open a <span style="color: red;">New issue</span> (top left)</li>
-						<li>report the issue and click on <br><span style="color: red;">Submit new issue</span> (bottom right)</li>
-					</ol>
-				</section>
-				<section>
-					<img src="images/example_issue.png" alt="issue"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-				</section>
-				<section>
-					<p>How to write an issue report:</p>
-					<ol>
-						<li>precise title<br><span style="color: red;">Incorrect eigenvalue formula lecture 2 slides</span></li>
-						<li>short description<br><span style="color: red;">Comparing the formulas between script and slides of lecture 2, I
-							found an inconsistency.</span></li>
-						<li>precise problem description<br><span style="color: red;">The formula reads $\mathbf{XQ}=\mathbf{Q\Lambda}$ in the
-							script and $\mathbf{XQ}=\mathbf{\Lambda Q}$ on the slides.</span></li>
-					</ol>
-				</section>
-				<section>
-					<p>Optional tips for writing issues:</p>
-					<ul>
-						<li>expected behavior<br><span style="color: red;">I expected a 3x2 tensor but got a 2x3 tensor.</span></li>
-						<li>suggestion for correction<br><span style="color: red;">I believe the correct formula is $\mathbf{XQ}=\mathbf{Q\Lambda}$.</span></li>
-						<li>link related issues using #issue_number<br><span style="color: red;">The problem might be related to issue #6.</span></li>
-						<li>provide details about your setup<br><span style="color: red;">I am running Ubuntu 20.04 using WSL.</span></li>
-					</ul>
-					<p>See also: <a href="https://hackernoon.com/45-github-issues-dos-and-donts-dfec9ab4b612">45 Github
-							Issues Dos and Don't</a></p>
-				</section>
-			</section>
-			<section>
-				<section>
-					<h2>Using ML in fluid mechanics</h2>
-				</section>
-				<section>
-					<p>the study of fluid mechanics ...</p>
-					<ul>
-						<li>produces large amounts of complex data</li>
-						<li>requires data or representations thereof</li>
-					</ul>
-					<div class="fragment">
-						<p>ML ...</p>
-						<ul>
-							<li>finds patterns in data</li>
-							<li>creates useful representations of data</li>
-						</ul>
-					</div>
-				</section>
-				<section>
-					<div>
-						<p>primary (physical) data</p>
-						<ul>
-							<li>flow snapshots (volume, boundaries, slices)</li>
-							<li>derived quantities (averages, force coefficients)</li>
-							<li>...</li>
-						</ul>
-					</div>
-					<div class="fragment">
-						<p>secondary data (the rest)</p>
-						<ul>
-							<li>log files (residuals, quality metrics)</li>
-							<li>setting (numerical schemes, physical models)</li>
-							<li>...</li>
-						</ul>
-					</div>
-				</section>
-				<section>
-					<img src="images/DNS_snapshots_size.png" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Progression of snapshot size in direct numerical simulations (DNS).</p>
-				</section>
-				<section>
-					<p>Simulations become more and more sophisticated:</p>
-					<ul>
-						<li>turbulence models</li>
-						<li>transport models</li>
-						<li>equations of state</li>
-						<li>mixture models</li>
-						<li>linear solver settings</li>
-						<li>discretization schemes</li>
-						<li>...</li>
-					</ul>
-					<p>$\rightarrow$ closure models and decision making required</p>
-				</section>
-				<section>
-					<img src="images/intro/cfd_data_ml.svg" alt="data-2"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Examples: surrogate modeling, flow analysis</p>
-				</section>
-				<section>
-					<img src="images/intro/data_ml_cfd.svg" alt="data-1"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Examples: boundary conditions, material models</p>
-				</section>
-				<section>
-					<img src="images/intro/stacked_workflow.svg" alt="data-3"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Examples: scale/complexity-reduced modeling</p>
-				</section>
-				<section>
-					<img src="images/intro/cfd_data_ml_loop.svg" alt="data-3"
-						style="background:none; border:none; box-shadow:none; width: 100%">
-					<p>Examples: flow control, parameter optimization</p>
-				</section>
-				<section>
-					<h3>ML is <span style="color: red;">not</span> a magic problem solver</h3>
-				</section>
-				<section>
-					<p>matching given inputs and <span style="color: red;">continuous outputs</span></p>
-					<div class="row_logo" style="width: 100%;">
-						<div class="column_logo">
-								<img src="images/intro/linear_regression_raw.svg" alt="raw"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-						<div class="column_logo">
-								<img class="fragment" src="images/intro/linear_regression.svg" alt="model"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-					</div>
-				</section>
-				<section>
-					<p>matching given inputs and <span style="color: red;">discrete outputs</span></p>
-					<div class="row_logo" style="width: 100%;">
-						<div class="column_logo">
-								<img src="images/intro/linear_classification_raw.svg" alt="raw"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-						<div class="column_logo">
-								<img class="fragment" src="images/intro/linear_classification.svg" alt="model"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-					</div>
-				</section>
-				<section>
-					<p>finding <span style="color: red;">low-dimensional</span> representations</p>
-					<div class="row_logo" style="width: 100%;">
-						<div class="column_logo">
-								<img src="images/intro/pca_raw.svg" alt="raw"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-						<div class="column_logo">
-								<img class="fragment" src="images/intro/pca.svg" alt="model"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-					</div>
-				</section>
-				<section>
-					<p>grouping <span style="color: red;">similar</span> data points</p>
-					<div class="row_logo" style="width: 100%;">
-						<div class="column_logo">
-								<img src="images/intro/clustering_raw.svg" alt="raw"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-						<div class="column_logo">
-								<img class="fragment" src="images/intro/clustering.svg" alt="model"
-									style="background:none; border:none; box-shadow:none; width: 90%">
-						</div>
-					</div>
-				</section>
-				<section>
-					<p>learning <span style="color: red;">optimal control</span> in dynamic environments</p>
-					<img src="images/intro/reinforcement.svg" alt="model"
-									style="background:none; border:none; box-shadow:none; width: 100%">
-				</section>
-				<section>
-					<h3>What type of ML could be helpful in the following scenarios?</h3>
-				</section>
-				<section>
-					<p>Creating a transport model $\mu (T)$ based on experimental data ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>Predicting the impact behavior of a droplet on a surface ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>Switching between two turbulence models in a RANS simulation ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">reinforcement learning</li>
-					</ol>
-				</section>
-				<section>
-					<p>Finding coherent structures in turbulent flows ...</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">reinforcement learning</li>
-						<li style="list-style-type: upper-latin;">classification</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>Closed-loop active flow control of the flow past a cylinder</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">regression</li>
-						<li style="list-style-type: upper-latin;">reinforcement learning</li>
-						<li style="list-style-type: upper-latin;">clustering</li>
-						<li style="list-style-type: upper-latin;">dimensionality reduction</li>
-					</ol>
-				</section>
-				<section>
-					<p>hints to create <span style="color: red;">sensible</span> ML applications</p>
-					<ul>
-						<li>domain knowledge is essential</li>
-						<li>ML shines in higher dimensions</li>
-						<li>combination of multiple ML techniques</li>
-						<li>combine the strengths of ML and <br>standard (classical) approaches</li>
-					</ul>
-				</section>
-			</section>
-			<section>
-				<section>
-					<h2>Lecture projects</h2>
-				</section>
-				<section>
-					<p>Lectures 2 & 3: write a CFD solver from scratch</p>
-					<img src="images/intro/9x9_solution.svg" alt="data-size"
-						style="background:white; border:none; box-shadow:none; width: 60%">
-				</section>
-				<section>
-					<p>Lectures 4 & 5: learn approximate velocity profiles</p>
-					<img src="images/intro/velocity_profiles.svg" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 70%">
-				</section>
-				<section>
-					<p>Lecture 6: predict the stability regime of rising bubbles</p>
-					<img src="images/intro/network_multiclass_prediction.svg" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 70%">
-				</section>
-				<section>
-					<p>Lectures 7: compute mass transfer at high Schmidt numbers</p>
-					<video height="450" controls mute loop>
-						<source src="images/intro/all_cases_sc100.mp4">
-					</video>
-				</section>
-				<section>
-					<p>Lectures 8 & 9: find coherent structures in turbulent flows</p>
-					<video height="450" controls mute loop>
-						<source src="images/intro/dmd_3D_mode_10_u.mp4">
-					</video>
-				</section>
-				<section>
-					<p>Lecture 10: create a reduced-order flow model</p>
-					<img src="images/intro/periodic_dataset_clustering.svg" alt="data-size"
-						style="background:white; border:none; box-shadow:none; width: 60%">
-				</section>
-				<section>
-					<p>Lecture 11: optimal open-loop flow control</p>
-					<img src="images/intro/cylinder_openloop_loss_surface.png" alt="data-size"
-						style="background:none; border:none; box-shadow:none; width: 50%">
-				</section>
-				<section>
-					<p>Lectures 12 & 13: learn an agnostic control law from scratch</p>
-					<video height="450" controls mute autoplay loop>
-						<source src="images/intro/variable_inflow_2x.mp4">
-					</video>
-				</section>
-			</section>
-			<section>
-				<section>
-					<h2>Technology stack</h2>
-				</section>
-				<section>
-					<h3>Linux and the command line</h3>
-				</section>
-				<section>
-					<h3>Git and GitHub</h3>
-				</section>
-				<section>
-					<h3>Jupyter labs</h3>
-				</section>
-				<section>
-					<h3>Python</h3>
-				</section>
-				<section>
-					<h3>PyTorch</h3>
-				</section>
-				<section>
-					<h3>OpenFOAM</h3>
-				</section>
-				<section>
-					<h3>Apptainer/containers</h3>
-				</section>
-			</section>
-			<section id="intro-review" data-flashcards>
-				<div data-flashcard data-card-id="regression-output">
-					<div data-question>What kind of output does a regression model predict?</div>
-					<div data-solution>Regression predicts <strong>continuous outputs</strong>, such as drag, pressure, or temperature.</div>
-				</div>
-				<div data-flashcard data-card-id="classification-output">
-					<div data-question>What kind of output does a classification model predict?</div>
-					<div data-solution>Classification predicts <strong>discrete classes</strong> or class probabilities.</div>
-				</div>
-				<div data-flashcard data-card-id="dimensionality-reduction">
-					<div data-question>What is the goal of dimensionality reduction in CFD?</div>
-					<div data-solution>To represent high-dimensional flow data with a much smaller set of informative coordinates or modes.</div>
-				</div>
-				<div data-flashcard data-card-id="domain-knowledge">
-					<div data-question>Name one ingredient of a sensible machine-learning application in CFD.</div>
-					<div data-solution>Examples include domain knowledge, informative features, appropriate data, and physically meaningful validation.</div>
-				</div>
-				<div data-flashcard data-card-id="ml-cfd-workflow-long-example">
-					<div data-question>
-						A team wants a machine-learning surrogate that predicts pressure loss from geometry and operating conditions. Explain how the learning problem should be formulated, how CFD data should be prepared and divided, and how the model should be evaluated on unseen cases. Why is a small average prediction error not enough to establish physically meaningful behavior?
-					</div>
-					<div data-solution>
-						<p>This is <strong>supervised regression</strong>: geometry and operating conditions are inputs, while pressure loss is the continuous target.</p>
-						<ul>
-							<li>Generate quality-controlled CFD data across the relevant parameter space and construct informative features.</li>
-							<li>Use leakage-safe training, validation, and final test sets.</li>
-							<li>Check errors across flow regimes, physical trends, constraints, and domain boundaries.</li>
-						</ul>
-						<p>Low average error can conceal leakage, important local failures, or unphysical predictions; trust needs statistical and physics-based checks.</p>
-					</div>
-				</div>
-			</section>
-			</section>
-		</div>
 
-	</div>
 
-	<script src="dist/reveal.js"></script>
-	<script src="dist/plugin/zoom.js"></script>
-	<script src="dist/plugin/notes.js"></script>
-	<script src="dist/plugin/search.js"></script>
-	<script src="dist/plugin/markdown.js"></script>
-	<script src="dist/plugin/highlight.js"></script>
-	<script src="dist/plugin/math.js"></script>
-	<script src="plugin/chalkboard/plugin.js"></script>
-	<script src="plugin/customcontrols/plugin.js"></script>
-	<script src="plugin/ink/dev/ink.js"></script>
-	<script src="plugin/flashcards/dev/flashcards.js"></script>
-	<script>
+</section>
+<section id="workflows">
+<section class="work-slide" id="combining-fluid-ml"><h2>How to combine ML and fluid mechanics</h2></section>
+<section class="work-slide" id="extract-learn"><h2>Extract data and learn models</h2><img class="lecture-figure" src="public/media/lecture_01/workflow-extract.svg" alt="Extract data and learn models" data-rwe-kind="image"></section>
+<section class="work-slide" id="learn-use"><h2>Learn models and use them in CFD or experiments</h2><img class="lecture-figure" src="public/media/lecture_01/workflow-use.svg" alt="Learn models and use them in CFD or experiments" data-rwe-kind="image"></section>
+<section class="work-slide" id="scales-complexity"><h2>Combine workflows across scales or levels of complexity</h2><img class="lecture-figure" src="public/media/lecture_01/workflow-stacked.svg" alt="Combine workflows across scales or levels of complexity" data-rwe-kind="image"></section>
+<section class="work-slide" id="feedback-loop"><h2>Close the loop</h2><img class="lecture-figure" src="public/media/lecture_01/workflow-circular.svg" alt="Close the loop" data-rwe-kind="image"></section>
+</section>
 
-		// Also available as an ES module, see:
-		// https://revealjs.com/initialization/
-		Reveal.initialize({
-			ink: { pen: { color: '#ffffff' } },
-			hash: true,
-			progress: true,
-			slideNumber: "c",
-			chalkboard: {
-				boardmarkerWidth: 4,
-				chalkWidth: 4,
-				chalkEffect: 0.01,
-				theme: "chalkboard",
-				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
-				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 },
-				boardmarkers: [
-					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
-					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
-					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
-					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
-					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
-					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
-					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
-				],
-				chalks: [
-					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
-					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
-					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
-					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
-					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
-					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
-					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
-				],
-			},
-			customcontrols: {
-				controls: [
-					{
-						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
-						title: 'Toggle chalkboard (B)',
-						action: 'RevealChalkboard.toggleChalkboard();'
-					},
-					{
-						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
-						title: 'Toggle notes canvas (C)',
-						action: 'RevealChalkboard.toggleNotesCanvas();'
-					}
-				]
-			},
-
-			// Learn about plugins: https://revealjs.com/plugins/
-			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls, RevealInk, RevealFlashcards]
-		});
-
-	</script>
-	<style type="text/css">
-		.reveal .slide-number {
-			font-size: 1em;
-			color: #42affa;
-			right: auto;
-			width: 1.5em;
-			height: 1.5em;
-			background-color: #191919;
-			display: grid !important;
-			place-items: center;
-		}
-	</style>
-
-</body>
-
-</html>
+<section class="work-slide review-slide" id="lecture-1-review" data-flashcards>
+<h2>Review — Lecture 1</h2>
+<div data-flashcard data-card-id="intro-complementarity"><div data-question>Why do fluid mechanics and machine learning complement each other?</div><div data-solution>Experiments and simulations generate complex flow data, while fluid-mechanical models also need reference data for calibration. Machine learning helps identify patterns, create compact representations, and learn predictive relationships from those data.</div></div>
+<div data-flashcard data-card-id="intro-snapshot"><div data-question>What is a flow snapshot, and why can a time-resolved dataset be much larger than one snapshot?</div><div data-solution>A snapshot records selected flow quantities at a particular time instance. A time-resolved dataset contains many snapshots. Storage also depends on spatial resolution, the number of stored fields, numerical precision, and file format.</div></div>
+<div data-flashcard data-card-id="intro-data-types"><div data-question>Name the three broad types of fluid-mechanical data discussed in the lecture and give an example of each.</div><div data-solution>Snapshots contain field values such as velocity or pressure. Derived quantities include averages, force coefficients, pressure losses, and vorticity. Secondary data include solver residuals, logs, and numerical settings.</div></div>
+<div data-flashcard data-card-id="intro-disciplines"><div data-question>Which three disciplines support the combination of machine learning and fluid mechanics? Give one contribution from each.</div><div data-solution>Domain knowledge contributes physical relationships and knowledge of numerical or measurement techniques. Mathematics contributes linear algebra, probability theory, and optimization. Computer science contributes efficient algorithms, parallel computing, and data processing.</div></div>
+<div data-flashcard data-card-id="intro-features-targets"><div data-question>How do a feature, a target or label, and an individual sample differ in supervised learning?</div><div data-solution>A feature is an input property or variable. Each sample contains specific values of the features and an associated target value. The target or label is the quantity or category the model should predict; it can be continuous or discrete.</div></div>
+<div data-flashcard data-card-id="intro-regression"><div data-question>Which learning task predicts the force on a bluff body from its Reynolds number, and what are its inputs and outputs?</div><div data-solution>This is regression because the predicted force is continuous. Reynolds number is the input feature, and the measured or simulated force is the target. The other relevant conditions, such as geometry and reference properties, must be fixed or supplied as additional features.</div></div>
+<div data-flashcard data-card-id="intro-classification"><div data-question>How does classification differ from regression? What does a point on the wrong side of a classification boundary represent?</div><div data-solution>Classification predicts a category or discrete output, whereas regression predicts continuous quantities. A labelled point on the wrong side of the boundary is misclassified by that model. A learned boundary need not separate all measured samples perfectly.</div></div>
+<div data-flashcard data-card-id="intro-patterns"><div data-question>Does an accurate predictive model necessarily reveal an understandable physical mechanism?</div><div data-solution>No. A model may learn a representation that predicts well but is difficult to interpret. We must examine what its patterns represent and whether they help answer the physical question. Predictive accuracy and physical understanding are different criteria.</div></div>
+<div data-flashcard data-card-id="intro-rotation-reduction"><div data-question>In the two-velocity-probe example, does rotating the coordinate system already reduce the dimensionality?</div><div data-solution>No. Centering and rotating the data into the principal-component coordinates preserve both describing coordinates. Dimensionality reduction occurs when we discard the second coordinate and retain only the first.</div></div>
+<div data-flashcard data-card-id="intro-small-variance"><div data-question>When might discarding a component with small variance help, and when might it be harmful?</div><div data-solution>If the component mainly represents measurement noise, discarding it can improve data quality. However, small variance alone does not make it irrelevant: a weak fluctuation may contain physically important information or a signal needed by a later task.</div></div>
+<div data-flashcard data-card-id="intro-clustering-classification"><div data-question>What distinguishes clustering from classification?</div><div data-solution>Clustering groups samples by similarity without predefined class labels. Classification learns to predict categories from labelled examples. In clustering, the representation, scaling, and similarity measure influence the groups that are found.</div></div>
+<div data-flashcard data-card-id="intro-cluster-meaning"><div data-question>Do clusters of velocity-probe readings automatically identify distinct physical flow regimes?</div><div data-solution>No. Clusters describe similarity in the chosen representation. Inspect the associated flow fields to establish their physical meaning; a few probes may miss differences elsewhere in the domain.</div></div>
+<div data-flashcard data-card-id="intro-rl-state-action"><div data-question>In the rotating-cylinder example, what are the state and the action?</div><div data-solution>The state is the vector of pressure measurements from a few locations in the wake. The action is the cylinder rotation speed. This lecture uses the term state for the measurements without distinguishing state from observation.</div></div>
+<div data-flashcard data-card-id="intro-rl-policy"><div data-question>What is the policy in the rotating-cylinder example?</div><div data-solution>The policy is the control law. It maps the wake-pressure values to a probability distribution over rotation speeds, from which the agent selects an action.</div></div>
+<div data-flashcard data-card-id="intro-rl-reward"><div data-question>Why does the reward r = −c<sub>D</sub> encourage drag reduction? Is reinforcement learning concerned only with the next reward?</div><div data-solution>A smaller drag coefficient gives a larger value of −c<sub>D</sub>. The learning objective is to maximize expected cumulative reward over successive interactions, rather than only the next reward. Practical objectives may also account for actuation cost and allowable rotation speeds.</div></div>
+<div data-flashcard data-card-id="intro-rl-notation"><div data-question>What do uppercase Sₙ, Aₙ, and Rₙ₊₁ mean, and how do they differ from lowercase sₙ, aₙ, and rₙ₊₁?</div><div data-solution>Uppercase letters denote random variables: state, action, and reward. Lowercase letters denote their realized values. The reward Rₙ₊₁ follows the action Aₙ, as the environment transitions to the next state Sₙ₊₁.</div></div>
+<div data-flashcard data-card-id="intro-combined-methods"><div data-question>Give two examples of combining learning categories. Must every step use machine learning?</div><div data-solution>Image-based anomaly detection can combine dimensionality reduction with classification. A reduced-order flow model can combine dimensionality reduction with regression in latent coordinates. Not every step needs machine learning: analytical models and classical numerical methods can be part of the workflow.</div></div>
+<div data-flashcard data-card-id="intro-generalization"><div data-question>Why can testing on nearby flow snapshots give an overly optimistic picture of generalization?</div><div data-solution>Nearby snapshots can be strongly correlated with training samples and may add little independent information. Test on suitably separated trajectories, runs, or operating conditions relevant to the intended application. Keep test data separate from model fitting and model selection.</div></div>
+<div data-flashcard data-card-id="intro-physical-checks"><div data-question>Why is a small average prediction error insufficient to establish a reliable fluid-mechanical model?</div><div data-solution>It can conceal local failures, physical inconsistencies, or poor predictions outside the training conditions. Check conservation laws, boundary conditions, simple and limiting cases, and independent data or methods. For dynamical models and controllers, also test the resulting trajectories or closed-loop behaviour.</div></div>
+<div data-flashcard data-card-id="intro-workflows"><div data-question>Describe the four extract–learn–use workflows discussed in the lecture.</div><div data-solution>In analysis, CFD or experiments provide data from which we learn models. In model integration, we learn a model from available data and use it in CFD or an experiment. Across scales or complexity levels, one investigation supplies a model for another. In a feedback loop, a learned model is used in the same system, changing its behaviour and generating new data. Examples include surrogate modeling, learned inlet conditions, multiphase closure models, and active flow control.</div></div>
+</section>
+</div></div>
+<script src="public/libs/reveal/6.0.2/reveal.js"></script><script src="public/libs/reveal/6.0.2/plugin/notes.js"></script><script src="public/libs/reveal/6.0.2/plugin/math.js"></script>
+<script src="plugin/ink/v0.3.7/ink.js"></script><script src="plugin/flashcards/v0.1.2/flashcards.js"></script><script src="public/ml-intro-runtime.js"></script>
+<script data-rwe-runtime src="editor-assets/rwe-655f8fe933e4.js"></script></body></html>

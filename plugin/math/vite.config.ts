@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       formats: ['es', 'umd'],
       entry: {
-        'plugin/math': resolve(__dirname, 'index.ts'),
+        'plugin/math': resolve(import.meta.dirname, 'index.ts'),
       },
       name: 'RevealMath',
       fileName: appendExtension,

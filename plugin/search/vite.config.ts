@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       formats: ['es', 'umd'],
       entry: {
-        'plugin/search': resolve(__dirname, 'index.ts'),
+        'plugin/search': resolve(import.meta.dirname, 'index.ts'),
       },
       name: 'RevealSearch',
       fileName: appendExtension

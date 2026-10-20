@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       formats: ['es', 'umd'],
       entry: {
-        'plugin/highlight': resolve(__dirname, 'index.ts'),
+        'plugin/highlight': resolve(import.meta.dirname, 'index.ts'),
       },
       name: 'RevealHighlight',
       fileName: appendExtension

@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { ModuleFormat } from 'rollup';
+import type { ModuleFormat } from 'rollup';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { rewriteLegacyCoreDtsPath } from './build/dts-paths.ts';
@@ -21,7 +21,7 @@ export default defineConfig({
 		emptyOutDir: true,
 		lib: {
 			formats: ['es', 'umd'],
-			entry: resolve(__dirname, 'js/index.ts'),
+			entry: resolve(import.meta.dirname, 'js/index.ts'),
 			name: 'Reveal',
 			fileName: (format, entryName) => {
 				return appendExtension(format, 'reveal');

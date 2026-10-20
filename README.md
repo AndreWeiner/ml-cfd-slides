@@ -31,6 +31,19 @@ Want to create reveal.js presentation in a graphical editor? Try <https://slides
   MIT licensed | Copyright © 2011-2026 Hakim El Hattab, https://hakim.se
 </div>
 
+
+## Lecture 1 — Course overview and motivation
+
+`ml_cfd_intro.html` is the editable introductory deck for Machine Learning in Fluid Mechanics. Open it directly in Firefox or serve this repository locally. Sections are arranged horizontally; move vertically through the slides within each section. Title-only slides are deliberately left blank for lecture development. The figures are copied from the lecture notebook's dark SVG exports. The final review slide contains 20 flashcards drawn from Lecture 1, with answers revealed on request and Again/Hard/Good controls.
+
+The Quarto overview links the GitHub Pages deck at:
+
+https://andreweiner.github.io/ml-cfd-slides/ml_cfd_intro.html
+
+Publish the original HTML and its local assets together. This deck uses classic JavaScript files and local styles, fonts, and figures so it can also be opened directly in Firefox without a development server.
+
+The introductory deck uses its own versioned Reveal.js runtime under `public/libs/reveal/6.0.2/`; other decks retain their existing runtime.
+
 ## Lecture 2 — Introduction to machine learning
 
 `ml_intro.html` follows the lecture script with title-only canvases for live derivations and the lecture’s dark-theme sketches. Major sections run horizontally; slides within each section run vertically. It uses the same classic Reveal.js, local editor support, and Ink setup as Lecture 1, with separate annotation storage.

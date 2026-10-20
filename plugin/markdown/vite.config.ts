@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       formats: ['es', 'umd'],
       entry: {
-        'plugin/markdown': resolve(__dirname, 'index.ts'),
+        'plugin/markdown': resolve(import.meta.dirname, 'index.ts'),
       },
       name: 'RevealMarkdown',
       fileName: appendExtension,

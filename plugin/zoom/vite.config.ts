@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       formats: ['es', 'umd'],
       entry: {
-        'plugin/zoom': resolve(__dirname, 'index.ts'),
+        'plugin/zoom': resolve(import.meta.dirname, 'index.ts'),
       },
       name: 'RevealZoom',
       fileName: appendExtension

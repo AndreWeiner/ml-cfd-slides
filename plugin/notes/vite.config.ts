@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       formats: ['es', 'umd'],
       entry: {
-        'plugin/notes': resolve(__dirname, 'index.ts'),
+        'plugin/notes': resolve(import.meta.dirname, 'index.ts'),
       },
       name: 'RevealNotes',
       fileName: appendExtension
