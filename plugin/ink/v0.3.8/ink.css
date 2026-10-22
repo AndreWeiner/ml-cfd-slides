@@ -1,0 +1,123 @@
+.reveal .reveal-ink-surface {
+  position: absolute; left: 0; z-index: 20; overflow: hidden;
+  pointer-events: none !important; max-width: none; max-height: none;
+}
+.reveal.ink-active .slides, .reveal.ink-active .slides * { touch-action: none; }
+.reveal.ink-active .slides { cursor: crosshair; user-select: none; -webkit-user-select: none; }
+.reveal .reveal-ink-toolbar {
+  position: absolute; z-index: 40; left: 50%; bottom: max(12px, env(safe-area-inset-bottom));
+  transform: translateX(-50%); display: flex; align-items: center; gap: 4px;
+  padding: 5px; border: 1px solid #61616b; border-radius: 12px;
+  background: #232329; color: #fff; font: 14px/1.2 system-ui, sans-serif;
+  max-width: calc(100% - 120px); box-sizing: border-box; flex-wrap: wrap; justify-content: center;
+  box-shadow: 0 3px 12px #0003; touch-action: manipulation;
+}
+.reveal .reveal-ink-toolbar[hidden] { display: none; }
+.reveal-ink-toolbar button, .reveal-ink-toolbar summary {
+  min-height: 44px; min-width: 44px; padding: 8px; border: 0; border-radius: 7px;
+  background: #36363f; color: #fff; font: inherit; cursor: pointer; box-sizing: border-box;
+}
+.reveal-ink-toolbar button[aria-pressed=true] { background: #8dd3c7; color: #15231f; }
+.reveal-ink-toolbar button:disabled { opacity: .4; cursor: default; }
+.reveal-ink-toolbar :focus-visible { outline: 2px solid #fa8174; outline-offset: 2px; }
+.reveal-ink-toolbar summary { display: flex; align-items: center; list-style: none; }
+.reveal-ink-toolbar summary::-webkit-details-marker { display: none; }
+.reveal-ink-options {
+  position: absolute; bottom: calc(100% + 8px); right: 0; border-radius: 10px;
+  background: #232329; padding: 12px; width: 220px; box-shadow: 0 3px 12px #0005;
+  display: grid; gap: 8px; border: 1px solid #61616b;
+}
+.reveal-ink-options label { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.reveal-ink-options input { max-width: 150px; min-height: 44px; }
+.reveal-ink-status { font-size: 11px; padding: 0 5px; max-width: 160px; }
+.reveal-ink-status.error { color: #fa8174; }
+@media (max-width: 600px) {
+  .reveal .reveal-ink-toolbar { max-width: calc(100% - 24px); bottom: max(64px, env(safe-area-inset-bottom)); }
+  .reveal-ink-status { flex-basis: 100%; max-width: none; text-align: center; }
+}
+@media print { .reveal .reveal-ink-toolbar { display: none !important; } }
+
+.reveal .reveal-ink-palette {
+  position: absolute; z-index: 40; left: max(6px, env(safe-area-inset-left));
+  top: 50%; transform: translateY(-50%); display: flex; flex-direction: column;
+  gap: 3px; padding: 4px; border-radius: 12px; background: #232329;
+  border: 1px solid #61616b; max-height: calc(100% - 140px); overflow-y: auto;
+  touch-action: pan-y; box-sizing: border-box;
+}
+.reveal .reveal-ink-palette[hidden] { display: none; }
+.reveal-ink-palette .reveal-ink-swatch {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; width: 44px; min-height: 44px; flex-shrink: 0;
+  border: 2px solid transparent; border-radius: 7px; padding: 2px;
+  background: #36363f; color: #fff; font: 11px/1.1 system-ui, sans-serif;
+  cursor: pointer; touch-action: manipulation;
+}
+.reveal-ink-swatch::before {
+  content: ''; width: 22px; height: 16px; border-radius: 3px;
+  background: var(--ink-swatch-color); border: 1px solid #999;
+}
+.reveal-ink-palette .reveal-ink-swatch[aria-pressed=true] { border-color: #8dd3c7; }
+.reveal-ink-palette :focus-visible { outline: 2px solid #fa8174; outline-offset: -2px; }
+@media print { .reveal .reveal-ink-palette { display: none !important; } }
+
+.reveal .reveal-ink-toggle {
+  position: absolute; z-index: 40; left: 50%; transform: translateX(-50%);
+  bottom: max(12px, env(safe-area-inset-bottom)); width: 44px; height: 44px;
+  border: 1px solid #61616b; border-radius: 12px; background: #232329;
+  color: #fff; font: 28px/1 system-ui, sans-serif; cursor: pointer;
+  touch-action: manipulation;
+}
+.reveal .reveal-ink-toggle[hidden], .reveal-ink-status[hidden] { display: none; }
+.reveal-ink-toggle:focus-visible { outline: 2px solid #fa8174; outline-offset: 2px; }
+@media (max-width: 600px) {
+  .reveal .reveal-ink-toggle { bottom: max(64px, env(safe-area-inset-bottom)); }
+}
+@media print { .reveal .reveal-ink-toggle { display: none !important; } }
+
+/* In drawing mode, palms cannot activate slide arrows or swipe the deck. */
+.reveal.ink-active .controls { visibility: hidden !important; pointer-events: none !important; }
+.reveal.ink-active .controls button { visibility: hidden !important; pointer-events: none !important; }
+.reveal.ink-active { touch-action: none; }
+.reveal .ink-extra-canvas { background: #191919; }
+.reveal .reveal-ink-toggle, .reveal-ink-toolbar .reveal-ink-collapse {
+  background: transparent; border: 0; box-shadow: none; border-radius: 0;
+  color: var(--r-link-color, #42affa); width: 44px; height: 44px; position: relative;
+}
+.reveal .reveal-ink-toggle { position: absolute; }
+.reveal-ink-toggle::before, .reveal-ink-collapse::before {
+  content: ''; position: absolute; width: 17px; height: 17px;
+  border-top: 5px solid currentColor; border-right: 5px solid currentColor;
+  top: 15px; left: 11px; transform: rotate(-45deg); border-radius: 2px;
+}
+.reveal-ink-collapse::before { top: 8px; transform: rotate(135deg); }
+
+.reveal-ink-palette .reveal-ink-palette-tool {
+  width: 44px; min-height: 44px; border: 2px solid transparent; border-radius: 7px;
+  background: #36363f; color: white; font: 10px system-ui; cursor: pointer;
+  flex-shrink: 0; margin-top: 5px;
+}
+.reveal-ink-palette .reveal-ink-palette-tool[aria-pressed=true] { border-color: #8dd3c7; }
+.reveal .reveal-ink-scroll {
+  position: absolute; z-index: 40; right: max(6px, env(safe-area-inset-right));
+  top: 20%; height: 55%; width: 44px; display: flex; flex-direction: column;
+  gap: 8px; align-items: center; background: #232329; border-radius: 10px;
+  padding: 8px 0; touch-action: none;
+}
+.reveal-ink-scroll input { writing-mode: vertical-lr; direction: ltr; width: 32px; flex: 1; min-height: 0; }
+.reveal-ink-scroll button { min-width: 44px; min-height: 44px; background: transparent; color: white; border: 0; font-size: 24px; cursor: pointer; }
+.reveal .reveal-ink-scroll[hidden] { display: none; }
+@media print { .reveal .reveal-ink-scroll { display: none !important; } }
+
+.reveal-ink-palette-tool { display: flex; align-items: center; justify-content: center; padding: 8px; touch-action: manipulation; }
+.reveal-ink-palette-tool svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.reveal-ink-palette-tool[aria-pressed=true] { color: #8dd3c7; }
+
+.reveal .reveal-ink-pen-cursor {
+  position: absolute; z-index: 35; pointer-events: none !important;
+  width: 6px; height: 6px; border-radius: 50%; background: #ff3030;
+  transform: translate(-50%, -50%); box-shadow: 0 0 0 1px #ffffffb3;
+}
+.reveal .reveal-ink-pen-cursor[hidden] { display: none; }
+@media print { .reveal .reveal-ink-pen-cursor { display: none !important; } }
+
+.reveal-ink-laser { pointer-events: none; filter: drop-shadow(0 0 2px #ff3344); }
