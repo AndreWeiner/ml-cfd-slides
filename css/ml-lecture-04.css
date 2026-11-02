@@ -18,3 +18,11 @@
 
 .reveal .vector-example-content .vector-candidate-list { margin:28px 0 0 110px; padding-left:40px; font-size:30px; line-height:1.4; }
 .reveal .vector-candidate-list li { padding-left:15px; margin-bottom:21px; }
+
+/* Main equations on the four multiclass definition slides. */
+.reveal .multiclass-equations { position:absolute; left:35px; top:145px; width:890px; font-size:27px; line-height:1.35; text-align:center; }
+.reveal .multiclass-equations p { margin:20px 0; }
+.reveal .multiclass-equations .math.display { margin:28px 0; }
+.reveal .multiclass-equations.compact { top:125px; font-size:24px; }
+.reveal .multiclass-equations.compact .math.display { margin:20px 0; }
+.reveal .multiclass-equations.compact p { margin:16px 0; }
