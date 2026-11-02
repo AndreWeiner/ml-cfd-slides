@@ -59,3 +59,24 @@ Figures are copied from `ml-cfd-lecture/notebooks/media/` into `public/media/lec
 Safari can report zero decoded frames while playback is advancing. The player now checks time progress, coalesces pending checks, and permits only one recovery reload per video element. A rejected recovery play request restores native controls. Autoplay and looping settings are preserved. Run `node test/mobile-media-recovery.mjs` to check recovery behavior. Rebuild the player after changing the helper (`npm run build:runtime && npm run build` for CFD; `npm run build` for ML). The ML Lecture 2 vendored player in `public/libs/reveal/6.0.2/reveal.js` must also be refreshed from `dist/reveal.js`.
 
 Course videos use `preload="auto"` with lazy `data-src` sources. Reveal loads nearby slides (desktop view distance 3, mobile 2); distant sources remain unset. The `data-lazy-loaded` video marker also lets Reveal release child sources when a slide leaves that range. Browsers control actual buffering and may retain cached data.
+
+## Lecture 4 — Surrogate models for discrete predictions
+
+`bubble_path_classification.html` is one lecture following the revised rising-bubble
+classification manuscript in `ml-cfd-lecture`. It uses the same 960 × 700 dark
+Reveal.js layout, horizontal sections, vertical work slides, editor support and
+Ink controls as the introductory decks. Title-only slides remain canvases for
+live derivations; the manuscript explanations and equations are retained in
+speaker notes. The deck contains 38 slides, including its title and one review
+slide with 20 flashcards. Its annotation store is separate from other lectures.
+
+Figures are exact copies of the manuscript exports in `public/media/lecture_04/`.
+Both themes are retained; the dark slide theme uses the dark figures. The scaled
+features and model/prediction notation match the manuscript. The local Taylor
+bubble animation retains its TU Hamburg / DFG SPP 1740 source credit.
+`source-manifest.json` records the manuscript and figure hashes; the digitized
+CSV and its notes are also included. Original simulation data are not claimed.
+
+Open `bubble_path_classification.html` directly in Firefox, or serve this folder
+locally. All player, math, Ink, review and editor dependencies are local. The deployment URL is
+https://andreweiner.github.io/ml-cfd-slides/bubble_path_classification.html.

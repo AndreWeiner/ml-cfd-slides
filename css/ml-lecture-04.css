@@ -1,0 +1,20 @@
+/* Lecture 4 inherits the preceding lecture's 960 × 700 live-derivation layout. */
+.reveal .taylor-animation { left:100px!important; top:235px!important; width:760px!important; height:185px!important; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,.4); }
+.reveal .figure-source { position:absolute; left:70px; top:560px; width:820px; margin:0; font-size:19px; line-height:1.4; }
+.reveal .discussion { position:absolute; left:115px; top:200px; width:745px; margin:0; font-size:31px; line-height:1.6; text-align:left; }
+.reveal .discussion li { margin-bottom:35px; }
+.reveal .probability-questions { top:170px; font-size:28px; }
+
+/* Lecture examples: scoped to these two slides, preserving other edited layouts. */
+.reveal #one-hot-examples .vector-example-content,
+.reveal #prediction-vectors .vector-example-content { position:absolute; left:30px; top:145px; width:900px; text-align:left; font-size:23px; line-height:1.25; }
+.reveal .vector-example-content .vector-example-context { margin:0 0 22px; text-align:center; font-size:26px; }
+.reveal .vector-example-table { width:100%; margin:0; table-layout:fixed; font-size:23px; line-height:1.25; }
+.reveal .vector-example-table th, .reveal .vector-example-table td { padding:10px 10px; vertical-align:middle; }
+.reveal .vector-example-table th { font-weight:600; }
+.reveal .vector-example-table th:first-child, .reveal .vector-example-table td:first-child { width:43%; }
+.reveal .vector-example-table th:nth-child(2), .reveal .vector-example-table td:nth-child(2) { width:15%; text-align:center!important; }
+.reveal .vector-example-table th:last-child, .reveal .vector-example-table td:last-child { width:42%; }
+
+.reveal .vector-example-content .vector-candidate-list { margin:28px 0 0 110px; padding-left:40px; font-size:30px; line-height:1.4; }
+.reveal .vector-candidate-list li { padding-left:15px; margin-bottom:21px; }

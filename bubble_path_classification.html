@@ -1,865 +1,705 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
 
-<head>
-	<meta charset="utf-8">
+<html lang="en"><head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Machine Learning in Fluid Mechanics — Lecture 4</title>
+<meta content="Surrogate models for discrete predictions — rising-bubble stability regimes" name="description"/>
+<meta content="Andre Weiner" name="author"/>
+<link href="https://creativecommons.org/licenses/by/4.0/" rel="license"/>
+<link href="public/libs/reveal/6.0.2/reset.css" rel="stylesheet"/><link href="public/libs/reveal/6.0.2/reveal.css" rel="stylesheet"/>
+<link href="css/ml-lecture-02-theme.css" rel="stylesheet"/><link href="css/lecture.css" rel="stylesheet"/>
+<link href="css/ml-intro.css" rel="stylesheet"/><link href="css/ml-lecture-04.css?v=vector-candidates" rel="stylesheet"/>
+<link href="plugin/ink/v0.3.9/ink.css" rel="stylesheet"/><link href="plugin/flashcards/v0.1.2/flashcards.css" rel="stylesheet"/>
+<link data-rwe-runtime rel="stylesheet" href="editor-assets/rwe-655f8fe933e4.css"></head><body><div class="reveal"><div class="slides">
+<section class="title-slide" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" id="title" style="width:960px!important;height:700px!important;min-height:700px;padding:0;">
+<h1 style="position:absolute;left:0;top:85px;width:960px;margin:0;">Machine Learning<br/>in Fluid Mechanics</h1>
+<h2 style="position:absolute;left:0;top:230px;width:960px;margin:0;">Lecture 4 — Surrogate models for discrete predictions</h2>
+<p style="position:absolute;left:0;top:312px;width:960px;margin:0;">Andre Weiner</p>
+<small style="position:absolute;left:0;top:356px;width:960px;margin:0;">Chair of Fluid Mechanics</small>
+<img alt="TU Dresden" class="university-logo" src="public/media/lecture_04/TUD-white.svg" style="position:absolute;left:180px;top:406px;width:600px;height:200px;margin:0;"/>
+<aside class="notes">Predicting the stability regime of rising bubbles. This is one lecture, from physical motivation through binary classification to a multiclass MLP. The lecture manuscript supplies the derivations; blank work slides are canvases for live explanation, matching the preceding decks. Slides: CC BY 4.0; the TU Hamburg animation retains its source attribution.</aside>
+</section>
+<section id="bubble-dynamics"><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="mass-transfer" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 116.667px; margin: 0px; width: 910px; height: auto;">Gas–liquid mass transfer</h2><img alt="Oxygen Taylor bubble with a visible colored wake; motion from left to right" class="lecture-figure taylor-animation" src="public/media/lecture_04/reactive-oxygen-taylor-bubble-tuhh-horizontal.gif" style="position: absolute; left: -860.46px; top: 143.125px; margin: 0px; width: 871.603px; height: 212.011px; object-position: 50% 50%;" data-rwe-kind="image"><p class="figure-source" style="position: absolute; left: 70px; top: 466.667px; margin: 0px; width: 820px; height: auto;">Source: Schlüter group, TU Hamburg · <a href="https://www.tuhh.de/dfg-spp1740/en/spp-1740">DFG SPP 1740 — Reactive Bubbly Flows</a></p><aside class="notes"><p>Gas–liquid mass transfer is essential in chemical and process engineering. Bubble column reactors bring a gas into contact with a liquid; bioreactors must supply dissolved gases such as oxygen to microorganisms or cells. In gas-evolving electrolyzers, bubble formation and removal affect the exposed electrode area and transport near the electrode. These applications connect reactions and local transport to the behavior of an entire apparatus.</p><figure class="quarto-float quarto-figure quarto-figure-center figure">
+<div class="quarto-float-body">
+</div>
+<figcaption>
+Reactive oxygen Taylor bubble with a visible colored wake in a copper-complex solution. Source: project group of Prof. Michael Schlüter, TU Hamburg, <a href="https://www.tuhh.de/dfg-spp1740/en/spp-1740">DFG Priority Program 1740 — Reactive Bubbly Flows</a>.
+</figcaption>
+</figure><p>This animation shows an oxygen Taylor bubble in a copper-complex solution. The colored wake provides a visual example of the connection between bubble motion, transport, and chemical reaction. The confined Taylor-bubble geometry differs from the unconfined single-bubble setup used for the regime map later in this lecture.</p><p>A reactor therefore contains several interacting ranges of scales:</p><table class="caption-top table">
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Representative scale</th>
+<th style="text-align: left;">Processes of interest</th>
+<th style="text-align: left;">Consequence for modeling</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Molecular, below the continuum scale</td>
+<td style="text-align: left;">Molecular interactions and reaction events</td>
+<td style="text-align: left;">Reaction kinetics and constitutive relations</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Micrometers</td>
+<td style="text-align: left;">Concentration boundary layers near gas–liquid interfaces</td>
+<td style="text-align: left;">Strong gradients control local mass transfer</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Millimeters</td>
+<td style="text-align: left;">Individual bubble shapes, wakes, and trajectories</td>
+<td style="text-align: left;">Bubble dynamics influence interfacial area and transport</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Centimeters</td>
+<td style="text-align: left;">Bubble–bubble and wake interactions, coalescence and breakup</td>
+<td style="text-align: left;">Collective behavior changes bubble populations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Meters</td>
+<td style="text-align: left;">Reactor circulation, bubble plumes, and, in suitable geometries, slugs</td>
+<td style="text-align: left;">Large-scale flow redistributes gas and dissolved species</td>
+</tr>
+</tbody>
+</table><p>These are illustrative scales, not universal boundaries. Bubble sizes and boundary-layer thicknesses depend on the fluid system and operating conditions. Reaction kinetics enter continuum models as rate laws, although the underlying molecular events occur below the continuum scale.</p><p> </p></aside></section><section class="work-slide" id="multiscale"><h2>Gas–liquid transport across scales</h2><img alt="Gas–liquid transport across scales" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-multiscale-dark.svg"/><aside class="notes"><p>Gas–liquid mass transfer is essential in chemical and process engineering. Bubble column reactors bring a gas into contact with a liquid; bioreactors must supply dissolved gases such as oxygen to microorganisms or cells. In gas-evolving electrolyzers, bubble formation and removal affect the exposed electrode area and transport near the electrode. These applications connect reactions and local transport to the behavior of an entire apparatus.</p><figure class="quarto-float quarto-figure quarto-figure-center figure">
+<div class="quarto-float-body">
+</div>
+<figcaption>
+Reactive oxygen Taylor bubble with a visible colored wake in a copper-complex solution. Source: project group of Prof. Michael Schlüter, TU Hamburg, <a href="https://www.tuhh.de/dfg-spp1740/en/spp-1740">DFG Priority Program 1740 — Reactive Bubbly Flows</a>.
+</figcaption>
+</figure><p>This animation shows an oxygen Taylor bubble in a copper-complex solution. The colored wake provides a visual example of the connection between bubble motion, transport, and chemical reaction. The confined Taylor-bubble geometry differs from the unconfined single-bubble setup used for the regime map later in this lecture.</p><p>A reactor therefore contains several interacting ranges of scales:</p><table class="caption-top table">
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Representative scale</th>
+<th style="text-align: left;">Processes of interest</th>
+<th style="text-align: left;">Consequence for modeling</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Molecular, below the continuum scale</td>
+<td style="text-align: left;">Molecular interactions and reaction events</td>
+<td style="text-align: left;">Reaction kinetics and constitutive relations</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Micrometers</td>
+<td style="text-align: left;">Concentration boundary layers near gas–liquid interfaces</td>
+<td style="text-align: left;">Strong gradients control local mass transfer</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Millimeters</td>
+<td style="text-align: left;">Individual bubble shapes, wakes, and trajectories</td>
+<td style="text-align: left;">Bubble dynamics influence interfacial area and transport</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Centimeters</td>
+<td style="text-align: left;">Bubble–bubble and wake interactions, coalescence and breakup</td>
+<td style="text-align: left;">Collective behavior changes bubble populations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Meters</td>
+<td style="text-align: left;">Reactor circulation, bubble plumes, and, in suitable geometries, slugs</td>
+<td style="text-align: left;">Large-scale flow redistributes gas and dissolved species</td>
+</tr>
+</tbody>
+</table><p>These are illustrative scales, not universal boundaries. Bubble sizes and boundary-layer thicknesses depend on the fluid system and operating conditions. Reaction kinetics enter continuum models as rate laws, although the underlying molecular events occur below the continuum scale.</p><p> </p></aside></section><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="numerical-models" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><img alt="Three ways to represent bubbly flow" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-numerical-methods-dark.svg" style="position: absolute; left: 30px; top: 105px; width: 900px; height: 490px; margin: 0px;"><aside class="notes"><p>Interface-resolved, Euler–Lagrange, and Euler–Euler descriptions retain different information. The sketches distinguish a resolved gas–liquid interface, tracked bubble particles, and an averaged gas-volume-fraction field.</p><p> </p><p>These numerical descriptions cover overlapping ranges of scales. Their useful range depends on spatial and temporal resolution, model assumptions, and computational cost. Covering two or three orders of magnitude can already be demanding; this is a practical illustration rather than a fixed limit for every method.</p><p><strong>Our focus is the dynamics of an individual rising bubble.</strong> Before learning a classifier, we need to understand which physical parameters distinguish its possible behaviors.</p></aside></section></section>
+<section id="dimensionless-numbers"><section class="work-slide" id="bubble-forces"><h2>What controls a rising bubble?</h2><img alt="What controls a rising bubble?" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-forces-dark.svg"/><aside class="notes"><p>We consider an initially spherical gas bubble released from rest in an otherwise quiescent liquid. The density difference drives its rise. As the surrounding liquid moves, pressure and viscous stresses act on the interface, while surface tension resists deformation.</p><p> </p><ul>
+<li><strong>Buoyancy:</strong> the net hydrostatic driving force is <span class="math inline">\(F_b=(\rho_l-\rho_g)gV\)</span>, where <span class="math inline">\(V\)</span> is the gas volume.</li>
+<li><strong>Viscous effects:</strong> velocity gradients generate stresses that dissipate energy and contribute to resistance against the motion.</li>
+<li><strong>Inertia:</strong> acceleration of the bubble and liquid, wake formation, and unsteady pressure contribute to the dynamics. Inertia is a response to forces, not an additional independent applied force.</li>
+<li><strong>Surface tension:</strong> interfacial stresses resist increases of area and couple the pressure jump to curvature. For a spherical interface of radius <span class="math inline">\(R\)</span>, the Laplace pressure jump is <span class="math inline">\(2\sigma/R\)</span>.</li>
+</ul><p>A closed interface with uniform surface tension does not experience a net translational force from surface tension alone. Its local stresses nevertheless strongly affect shape and thereby the surrounding flow.</p></aside></section><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="eotvos" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 20px; margin: 0px; width: 910px; height: auto;">Eötvös number: buoyancy and surface tension</h2><aside class="notes"><p>We use <span class="math inline">\(R\)</span> to denote the <strong>initial bubble radius</strong>, <span class="math inline">\(\rho_l\)</span> and <span class="math inline">\(\rho_g\)</span> the liquid and gas densities, <span class="math inline">\(\mu_l\)</span> the liquid dynamic viscosity, and <span class="math inline">\(\sigma\)</span> the surface tension. The radius-based definition retaining the density difference is</p><p><div class="math display">\[
+Eo_{\Delta\rho,R}=\frac{(\rho_l-\rho_g)gR^2}{\sigma}.
+\]</div></p><p>For a light gas, <span class="math inline">\(\rho_g\ll\rho_l\)</span>. Following the convention of the reference study, we use</p><p><div class="math display">\[
+\boxed{Eo=\frac{\rho_l gR^2}{\sigma}.}
+\]</div></p><p>The Eötvös number is also called the <strong>Bond number</strong>. For <span class="math inline">\(Eo\ll1\)</span>, surface tension strongly resists deformation. As <span class="math inline">\(Eo\)</span> increases, buoyancy becomes more important relative to capillary stresses, permitting stronger deformation. The actual shape also depends on the flow and the other parameters.</p><p> </p></aside>
+<!-- Imported from bubble_path_classification.html slide 7 -->
+<img alt="Deformation with increasing Eötvös number" class="lecture-figure" data-rwe-kind="image" src="editor-assets/4657c838be4b5b6f3715.svg" style="position: absolute; left: 30px; top: 194.444px; width: 900px; height: 490px; margin: 0px;">
+</section><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="galilei" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 20px; margin: 0px; width: 910px; height: auto;">Galilei number: inertia and viscosity</h2><aside class="notes"><p>Using the gravitational velocity scale <span class="math inline">\(U_g=\sqrt{gR}\)</span> gives</p><p><div class="math display">\[
+\boxed{Ga=\frac{\rho_l U_gR}{\mu_l}
+       =\frac{\rho_l\sqrt{gR^3}}{\mu_l}
+       =\frac{\sqrt{gR^3}}{\nu_l},}
+\qquad \nu_l=\frac{\mu_l}{\rho_l}.
+\]</div></p><p>This is a Reynolds number formed with a gravitational velocity scale rather than the unknown rise speed. It compares inertial and viscous effects on that scale; equivalently, <span class="math inline">\(Ga^2\)</span> compares gravitational and viscous scales.</p><p>Increasing <span class="math inline">\(Ga\)</span> reduces the relative importance of viscous damping, making inertial wakes and instabilities more accessible. It does not imply a universal monotonic increase in oscillation amplitude: the regime depends jointly on <span class="math inline">\(Ga\)</span>, <span class="math inline">\(Eo\)</span>, and the remaining physical conditions.</p><p> </p><div class="callout callout-style-default callout-note callout-titled" title="The length convention matters">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The length convention matters
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Many references use the initial diameter <span class="math inline">\(d=2R\)</span> and retain <span class="math inline">\(\Delta\rho=\rho_l-\rho_g\)</span>. For the definitions <span class="math inline">\(Eo_d=\Delta\rho\,gd^2/\sigma\)</span> and <span class="math inline">\(Ga_d=\sqrt{(\Delta\rho/\rho_l)gd^3}/\nu_l\)</span>, conversion from our convention gives</p>
+<p><div class="math display">\[
+Eo_d=4(1-\rho_g/\rho_l)Eo,\qquad
+Ga_d=2^{3/2}\sqrt{1-\rho_g/\rho_l}\,Ga.
+\]</div> A classifier and its input data must use the same definitions.</p>
+</div>
+</div></aside>
+<!-- Imported from bubble_path_classification.html slide 8 -->
+<img alt="Bubble dynamics with increasing Galilei number" class="lecture-figure" data-rwe-kind="image" src="editor-assets/f2f60be2cdfaf5a633b6.svg" style="position: absolute; left: 30px; top: 210px; width: 900px; height: 490px; margin: 0px;">
+</section></section>
+<section id="regime-map"><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="observed-regimes" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 20px; margin: 0px; width: 910px; height: auto;">Rising-bubble regimes</h2><img alt="Rising-bubble regimes" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-regime-map-dark.svg" style="position: absolute; left: 30px; top: 140px; margin: 0px; width: 900px; height: 490px;"><aside class="notes"><p>Tripathi, Sahu and Govindarajan (2015), Nature Communications 6, 6268. DOI: <a href="https://doi.org/10.1038/ncomms7268">10.1038/ncomms7268</a>. The markers are digitized, not original simulation outputs. No boundaries are reproduced. Numbering follows the caption and main Results: II skirted, III oscillatory.</p><p><span class="citation" data-cites="tripathi2015">Tripathi et al. (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-tripathi2015" role="doc-biblioref">2015</a>)</span> investigated initially spherical bubbles using three-dimensional simulations. Their study spans <span class="math inline">\(7\leq Ga\leq500\)</span> and <span class="math inline">\(0.1\leq Eo\leq200\)</span>, using the radius-based convention above and fixed density and viscosity ratios <span class="math inline">\(\rho_g/\rho_l=10^{-3}\)</span> and <span class="math inline">\(\mu_g/\mu_l=10^{-2}\)</span>.</p><p>Their <a href="https://www.nature.com/articles/ncomms7268/figures/1">Figure 1</a> summarizes five regimes on logarithmic Galilei–Eötvös axes:</p><p> </p><p><strong>Data provenance.</strong> This reproduction uses an independent digitization of the marker positions in the published image. It represents visible or recoverable markers rather than the complete set of simulations. Partially obscured points are flagged in the extraction record; an unreadable location is excluded. The coordinates retain digitization uncertainty and are not original simulation outputs. No fitted or hand-drawn regime boundaries are added.</p><p><a href="public/media/lecture_04/tripathi2015_digitization/points.csv">Download freshly digitized points</a> · <a href="public/media/lecture_04/tripathi2015_digitization/extraction-overlay.png">Inspect the extraction overlay</a>.</p><div class="callout callout-style-default callout-note callout-titled" title="Regime numbering in the source">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Regime numbering in the source
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In <span class="citation" data-cites="tripathi2015">Tripathi et al. (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-tripathi2015" role="doc-biblioref">2015</a>)</span>, the Roman labels II and III printed inside Figure 1 are interchanged relative to the figure caption and main Results discussion. This course consistently follows the <strong>caption and main Results</strong>: <strong>II denotes skirted, non-oscillatory bubbles</strong>, and <strong>III denotes oscillatory paths</strong>. The revised figure, downloadable dataset, and exercise all use this convention. The difference is an internal inconsistency in the publication, not a separate numbering scheme introduced for the course.</p>
+</div>
+</div><table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Regime</th>
+<th style="text-align: left;">Characteristic behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Axisymmetric rise</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">II</td>
+<td style="text-align: left;">Skirted bubbles with limited asymmetry</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">III</td>
+<td style="text-align: left;">Strong shape asymmetry and zigzag or spiral paths</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IV</td>
+<td style="text-align: left;">Peripheral breakup</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">V</td>
+<td style="text-align: left;">Central breakup / change of topology</td>
+</tr>
+</tbody>
+</table><p>The reproduction above contains only the digitized marker points. The <strong>original Figure 1 in <span class="citation" data-cites="tripathi2015">Tripathi et al. (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-tripathi2015" role="doc-biblioref">2015</a>)</span> also contains hand-drawn regime boundaries</strong>, introduced as guides to the eye. These lines summarize the numerical observations graphically; they are not the output of an explicit predictive function.</p><p>Such a diagram is useful for interpreting the observed regimes, but its direct use in a computational model is limited. For example, a reactor simulation might need to choose between <strong>mass-transfer correlations developed for different bubble-rise regimes</strong>. For each new pair <span class="math inline">\((Ga,Eo)\)</span>, the simulation would need a rule that returns the corresponding regime label. A picture with hand-drawn boundaries does not provide an evaluable input–output relation; that classification rule must first be formulated and implemented. Predicting the regime could then support the selection of a suitable correlation, whose validity under the simulated conditions would still need to be checked.</p><p>Drawing the boundaries also involves subjective judgment. Asking ten people to separate the same labeled markers could produce ten slightly different sets of boundaries, especially in sparsely sampled regions. A visual drawing alone supplies no quantitative criterion for deciding which separation represents the data better.</p><p>We therefore seek a <strong>surrogate for a discrete prediction</strong>: a mathematical mapping from the dimensionless inputs to a regime label, together with an explicit quantitative measure of prediction quality. A classification loss or misclassification rate can quantify agreement with the labeled data. Evaluation on held-out data can then assess how well the resulting boundaries generalize beyond the samples used to construct them. This provides a reproducible basis for fitting and comparing classifiers. The regime label supports model selection; a separate mass-transfer correlation is still needed to predict the exchange rate.</p><p>The two-input description applies within the assumptions of the dataset. Different density or viscosity ratios, contamination, confinement, ambient turbulence, or neighboring bubbles can change the dynamics. Those conditions must be checked before using the learned map in another application.</p></aside></section><section class="work-slide" id="predictive-map"><h2>From a drawn map to a predictive model</h2><aside class="notes"><p><span class="citation" data-cites="tripathi2015">Tripathi et al. (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-tripathi2015" role="doc-biblioref">2015</a>)</span> investigated initially spherical bubbles using three-dimensional simulations. Their study spans <span class="math inline">\(7\leq Ga\leq500\)</span> and <span class="math inline">\(0.1\leq Eo\leq200\)</span>, using the radius-based convention above and fixed density and viscosity ratios <span class="math inline">\(\rho_g/\rho_l=10^{-3}\)</span> and <span class="math inline">\(\mu_g/\mu_l=10^{-2}\)</span>.</p><p>Their <a href="https://www.nature.com/articles/ncomms7268/figures/1">Figure 1</a> summarizes five regimes on logarithmic Galilei–Eötvös axes:</p><p> </p><p><strong>Data provenance.</strong> This reproduction uses an independent digitization of the marker positions in the published image. It represents visible or recoverable markers rather than the complete set of simulations. Partially obscured points are flagged in the extraction record; an unreadable location is excluded. The coordinates retain digitization uncertainty and are not original simulation outputs. No fitted or hand-drawn regime boundaries are added.</p><p><a href="public/media/lecture_04/tripathi2015_digitization/points.csv">Download freshly digitized points</a> · <a href="public/media/lecture_04/tripathi2015_digitization/extraction-overlay.png">Inspect the extraction overlay</a>.</p><div class="callout callout-style-default callout-note callout-titled" title="Regime numbering in the source">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Regime numbering in the source
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In <span class="citation" data-cites="tripathi2015">Tripathi et al. (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-tripathi2015" role="doc-biblioref">2015</a>)</span>, the Roman labels II and III printed inside Figure 1 are interchanged relative to the figure caption and main Results discussion. This course consistently follows the <strong>caption and main Results</strong>: <strong>II denotes skirted, non-oscillatory bubbles</strong>, and <strong>III denotes oscillatory paths</strong>. The revised figure, downloadable dataset, and exercise all use this convention. The difference is an internal inconsistency in the publication, not a separate numbering scheme introduced for the course.</p>
+</div>
+</div><table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Regime</th>
+<th style="text-align: left;">Characteristic behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Axisymmetric rise</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">II</td>
+<td style="text-align: left;">Skirted bubbles with limited asymmetry</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">III</td>
+<td style="text-align: left;">Strong shape asymmetry and zigzag or spiral paths</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IV</td>
+<td style="text-align: left;">Peripheral breakup</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">V</td>
+<td style="text-align: left;">Central breakup / change of topology</td>
+</tr>
+</tbody>
+</table><p>The reproduction above contains only the digitized marker points. The <strong>original Figure 1 in <span class="citation" data-cites="tripathi2015">Tripathi et al. (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-tripathi2015" role="doc-biblioref">2015</a>)</span> also contains hand-drawn regime boundaries</strong>, introduced as guides to the eye. These lines summarize the numerical observations graphically; they are not the output of an explicit predictive function.</p><p>Such a diagram is useful for interpreting the observed regimes, but its direct use in a computational model is limited. For example, a reactor simulation might need to choose between <strong>mass-transfer correlations developed for different bubble-rise regimes</strong>. For each new pair <span class="math inline">\((Ga,Eo)\)</span>, the simulation would need a rule that returns the corresponding regime label. A picture with hand-drawn boundaries does not provide an evaluable input–output relation; that classification rule must first be formulated and implemented. Predicting the regime could then support the selection of a suitable correlation, whose validity under the simulated conditions would still need to be checked.</p><p>Drawing the boundaries also involves subjective judgment. Asking ten people to separate the same labeled markers could produce ten slightly different sets of boundaries, especially in sparsely sampled regions. A visual drawing alone supplies no quantitative criterion for deciding which separation represents the data better.</p><p>We therefore seek a <strong>surrogate for a discrete prediction</strong>: a mathematical mapping from the dimensionless inputs to a regime label, together with an explicit quantitative measure of prediction quality. A classification loss or misclassification rate can quantify agreement with the labeled data. Evaluation on held-out data can then assess how well the resulting boundaries generalize beyond the samples used to construct them. This provides a reproducible basis for fitting and comparing classifiers. The regime label supports model selection; a separate mass-transfer correlation is still needed to predict the exchange rate.</p><p>The two-input description applies within the assumptions of the dataset. Different density or viscosity ratios, contamination, confinement, ambient turbulence, or neighboring bubbles can change the dynamics. Those conditions must be checked before using the learned map in another application.</p></aside></section></section>
+<section id="feature-transformation"><section class="work-slide" id="linear-features"><h2>The same data on linear axes</h2><img alt="The same data on linear axes" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-regime-linear-dark.svg"/><aside class="notes"><p>The publication displays the data on logarithmic axes. This makes a wide parameter range readable, but it also changes the geometry in which we judge distances and draw straight boundaries. Without explicitly discussing feature engineering, we have already adopted the transformation <span class="math inline">\((Ga,Eo)\mapsto(\log_{10}(Ga),\log_{10}(Eo))\)</span>.</p><p>For comparison, the following plot shows exactly the same 104 digitized points on <strong>linear axes</strong>. Many samples occupy a relatively small region near the lower-left corner, while a few large parameter values determine the extent of the axes. The coordinates have not changed; only the axis representation has.</p><p> </p><p>The histograms make the uneven sampling visible for each input separately. Their left column uses equal-width bins in the original variables; their right column uses equal-width bins after taking the common logarithm. Logarithmic scaling spreads out the smaller values and compresses the larger ones, making the <strong>marginal sample distributions</strong> (the sample distributions of each feature considered separately) <strong>more balanced</strong>. It does not create additional observations, guarantee uniform sampling, or remove gaps in the two-dimensional parameter space.</p><p> </p><p>A straight line on logarithmic axes is a straight line in <strong>log-transformed features</strong>. It generally becomes a curved, power-law relation when expressed in the original variables. Changing the representation therefore changes the family of boundaries described by a linear model.</p></aside></section><section class="work-slide" id="feature-histograms"><h2>Raw and logarithmic features</h2><img alt="Raw and logarithmic features" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-feature-histograms-dark.svg"/><aside class="notes"><p>The publication displays the data on logarithmic axes. This makes a wide parameter range readable, but it also changes the geometry in which we judge distances and draw straight boundaries. Without explicitly discussing feature engineering, we have already adopted the transformation <span class="math inline">\((Ga,Eo)\mapsto(\log_{10}(Ga),\log_{10}(Eo))\)</span>.</p><p>For comparison, the following plot shows exactly the same 104 digitized points on <strong>linear axes</strong>. Many samples occupy a relatively small region near the lower-left corner, while a few large parameter values determine the extent of the axes. The coordinates have not changed; only the axis representation has.</p><p> </p><p>The histograms make the uneven sampling visible for each input separately. Their left column uses equal-width bins in the original variables; their right column uses equal-width bins after taking the common logarithm. Logarithmic scaling spreads out the smaller values and compresses the larger ones, making the <strong>marginal sample distributions</strong> (the sample distributions of each feature considered separately) <strong>more balanced</strong>. It does not create additional observations, guarantee uniform sampling, or remove gaps in the two-dimensional parameter space.</p><p> </p><p>A straight line on logarithmic axes is a straight line in <strong>log-transformed features</strong>. It generally becomes a curved, power-law relation when expressed in the original variables. Changing the representation therefore changes the family of boundaries described by a linear model.</p></aside></section><section class="work-slide" id="binary-labels"><h2>A first binary classification problem</h2><aside class="notes"><p>For a positive input <span class="math inline">\(q\in\{Ga,Eo\}\)</span>, we first take its logarithm and then apply min–max scaling:</p><p><div class="math display">\[
+a_q=\min_{j\in\mathcal T}\log_{10}(q_j),
+\qquad
+b_q=\max_{j\in\mathcal T}\log_{10}(q_j),
+\]</div></p><p><div class="math display">\[
+\boxed{\widetilde q_i
+=2\frac{\log_{10}(q_i)-a_q}{b_q-a_q}-1.}
+\]</div></p><p>Here <span class="math inline">\(\mathcal T\)</span> is the set of training samples and <span class="math inline">\(b_q&gt;a_q\)</span> is required. The smallest and largest training values map to <span class="math inline">\(-1\)</span> and <span class="math inline">\(1\)</span>. The same stored extrema must be reused for validation data and new predictions; values outside the training range can map outside <span class="math inline">\([-1,1]\)</span>. Fitting the scaling on validation or test samples would leak information about their distribution into model preparation. Min–max scaling changes the range, but does not itself make a nonuniform sample distribution uniform.</p><p>We now focus on <strong>regime I (axisymmetric rise)</strong> and <strong>regime III (oscillatory paths)</strong>. The other regimes remain part of the full dataset but are excluded from this first binary classification problem. For the worked training demonstration, the 20 regime-I and 27 regime-III samples form <span class="math inline">\(\mathcal T\)</span>, giving <span class="math inline">\(N=47\)</span>. Thus the scaler is fitted on these 47 samples. The preceding histograms describe all 104 samples and serve only to compare representations.</p><p>Now we are ready to collect the scaled features in a feature vector:</p><p><div class="math display">\[
+\mathbf x_i=
+\begin{bmatrix}
+\widetilde{Ga}_i\\
+\widetilde{Eo}_i\\
+1
+\end{bmatrix}\in\mathbb R^3.
+\]</div></p><p>The final component is a constant that lets us include the bias in a dot product. It is not a third measured physical input. We assign labels according to the observed regime:</p><p><div class="math display">\[
+y_i=
+\begin{cases}
+0,&amp;\text{sample }i\text{ belongs to regime I},\\
+1,&amp;\text{sample }i\text{ belongs to regime III}.
+\end{cases}
+\qquad
+\mathcal D=\{(\mathbf x_i,y_i)\}_{i=1}^{N}.
+\]</div></p></aside></section><section class="work-slide" id="perceptron-update"><h2>The perceptron as an error-correction rule</h2><aside class="notes"><p>We can find suitable weights through a simple error-correction idea. Following the reinforcement motivation of <span class="citation" data-cites="rosenblatt1958">Rosenblatt (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-rosenblatt1958" role="doc-biblioref">1958</a>)</span>, we adjust the connections so that a mistaken response becomes less likely. In our binary notation, this gives three cases:</p><ul>
+<li>For a missed positive sample (<span class="math inline">\(y_i=1\)</span>, <span class="math inline">\(\widehat y_i=0\)</span>), we add <span class="math inline">\(\eta\mathbf x_i\)</span> to the weights, raising its score.</li>
+<li>For a false positive (<span class="math inline">\(y_i=0\)</span>, <span class="math inline">\(\widehat y_i=1\)</span>), we subtract <span class="math inline">\(\eta\mathbf x_i\)</span>, lowering its score.</li>
+<li>For a correct prediction, we leave the weights unchanged.</li>
+</ul><p>These cases can be collected in the <strong>perceptron update rule</strong>:</p><p><div class="math display">\[
+\boxed{\mathbf w^{(n+1)}=\mathbf w^{(n)}
++\eta\bigl(y_i-\widehat y_i^{(n)}\bigr)\mathbf x_i},
+\qquad \eta&gt;0.
+\]</div></p><p>Here <span class="math inline">\(\eta\)</span> is the learning rate and sets the size of each correction. This is our compact binary formulation of the error-correction idea; Rosenblatt’s original paper describes a more elaborate reinforcement system.</p><p>In components,</p><p><div class="math display">\[
+w_1^{(n+1)}=w_1^{(n)}+\eta(y_i-\widehat y_i^{(n)})\widetilde{Ga}_i,
+\]</div> <div class="math display">\[
+w_2^{(n+1)}=w_2^{(n)}+\eta(y_i-\widehat y_i^{(n)})\widetilde{Eo}_i,
+\qquad
+b^{(n+1)}=b^{(n)}+\eta(y_i-\widehat y_i^{(n)}).
+\]</div></p><p>A correctly classified sample leaves the weights unchanged. For a missed positive sample, the update increases its score by <span class="math inline">\(\eta\|\mathbf x_i\|^2\)</span>; for a false positive, it decreases the score by the same amount. The update can nevertheless worsen predictions at other samples.</p><p>This is the <strong>online perceptron algorithm</strong>: we process one sample at a time and correct the weights whenever its prediction is wrong. We use the hard-label loss <span class="math inline">\(\mathcal L_{\mathrm{count}}\)</span> to monitor the total number of classification errors. The correction improves the score for the currently presented sample, but it need not reduce this total loss at every step.</p></aside></section><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="perceptron-questions" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 20px; margin: 0px; width: 910px; height: auto; white-space: normal;" data-rwe-text-layout="auto-height">What do you expect from the training?</h2><ol class="discussion" style="position: absolute; left: 107.5px; top: 223.103px; margin: 0px; width: 745px; height: auto;"><li>Can the loss become zero?</li><li>When do the updates stop?</li><li>Is the loss monotonically decreasing?</li></ol><aside class="notes"><p>We initialize <span class="math inline">\(\mathbf w^{(0)}=\mathbf0\)</span> and use <span class="math inline">\(\eta=1\)</span>. Each epoch presents all 47 training samples once, in an order shuffled by a NumPy random generator with seed 42. We update only on a misclassification and stop after a complete pass with no update, with a maximum budget of 500 epochs. In the plot, iteration <span class="math inline">\(n\)</span> counts <strong>sample presentations</strong>, including those that leave the weights unchanged. After every presentation, we recompute <span class="math inline">\(\mathcal L_{\mathrm{count}}\)</span> on all 47 samples; the trace is not a cumulative count of mistakes made along the training sequence.</p><p> </p><p>We can examine the following questions before considering the result notes:</p><ol type="1">
+<li><strong>Can the loss become zero?</strong> What geometric property of these transformed data would allow a linear decision boundary to classify all samples correctly?</li>
+<li><strong>When do the updates stop?</strong> How do one correctly predicted sample, a complete pass without an update, and reaching the iteration budget differ?</li>
+<li><strong>Is the loss monotonically decreasing?</strong> Could improving the prediction at one sample increase the total number of errors?</li>
+</ol><div class="callout callout-style-default callout-note callout-titled" title="Result notes">
+<div aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout" class="callout-header d-flex align-content-center collapsed" data-bs-target=".callout-3-contents" data-bs-toggle="collapse">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Result notes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In this reproducible run, the first zero-error state occurs at presentation <strong>1290</strong>. Training terminates after <strong>29 epochs</strong>, <strong>1363 sample presentations</strong>, and <strong>125 weight updates</strong>, once an entire pass confirms that no update is needed. The final weights are approximately</p>
+<p><div class="math display">\[
+\mathbf w=\begin{bmatrix}8.8045\\1.3294\\3.0000\end{bmatrix}.
+\]</div></p>
+<p>The error-counting loss starts at <span class="math inline">\(13.5\)</span> (27 wrong predictions) and ends at zero. It increases after <strong>56 individual updates</strong>, so it is not monotonically decreasing. A correction for one sample can move the boundary across other samples.</p>
+<p>An independent convex-hull separation check confirms that these particular transformed samples admit a separator with a positive margin. Thus zero training loss is attainable here; the successful finite run is also a constructive separating example. This conclusion concerns the digitized samples, not a proven physical boundary between all possible bubbles.</p>
+<p>For finite data that admit a separating hyperplane with a strictly positive margin, repeated perceptron passes terminate after finitely many errors. If the data are not linearly separable, that guarantee does not apply. A finite run that does not reach zero errors is not, by itself, a proof of nonseparability. The plotted quantity is training error; this demonstration does not measure predictive performance on independent data.</p>
+</div>
+</div>
+</div></aside></section><section class="work-slide" id="perceptron-training"><h2>Training the perceptron</h2><img alt="Training the perceptron" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-perceptron-results-dark.svg"/><aside class="notes"><p>We initialize <span class="math inline">\(\mathbf w^{(0)}=\mathbf0\)</span> and use <span class="math inline">\(\eta=1\)</span>. Each epoch presents all 47 training samples once, in an order shuffled by a NumPy random generator with seed 42. We update only on a misclassification and stop after a complete pass with no update, with a maximum budget of 500 epochs. In the plot, iteration <span class="math inline">\(n\)</span> counts <strong>sample presentations</strong>, including those that leave the weights unchanged. After every presentation, we recompute <span class="math inline">\(\mathcal L_{\mathrm{count}}\)</span> on all 47 samples; the trace is not a cumulative count of mistakes made along the training sequence.</p><p> </p><p>We can examine the following questions before considering the result notes:</p><ol type="1">
+<li><strong>Can the loss become zero?</strong> What geometric property of these transformed data would allow a linear decision boundary to classify all samples correctly?</li>
+<li><strong>When do the updates stop?</strong> How do one correctly predicted sample, a complete pass without an update, and reaching the iteration budget differ?</li>
+<li><strong>Is the loss monotonically decreasing?</strong> Could improving the prediction at one sample increase the total number of errors?</li>
+</ol><div class="callout callout-style-default callout-note callout-titled" title="Result notes">
+<div aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout" class="callout-header d-flex align-content-center collapsed" data-bs-target=".callout-3-contents" data-bs-toggle="collapse">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Result notes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In this reproducible run, the first zero-error state occurs at presentation <strong>1290</strong>. Training terminates after <strong>29 epochs</strong>, <strong>1363 sample presentations</strong>, and <strong>125 weight updates</strong>, once an entire pass confirms that no update is needed. The final weights are approximately</p>
+<p><div class="math display">\[
+\mathbf w=\begin{bmatrix}8.8045\\1.3294\\3.0000\end{bmatrix}.
+\]</div></p>
+<p>The error-counting loss starts at <span class="math inline">\(13.5\)</span> (27 wrong predictions) and ends at zero. It increases after <strong>56 individual updates</strong>, so it is not monotonically decreasing. A correction for one sample can move the boundary across other samples.</p>
+<p>An independent convex-hull separation check confirms that these particular transformed samples admit a separator with a positive margin. Thus zero training loss is attainable here; the successful finite run is also a constructive separating example. This conclusion concerns the digitized samples, not a proven physical boundary between all possible bubbles.</p>
+<p>For finite data that admit a separating hyperplane with a strictly positive margin, repeated perceptron passes terminate after finitely many errors. If the data are not linearly separable, that guarantee does not apply. A finite run that does not reach zero errors is not, by itself, a proof of nonseparability. The plotted quantity is training error; this demonstration does not measure predictive performance on independent data.</p>
+</div>
+</div>
+</div></aside></section>
 
-	<title>Machine learning in computational fluid dynamics</title>
 
-	<meta name="description" content="Machine learning in computational fluid dynamics">
-	<meta name="author" content="Andre Weiner">
+</section>
 
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<section id="logistic-regression"><section class="work-slide" id="conditional-probabilities"><h2>From hard decisions to class probabilities</h2><aside class="notes"><p>The perceptron example shows that a correction can improve one prediction while worsening others, so the error-counting loss need not decrease at every update. Moreover, a label alone does not distinguish a sample close to the decision boundary from one far into a predicted region. This motivates modeling <strong>conditional class probabilities</strong> with a smooth function.</p><p>For our binary problem, we define</p><p><div class="math display">\[
+P(Y=1\mid\mathbf X=\mathbf x).
+\]</div></p><p>We read this aloud as <strong>“the probability that the label <span class="math inline">\(Y\)</span> equals one, given the feature vector <span class="math inline">\(\mathbf x\)</span>.”</strong> Here class one means regime III, and class zero means regime I. The uppercase symbols denote random variables; <span class="math inline">\(\mathbf x\)</span> and an observed label <span class="math inline">\(y_i\)</span> denote particular values. In the following, <span class="math inline">\(P(Y=1\mid\mathbf x)\)</span> is shorthand for the same conditional probability.</p><p>The model approximates this probability by <span class="math inline">\(y_{\mathbf w}(\mathbf x)\)</span>. The subscript <span class="math inline">\(\mathbf w\)</span> indicates that this is a model parameterized by the weights <span class="math inline">\(\mathbf w\)</span>. For sample <span class="math inline">\(i\)</span>, we write</p><p><div class="math display">\[
+\widehat y_i=y_{\mathbf w}(\mathbf x_i)\in(0,1).
+\]</div></p><p><strong>The prediction <span class="math inline">\(\widehat y_i\)</span> is now a soft output</strong>, replacing the earlier hard-label prediction. It always denotes the probability of class one; it is not necessarily the probability of the observed class. The probability assigned to the actual observed label is</p><p><div class="math display">\[
+q_i=P_{\mathbf w}(Y=y_i\mid\mathbf x_i)
+=\begin{cases}\widehat y_i,&amp;y_i=1,\\1-\widehat y_i,&amp;y_i=0.\end{cases}
+\]</div></p><p>This distinction matters: for a regime-I sample, a good model predicts a small <span class="math inline">\(\widehat y_i\)</span> but a large <span class="math inline">\(q_i\)</span>.</p></aside></section><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="probability-thought-experiment" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 20px; margin: 0px; width: 910px; height: auto;">A probability thought experiment</h2><ol class="discussion probability-questions" style="position: absolute; left: 240px; top: 187.866px; margin: 0px; width: 480px; height: auto; white-space: normal; text-align: left;" data-rwe-text-layout="auto-height"><li style="text-align: left;"><span style="text-align: left;"><span class="katex" style="text-align: left;"><span class="katex-mathml" style="text-align: left;"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mo>=</mo><mn>1</mn><mo>∣</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(Y=1\mid\mathbf x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true" style="text-align: left;"><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span style="margin-right: 0.1389em; text-align: left;" class="mord mathnormal">P</span><span class="mopen" style="text-align: left;">(</span><span style="margin-right: 0.2222em; text-align: left;" class="mord mathnormal">Y</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">=</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord" style="text-align: left;">1</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">∣</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord mathbf" style="text-align: left;">x</span><span class="mclose" style="text-align: left;">)</span></span></span></span></span>: well inside regime III?</li><li style="text-align: left;"><span style="text-align: left;"><span class="katex" style="text-align: left;"><span class="katex-mathml" style="text-align: left;"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mo>=</mo><mn>1</mn><mo>∣</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(Y=1\mid\mathbf x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true" style="text-align: left;"><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span style="margin-right: 0.1389em; text-align: left;" class="mord mathnormal">P</span><span class="mopen" style="text-align: left;">(</span><span style="margin-right: 0.2222em; text-align: left;" class="mord mathnormal">Y</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">=</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord" style="text-align: left;">1</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">∣</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord mathbf" style="text-align: left;">x</span><span class="mclose" style="text-align: left;">)</span></span></span></span></span>: well inside regime I?</li><li style="text-align: left;"><span style="text-align: left;"><span class="katex" style="text-align: left;"><span class="katex-mathml" style="text-align: left;"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mo>=</mo><mn>1</mn><mo>∣</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(Y=1\mid\mathbf x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true" style="text-align: left;"><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span style="margin-right: 0.1389em; text-align: left;" class="mord mathnormal">P</span><span class="mopen" style="text-align: left;">(</span><span style="margin-right: 0.2222em; text-align: left;" class="mord mathnormal">Y</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">=</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord" style="text-align: left;">1</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">∣</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord mathbf" style="text-align: left;">x</span><span class="mclose" style="text-align: left;">)</span></span></span></span></span>: close to the boundary?</li><li style="text-align: left;"><span style="text-align: left;"><span class="katex" style="text-align: left;"><span class="katex-mathml" style="text-align: left;"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mo>=</mo><mn>0</mn><mo>∣</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(Y=0\mid\mathbf x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true" style="text-align: left;"><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span style="margin-right: 0.1389em; text-align: left;" class="mord mathnormal">P</span><span class="mopen" style="text-align: left;">(</span><span style="margin-right: 0.2222em; text-align: left;" class="mord mathnormal">Y</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">=</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord" style="text-align: left;">0</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span><span class="mrel" style="text-align: left;">∣</span><span class="mspace" style="margin-right: 0.2778em; text-align: left;"></span></span><span class="base" style="text-align: left;"><span class="strut" style="height: 1em; vertical-align: -0.25em; text-align: left;"></span><span class="mord mathbf" style="text-align: left;">x</span><span class="mclose" style="text-align: left;">)</span></span></span></span></span>: well inside regime I?</li></ol><aside class="notes"><p>For an informative, well-fitted model, what values would we expect in the following situations?</p><ol type="1">
+<li><span class="math inline">\(P(Y=1\mid\mathbf x)\)</span> for a point well inside regime III?</li>
+<li><span class="math inline">\(P(Y=1\mid\mathbf x)\)</span> for a point well inside regime I?</li>
+<li><span class="math inline">\(P(Y=1\mid\mathbf x)\)</span> for a point close to the I–III decision boundary?</li>
+<li><span class="math inline">\(P(Y=0\mid\mathbf x)\)</span> for a point well inside regime I?</li>
+</ol><div class="callout callout-style-default callout-note callout-titled" title="Expected answers">
+<div aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout" class="callout-header d-flex align-content-center collapsed" data-bs-target=".callout-4-contents" data-bs-toggle="collapse">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Expected answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The first probability should be close to one, the second close to zero, the third around one half, and the fourth close to one. The two class probabilities satisfy <span class="math inline">\(P(Y=0\mid\mathbf x)=1-P(Y=1\mid\mathbf x)\)</span>.</p>
+<p>These are expectations for the intended model behavior. A fitted classifier can be wrong or overconfident; distance from an assumed physical boundary alone does not establish a calibrated probability. Our model’s equal-probability boundary will be defined by <span class="math inline">\(y_{\mathbf w}(\mathbf x)=1/2\)</span>.</p>
+</div>
+</div>
+</div></aside></section><section class="work-slide" id="sigmoid-model"><h2>Turning the linear score into probabilities</h2><aside class="notes"><p>We retain the augmented features and linear score, but replace the Heaviside function by the <strong>logistic sigmoid</strong>:</p><p><div class="math display">\[
+z_i=\mathbf w^{\mathsf T}\mathbf x_i,
+\qquad
+\sigma(z)=\frac{1}{1+\exp(-z)},
+\qquad
+\boxed{\widehat y_i=\sigma(z_i).}
+\]</div></p><p>The sigmoid maps any finite real score to a number strictly between zero and one. It is smooth, with</p><p><div class="math display">\[
+\sigma'(z)=\sigma(z)\bigl[1-\sigma(z)\bigr],
+\qquad \sigma(0)=\frac12.
+\]</div></p><p> </p><p>If a discrete decision is needed, we define a separate hard prediction</p><p><div class="math display">\[
+\widehat c_i=\begin{cases}0,&amp;\widehat y_i\leq\frac12,\\1,&amp;\widehat y_i&gt;\frac12.\end{cases}
+\]</div></p><p>Since the sigmoid is strictly increasing, <span class="math inline">\(\widehat y_i=1/2\)</span> is equivalent to <span class="math inline">\(z_i=0\)</span>. Thus this change preserves the family of linear boundaries in transformed feature space. What changes is the model output and its training objective. The log-odds are linear:</p><p><div class="math display">\[
+\log\!\left(\frac{\widehat y_i}{1-\widehat y_i}\right)=z_i=\mathbf w^{\mathsf T}\mathbf x_i.
+\]</div></p><p>Here and in the likelihood below, <span class="math inline">\(\log\)</span> denotes the natural logarithm; the feature transformation used <span class="math inline">\(\log_{10}\)</span>.</p></aside></section><section class="work-slide" id="likelihood"><h2>Maximum likelihood</h2><aside class="notes"><p>Using the Bernoulli model, we express the probability of either observed label in one formula:</p><p><div class="math display">\[
+q_i=\widehat y_i^{y_i}(1-\widehat y_i)^{1-y_i}.
+\]</div></p><p>For <span class="math inline">\(y_i=1\)</span>, only the <span class="math inline">\(\widehat y_i\)</span> factor remains; for <span class="math inline">\(y_i=0\)</span>, only <span class="math inline">\(1-\widehat y_i\)</span> remains. Under the modeling assumption that the labels are <strong>conditionally independent given their inputs and the weights</strong>, the joint conditional probability of the observed labels is</p><p><div class="math display">\[
+\begin{aligned}
+L(\mathbf w;\mathcal D)
+&amp;=P_{\mathbf w}(Y_1=y_1,\ldots,Y_N=y_N\mid\mathbf x_1,\ldots,\mathbf x_N)\\
+&amp;=\prod_{i=1}^{N}q_i
+=\prod_{i=1}^{N}
+\widehat y_i^{\,y_i}(1-\widehat y_i)^{1-y_i}.
+\end{aligned}
+\]</div></p><p>Viewed as a function of the unknown weights with the observations fixed, <span class="math inline">\(L\)</span> is the <strong>likelihood</strong>. Maximum-likelihood estimation seeks weights that maximize this likelihood. Equivalently, it seeks to assign high probability to the labels that were actually observed. The likelihood is not a probability distribution over the weights.</p></aside></section><section class="work-slide" id="log-likelihood"><h2>From likelihood to log-likelihood</h2><aside class="notes"><p>Directly multiplying many probabilities can produce extremely small numbers and eventually floating-point <strong>underflow</strong>. Its gradient also carries the potentially small product as a factor: <span class="math inline">\(\nabla L=L\nabla\log(L)\)</span>. For example, if every observed label receives probability <span class="math inline">\(1/2\)</span>, then <span class="math inline">\(L=2^{-N}\)</span>; with the 47 training samples this is already about <span class="math inline">\(7.1\times10^{-15}\)</span>. This particular value is representable in double precision, but the product becomes increasingly troublesome for larger datasets or poorly predicted labels.</p><p>The natural logarithm is strictly increasing, so maximizing <span class="math inline">\(L\)</span> and maximizing its <strong>log-likelihood</strong> have the same ordering of candidate weights:</p><p><div class="math display">\[
+\begin{aligned}
+\ell(\mathbf w;\mathcal D)
+&amp;=\log\!\left(L(\mathbf w;\mathcal D)\right)\\
+&amp;=\log\!\left(\prod_{i=1}^{N}
+\widehat y_i^{\,y_i}(1-\widehat y_i)^{1-y_i}\right)\\
+&amp;=\sum_{i=1}^{N}\log\!\left(
+\widehat y_i^{\,y_i}(1-\widehat y_i)^{1-y_i}\right)\\
+&amp;=\sum_{i=1}^{N}\left[
+\log\!\left(\widehat y_i^{\,y_i}\right)
++\log\!\left((1-\widehat y_i)^{1-y_i}\right)\right]\\
+&amp;=\sum_{i=1}^{N}\left[
+y_i\log(\widehat y_i)+(1-y_i)\log(1-\widehat y_i)\right].
+\end{aligned}
+\]</div></p><p>We first substitute the likelihood product. Using <span class="math inline">\(\log(ab)=\log(a)+\log(b)\)</span>, we turn the product over samples into a sum and split each sample’s two factors. Finally, <span class="math inline">\(\log(a^r)=r\log(a)\)</span> brings the label-dependent exponents in front of the logarithms. The sigmoid outputs satisfy <span class="math inline">\(0&lt;\widehat y_i&lt;1\)</span> for finite scores, so all logarithm arguments are positive.</p><p>This is evaluated as a sum; there is no need to form the probability product first. Changing sign turns maximization into minimization. Dividing by <span class="math inline">\(N\)</span> gives the mean <strong>binary cross entropy (BCE)</strong>:</p><p><div class="math display">\[
+\boxed{\mathcal L_{\mathrm{BCE}}(\mathbf w)
+=-\frac1N\sum_{i=1}^{N}
+\left[y_i\log(\widehat y_i)+(1-y_i)\log(1-\widehat y_i)\right]
+=-\frac1N\ell(\mathbf w;\mathcal D).}
+\]</div></p><p>An incorrect confident prediction is penalized strongly: for <span class="math inline">\(y_i=1\)</span>, the contribution <span class="math inline">\(-\log(\widehat y_i)\)</span> grows without bound as <span class="math inline">\(\widehat y_i\to0\)</span>. Unlike the hard error count, BCE also changes when the probability improves without crossing the classification threshold.</p><p>We can also examine the contribution of a single sample. The <strong>per-sample BCE</strong> is its negative log-probability under the model:</p><p><div class="math display">\[
+\ell_{\mathrm{BCE},i}
+=-\left[y_i\log(\widehat y_i)+(1-y_i)\log(1-\widehat y_i)\right],
+\qquad
+\mathcal L_{\mathrm{BCE}}=\frac1N\sum_{i=1}^{N}\ell_{\mathrm{BCE},i}.
+\]</div></p><p>This separates the penalty for one prediction from the averaging over the dataset. It also lets us derive the gradient for one sample first and then average the contributions, or use individual contributions in stochastic training.</p><p>For implementation, we can express the same loss directly through the linear score <span class="math inline">\(z_i\)</span>. Substituting <span class="math inline">\(\widehat y_i=\sigma(z_i)\)</span> gives</p><p><div class="math display">\[
+\log(\widehat y_i)=z_i-\log\!\left(1+\exp(z_i)\right),
+\qquad
+\log(1-\widehat y_i)=-\log\!\left(1+\exp(z_i)\right).
+\]</div></p><p>Hence,</p><p><div class="math display">\[
+\begin{aligned}
+\ell_{\mathrm{BCE},i}
+&amp;=-y_i\left[z_i-\log\!\left(1+\exp(z_i)\right)\right]
++(1-y_i)\log\!\left(1+\exp(z_i)\right)\\
+&amp;=\boxed{\log\!\left(1+\exp(z_i)\right)-y_i z_i.}
+\end{aligned}
+\]</div></p><p>The two expressions are mathematically equivalent, but the score-based form is helpful numerically. For a large positive score, the computed sigmoid can round to one. If the true label is zero, evaluating <span class="math inline">\(-\log(1-\widehat y_i)\)</span> then produces infinity even though the loss for a finite score is finite. For example, at <span class="math inline">\(z_i=100\)</span> and <span class="math inline">\(y_i=0\)</span>, the correct loss is approximately <span class="math inline">\(100\)</span>.</p><p>We therefore evaluate the score-based expression with a stable <strong>softplus</strong> or log-sum-exp implementation, such as <code>numpy.logaddexp(0, z_i) - y_i*z_i</code>. We still avoid computing <span class="math inline">\(\exp(z_i)\)</span> naively, since that can overflow for large positive scores. A stable equivalent form is</p><p><div class="math display">\[
+\ell_{\mathrm{BCE},i}
+=\max(0,z_i)-y_i z_i
++\log\!\left(1+\exp(-|z_i|)\right).
+\]</div></p><p>Here the exponential argument is never positive, so the exponential cannot overflow. In practice, a library’s BCE-with-logits function combines this stable loss evaluation with its gradient calculation.</p></aside></section><section class="work-slide" id="likelihood-landscapes"><h2>Likelihood and log-likelihood landscapes</h2><img alt="Likelihood and log-likelihood landscapes" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-logistic-landscapes-dark.svg"/><aside class="notes"><p>To visualize the three-parameter model on a plane, we hold the bias fixed at <span class="math inline">\(b=0\)</span> and vary <span class="math inline">\(w_1\)</span> and <span class="math inline">\(w_2\)</span> over <span class="math inline">\([-8,12]\)</span>. Both panels use the same 47 training samples and the same feature scaling: the left shows <span class="math inline">\(L\)</span> and the right shows <span class="math inline">\(\ell=\log(L)\)</span>. These are coefficient slices, rather than the full three-dimensional objective or the optimization path of the trained model, whose bias is free to change.</p><p> </p><p>Taking the logarithm changes the numerical scale and gradient magnitudes, but it does not introduce a different ordering of likelihood values or move their maxima. The two panels describe the same likelihood criterion under a monotone transformation; they are not two different statistical models. The negative log-likelihood, and hence BCE, provides a convex minimization objective for this linear model.</p></aside></section>
+<section class="work-slide" id="binary-cross-entropy"><h2>Binary cross entropy</h2><aside class="notes"><p>Directly multiplying many probabilities can produce extremely small numbers and eventually floating-point <strong>underflow</strong>. Its gradient also carries the potentially small product as a factor: <span class="math inline">\(\nabla L=L\nabla\log(L)\)</span>. For example, if every observed label receives probability <span class="math inline">\(1/2\)</span>, then <span class="math inline">\(L=2^{-N}\)</span>; with the 47 training samples this is already about <span class="math inline">\(7.1\times10^{-15}\)</span>. This particular value is representable in double precision, but the product becomes increasingly troublesome for larger datasets or poorly predicted labels.</p><p>The natural logarithm is strictly increasing, so maximizing <span class="math inline">\(L\)</span> and maximizing its <strong>log-likelihood</strong> have the same ordering of candidate weights:</p><p><div class="math display">\[
+\begin{aligned}
+\ell(\mathbf w;\mathcal D)
+&amp;=\log\!\left(L(\mathbf w;\mathcal D)\right)\\
+&amp;=\log\!\left(\prod_{i=1}^{N}
+\widehat y_i^{\,y_i}(1-\widehat y_i)^{1-y_i}\right)\\
+&amp;=\sum_{i=1}^{N}\log\!\left(
+\widehat y_i^{\,y_i}(1-\widehat y_i)^{1-y_i}\right)\\
+&amp;=\sum_{i=1}^{N}\left[
+\log\!\left(\widehat y_i^{\,y_i}\right)
++\log\!\left((1-\widehat y_i)^{1-y_i}\right)\right]\\
+&amp;=\sum_{i=1}^{N}\left[
+y_i\log(\widehat y_i)+(1-y_i)\log(1-\widehat y_i)\right].
+\end{aligned}
+\]</div></p><p>We first substitute the likelihood product. Using <span class="math inline">\(\log(ab)=\log(a)+\log(b)\)</span>, we turn the product over samples into a sum and split each sample’s two factors. Finally, <span class="math inline">\(\log(a^r)=r\log(a)\)</span> brings the label-dependent exponents in front of the logarithms. The sigmoid outputs satisfy <span class="math inline">\(0&lt;\widehat y_i&lt;1\)</span> for finite scores, so all logarithm arguments are positive.</p><p>This is evaluated as a sum; there is no need to form the probability product first. Changing sign turns maximization into minimization. Dividing by <span class="math inline">\(N\)</span> gives the mean <strong>binary cross entropy (BCE)</strong>:</p><p><div class="math display">\[
+\boxed{\mathcal L_{\mathrm{BCE}}(\mathbf w)
+=-\frac1N\sum_{i=1}^{N}
+\left[y_i\log(\widehat y_i)+(1-y_i)\log(1-\widehat y_i)\right]
+=-\frac1N\ell(\mathbf w;\mathcal D).}
+\]</div></p><p>An incorrect confident prediction is penalized strongly: for <span class="math inline">\(y_i=1\)</span>, the contribution <span class="math inline">\(-\log(\widehat y_i)\)</span> grows without bound as <span class="math inline">\(\widehat y_i\to0\)</span>. Unlike the hard error count, BCE also changes when the probability improves without crossing the classification threshold.</p><p>We can also examine the contribution of a single sample. The <strong>per-sample BCE</strong> is its negative log-probability under the model:</p><p><div class="math display">\[
+\ell_{\mathrm{BCE},i}
+=-\left[y_i\log(\widehat y_i)+(1-y_i)\log(1-\widehat y_i)\right],
+\qquad
+\mathcal L_{\mathrm{BCE}}=\frac1N\sum_{i=1}^{N}\ell_{\mathrm{BCE},i}.
+\]</div></p><p>This separates the penalty for one prediction from the averaging over the dataset. It also lets us derive the gradient for one sample first and then average the contributions, or use individual contributions in stochastic training.</p><p>For implementation, we can express the same loss directly through the linear score <span class="math inline">\(z_i\)</span>. Substituting <span class="math inline">\(\widehat y_i=\sigma(z_i)\)</span> gives</p><p><div class="math display">\[
+\log(\widehat y_i)=z_i-\log\!\left(1+\exp(z_i)\right),
+\qquad
+\log(1-\widehat y_i)=-\log\!\left(1+\exp(z_i)\right).
+\]</div></p><p>Hence,</p><p><div class="math display">\[
+\begin{aligned}
+\ell_{\mathrm{BCE},i}
+&amp;=-y_i\left[z_i-\log\!\left(1+\exp(z_i)\right)\right]
++(1-y_i)\log\!\left(1+\exp(z_i)\right)\\
+&amp;=\boxed{\log\!\left(1+\exp(z_i)\right)-y_i z_i.}
+\end{aligned}
+\]</div></p><p>The two expressions are mathematically equivalent, but the score-based form is helpful numerically. For a large positive score, the computed sigmoid can round to one. If the true label is zero, evaluating <span class="math inline">\(-\log(1-\widehat y_i)\)</span> then produces infinity even though the loss for a finite score is finite. For example, at <span class="math inline">\(z_i=100\)</span> and <span class="math inline">\(y_i=0\)</span>, the correct loss is approximately <span class="math inline">\(100\)</span>.</p><p>We therefore evaluate the score-based expression with a stable <strong>softplus</strong> or log-sum-exp implementation, such as <code>numpy.logaddexp(0, z_i) - y_i*z_i</code>. We still avoid computing <span class="math inline">\(\exp(z_i)\)</span> naively, since that can overflow for large positive scores. A stable equivalent form is</p><p><div class="math display">\[
+\ell_{\mathrm{BCE},i}
+=\max(0,z_i)-y_i z_i
++\log\!\left(1+\exp(-|z_i|)\right).
+\]</div></p><p>Here the exponential argument is never positive, so the exponential cannot overflow. In practice, a library’s BCE-with-logits function combines this stable loss evaluation with its gradient calculation.</p></aside></section><section class="work-slide" id="logistic-update"><h2>The logistic-regression update</h2><aside class="notes"><p>For one sample, differentiating with respect to the score gives</p><p><div class="math display">\[
+\begin{aligned}
+\frac{\partial\ell_{\mathrm{BCE},i}}{\partial z_i}
+&amp;=\left[-\frac{y_i}{\widehat y_i}+\frac{1-y_i}{1-\widehat y_i}\right]
+\widehat y_i(1-\widehat y_i)\\
+&amp;=\widehat y_i-y_i.
+\end{aligned}
+\]</div></p><p>Since <span class="math inline">\(\nabla_{\mathbf w}z_i=\mathbf x_i\)</span>,</p><p><div class="math display">\[
+\nabla_{\mathbf w}\mathcal L_{\mathrm{BCE}}
+=\frac1N\sum_{i=1}^{N}(\widehat y_i-y_i)\mathbf x_i,
+\]</div></p><p>and a full-batch gradient-descent step is</p><p><div class="math display">\[
+\boxed{\mathbf w^{(n+1)}=\mathbf w^{(n)}
++\frac{\eta}{N}\sum_{i=1}^{N}
+\bigl(y_i-\widehat y_i^{(n)}\bigr)\mathbf x_i.}
+\]</div></p><p>For a stochastic single-sample step, we omit the average and use just the selected sample’s contribution. The form resembles the perceptron update, but the residual now contains a <strong>smooth probability</strong>, rather than a hard class label. A correctly classified sample can still change the weights because its probability need not equal its observed label.</p><p>The linear log-odds model fitted by Bernoulli maximum likelihood is called <strong>logistic regression</strong>, even though its application here is classification. Its construction and likelihood derivation are described by <span class="citation" data-cites="nglogisticnotes">Ng (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-nglogisticnotes" role="doc-biblioref">n.d.</a>)</span>. In linear logistic regression, BCE is convex in the weights. A suitable step size can produce decreasing BCE, but an excessively large learning rate can still cause poor optimization behavior. Convexity does not by itself guarantee a finite minimizer.</p></aside></section><section class="work-slide" id="logistic-training"><h2>Predicted probabilities and the decision boundary</h2><img alt="Predicted probabilities and the decision boundary" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-logistic-probabilities-dark.svg"/><aside class="notes"><p>We use the same 47 training samples and scaling as in the perceptron example. Starting from <span class="math inline">\(\mathbf w=\mathbf0\)</span>, we perform <strong>2000 full-batch gradient steps</strong> with learning rate <span class="math inline">\(\eta=1\)</span> on <strong>mean BCE</strong>. One plotted iteration is now a full-batch step, rather than a single sample presentation. The final weights are approximately <span class="math inline">\((18.1248,\,2.1303,\,5.6672)^{\mathsf T}\)</span> and mean BCE is <span class="math inline">\(0.07524\)</span>. The hard classification error first reaches zero at step <strong>302</strong> and remains zero at the end; BCE continues to decrease after that point. The fixed budget defines the displayed model, not a claim of convergence to finite maximum-likelihood weights.</p><p> </p><p>The solid isoline gives the discrete decision boundary. Other isolines show how gradually or sharply the fitted probability changes away from it. The color field shows probabilities from the fitted model; this training plot alone does not establish that they are calibrated probabilities for new physical cases.</p><div class="callout callout-style-default callout-note callout-titled" title="A finite training run is not a finite maximum-likelihood solution">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>A finite training run is not a finite maximum-likelihood solution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The 47 transformed training samples are linearly separable. Along a separating weight direction, increasing the weight magnitude makes the observed-label probabilities approach one. The likelihood approaches its supremum and BCE approaches zero, while the weights grow without a finite maximizing value. Thus <strong>unregularized maximum-likelihood weights do not exist as a finite optimum for this dataset</strong>, even if the training classification error is already zero.</p>
+<p>Our displayed weights are the result of a stated finite iteration budget. Regularization or a suitable prior can control the coefficient magnitude; these require an explicit additional modeling choice. Separation in logistic regression is discussed by <span class="citation" data-cites="shalizi2020logistic">Shalizi (<a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/bubble_path_classification.html#ref-shalizi2020logistic" role="doc-biblioref">2020</a>)</span>. Smooth training therefore improves the optimization formulation but does not remove every limitation of the model or the data.</p>
+</div>
+</div></aside></section></section>
+<section id="nonlinear-classification"><section class="work-slide" style="display: block; --rwe-canvas-width: 960px; --rwe-canvas-height: 700px; top: 0px !important; left: 0px !important; width: 960px !important; height: 700px !important; margin: 0px; padding: 0px; box-sizing: border-box;" id="union-labels" data-rwe-canvas="true" data-rwe-canvas-width="960" data-rwe-canvas-height="700"><h2 style="position: absolute; left: 25px; top: 20px; margin: 0px; width: 910px; height: auto;">Regime I versus regimes II and III</h2><aside class="notes"><p>We next enlarge the positive class. The task is still <strong>binary classification</strong>, although three physical regimes supply the observations:</p><p><div class="math display">\[
+y_i^{\cup}=\begin{cases}
+0,&amp;\text{regime I},\\
+1,&amp;\text{regime II or III}.
+\end{cases}
+\]</div></p><p>This gives <span class="math inline">\(M=59\)</span> samples: 20 from regime I, 12 from regime II, and 27 from regime III. Regimes IV and V are excluded. The positive label now means either skirted, non-oscillatory bubbles or bubbles with oscillatory paths; it does not distinguish those two behaviors.</p><p>For these 59 transformed samples, an independent geometric check finds an intersection between the convex hull of regime I and that of regimes II and III together. Consequently, the classes cannot all be separated by one affine decision boundary. This conclusion uses the sample geometry, rather than a visual impression of the map or an optimization run that happened to fail.</p><p>For this enlarged training demonstration, we fit one common logarithmic min–max transformation on the 59 training samples. Both component models and the combined model use these <strong>same transformed coordinates</strong>. The I–III component solves the same classification task as before, but is fitted again in the common representation; coefficients from differently scaled feature spaces must not be combined without conversion.</p></aside>
+<!-- Imported from bubble_path_classification.html slide 8 -->
+<img alt="Rising-bubble regimes" class="lecture-figure" data-rwe-kind="image" src="editor-assets/071d5cf542219ea778e3.svg" style="position: absolute; left: 30px; top: 140px; margin: 0px; width: 900px; height: 490px;">
+</section><section class="work-slide" id="component-models"><h2>Two component models and a learned combination</h2><aside class="notes"><p>We first construct two logistic models:</p><p><div class="math display">\[
+h_1(\mathbf x)=\sigma(\bigl(\mathbf w_1^{(1)}\bigr)^{\mathsf T}\mathbf x)
+\quad\text{trained on regimes I and III},
+\]</div> <div class="math display">\[
+h_2(\mathbf x)=\sigma(\bigl(\mathbf w_2^{(1)}\bigr)^{\mathsf T}\mathbf x)
+\quad\text{trained on regimes I and II}.
+\]</div></p><p>Here <span class="math inline">\(\mathbf w_j^{(1)}=[w_{j1}^{(1)},w_{j2}^{(1)},b_j^{(1)}]^{\mathsf T}\)</span> multiplies <span class="math inline">\(\mathbf x=[\widetilde{Ga},\widetilde{Eo},1]^{\mathsf T}\)</span>. The constant-one input supplies the hidden-neuron bias. At the next layer, <span class="math inline">\([h_1,h_2,1]^{\mathsf T}\)</span> similarly supplies the output bias.</p><p>Both use label zero for regime I. The first uses label one for regime III; the second uses label one for regime II. Each component has a straight <span class="math inline">\(h_j=1/2\)</span> boundary in the transformed physical feature plane. Its predictions in the third regime, which was excluded from that component’s training, have not been independently established.</p><p>We use the two <strong>sigmoid outputs</strong> as new features:</p><p><div class="math display">\[
+\boldsymbol\phi(\mathbf x)=
+\begin{bmatrix}h_1(\mathbf x)\\h_2(\mathbf x)\\1\end{bmatrix},
+\qquad
+\mathbf w^{(2)}=
+\begin{bmatrix}w_1^{(2)}\\w_2^{(2)}\\b^{(2)}\end{bmatrix}.
+\]</div></p><p>The combined probability model is</p><p><div class="math display">\[
+\boxed{y_\theta(\mathbf x)
+=\sigma\!\left(\bigl(\mathbf w^{(2)}\bigr)^{\mathsf T}\boldsymbol\phi(\mathbf x)\right)
+=\sigma\!\left(w_1^{(2)}h_1(\mathbf x)+w_2^{(2)}h_2(\mathbf x)+b^{(2)}\right).}
+\]</div></p><p>Here <span class="math inline">\(\theta\)</span> collects the two hidden weight vectors and the output weight vector. For sample <span class="math inline">\(i\)</span>, the combined prediction is <span class="math inline">\(\widehat y_i^{\cup}=y_\theta(\mathbf x_i)\)</span>, approximating <span class="math inline">\(P(Y^{\cup}=1\mid\mathbf x_i)\)</span>. This follows the same model-versus-prediction notation as before; the superscript <span class="math inline">\(\cup\)</span> identifies the enlarged positive class.</p><p>The outer model has the same form as logistic regression, but its input features are now the outputs of two learned models. The coefficients determine how those features contribute to the combined decision; they need not define an average or sum to one.</p><p>The intermediate sigmoid functions are essential. Combining only the raw linear scores would give</p><p><div class="math display">\[
+w_1^{(2)}\bigl(\mathbf w_1^{(1)}\bigr)^{\mathsf T}\mathbf x+
+w_2^{(2)}\bigl(\mathbf w_2^{(1)}\bigr)^{\mathsf T}\mathbf x+b^{(2)},
+\]</div></p><p>which is still affine in the physical features. Applying a sigmoid only at the very end would leave a linear equal-probability boundary. With the nonlinear intermediate features <span class="math inline">\(h_1\)</span> and <span class="math inline">\(h_2\)</span>, the equation</p><p><div class="math display">\[
+w_1^{(2)}h_1(\mathbf x)+w_2^{(2)}h_2(\mathbf x)+b^{(2)}=0
+\]</div></p><p>can instead describe a <strong>nonlinear boundary</strong> in <span class="math inline">\((\widetilde{Ga},\widetilde{Eo})\)</span>.</p></aside></section><section class="work-slide" id="combined-models"><h2>Combining two logistic models</h2><img alt="Two sigmoid component models provide features for the combined classifier" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-mlp-components-dark.svg"/><aside class="notes"><p>The graph exposes a familiar structure:</p><ul>
+<li>the <strong>input layer</strong> supplies <span class="math inline">\(\widetilde{Ga}\)</span> and <span class="math inline">\(\widetilde{Eo}\)</span>;</li>
+<li>two <strong>hidden neurons</strong> compute <span class="math inline">\(h_1\)</span> and <span class="math inline">\(h_2\)</span>, each from an affine score followed by a sigmoid;</li>
+<li>one <strong>output neuron</strong> computes <span class="math inline">\(y_\theta\)</span> from the hidden activations and its bias.</li>
+</ul><p> </p><p>This is a <strong>multilayer perceptron (MLP)</strong> with one hidden layer. The constant-one entries are bookkeeping for the three biases, rather than additional measured inputs. There are nine trainable parameters: three in each component and three in the output model. Despite its name, an MLP need not use the hard Heaviside function or the perceptron learning rule.</p><p>The physical interpretation assigned to each hidden unit here comes from deliberately training it on a particular two-regime task. Hidden neurons in a generally trained MLP do not automatically acquire such an interpretation.</p></aside></section><section class="work-slide" id="combined-mlp"><h2>A multilayer perceptron</h2><img alt="Two scaled inputs, two sigmoid hidden units and one output, with explicit bias units" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-mlp-network-dark.svg"/><aside class="notes"><p>The graph exposes a familiar structure:</p><ul>
+<li>the <strong>input layer</strong> supplies <span class="math inline">\(\widetilde{Ga}\)</span> and <span class="math inline">\(\widetilde{Eo}\)</span>;</li>
+<li>two <strong>hidden neurons</strong> compute <span class="math inline">\(h_1\)</span> and <span class="math inline">\(h_2\)</span>, each from an affine score followed by a sigmoid;</li>
+<li>one <strong>output neuron</strong> computes <span class="math inline">\(y_\theta\)</span> from the hidden activations and its bias.</li>
+</ul><p> </p><p>This is a <strong>multilayer perceptron (MLP)</strong> with one hidden layer. The constant-one entries are bookkeeping for the three biases, rather than additional measured inputs. There are nine trainable parameters: three in each component and three in the output model. Despite its name, an MLP need not use the hard Heaviside function or the perceptron learning rule.</p><p>The physical interpretation assigned to each hidden unit here comes from deliberately training it on a particular two-regime task. Hidden neurons in a generally trained MLP do not automatically acquire such an interpretation.</p></aside></section><section class="work-slide" id="combined-probabilities"><h2>Component and combined probability maps</h2><img alt="Component and combined probability maps" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-mlp-probabilities-dark.svg"/><aside class="notes"><p>For each component, we use zero initial weights, learning rate <span class="math inline">\(\eta=1\)</span>, and <strong>2000 full-batch steps</strong> minimizing mean BCE on that component’s training subset. We freeze both components and train the output weights from zero for another <strong>2000 full-batch steps</strong> on all 59 samples, again with <span class="math inline">\(\eta=1\)</span>. No joint fine-tuning is used in these plots. Thus the construction retains the two component tasks as an explicit, interpretable hidden layer.</p><p> </p><p>We compare the straight equal-probability boundaries of the two components with the combined model’s solid decision boundary. The color fields show the model probabilities as well as the hard decision boundaries. Each component panel shows the samples used to fit that component; the final panel shows the enlarged binary dataset.</p><p>In this staged run, both component classifiers have zero training errors on their respective subsets. Their mean BCE values are approximately <span class="math inline">\(0.07662\)</span> for I–III and <span class="math inline">\(0.04356\)</span> for I–II. The combined classifier has <strong>zero errors on all 59 training samples</strong>, with mean BCE approximately <span class="math inline">\(0.02865\)</span>. Its output weights are approximately <span class="math inline">\(\mathbf w^{(2)}=(12.6122,\,11.1134,\,-6.3421)^{\mathsf T}\)</span>. These values describe a finite optimization run, not exact population probabilities or an identified physical regime boundary.</p><p>The combination remains a model of this restricted dataset. It does not classify breakup regimes IV and V, and training-set agreement does not establish generalization or probability calibration.</p></aside></section></section>
+<section id="multiclass-classification"><section class="work-slide" id="categorical-labels"><h2>From two outcomes to K classes</h2><aside class="notes"><p>The union model still has only two outcomes. We now return to all five physical regimes and predict a separate probability for each. More generally, for <span class="math inline">\(K\geq2\)</span>, we define the categorical label as</p><p><div class="math display">\[
+y_i\in\{1,2,\ldots,K\}.
+\]</div></p><p>For this subsection, we use the integer labels <span class="math inline">\(1,\ldots,5\)</span> for regimes I, II, III, IV, and V. These category identifiers do not impose a physical ordering or a distance between regimes. They replace the earlier binary label convention.</p></aside></section><section class="work-slide" id="one-hot"><h2>One-hot encoding</h2><aside class="notes"><p>Why do we change the label representation? Our classifier will produce <strong>one probability for each of the <span class="math inline">\(K\)</span> classes</strong>. We therefore want a target with the same structure: one entry per class, indicating which outcome was observed. One-hot encoding provides exactly this representation. The observed class receives an entry of one, and all other entries are zero.</p><p>Treating the category number as a scalar regression target would introduce an artificial numerical meaning. For example, squared error would penalize predicting class 5 for a class-1 sample more strongly than predicting class 2, simply because the identifiers are farther apart. Our regime labels do not justify that ordering or distance. With one-hot targets, every class has its own entry, and categorical cross entropy selects the probability assigned to the observed class.</p><p>One-hot encoding is thus useful for expressing the model and loss in a common vector notation. It is <strong>not necessary to store the labels as vectors</strong>: many implementations accept integer class labels and select the corresponding probability directly, giving the same categorical cross entropy. We use the explicit vectors here to make the connection between targets, predicted probabilities, and the loss visible.</p><p>We define the encoding function for category <span class="math inline">\(k\)</span> by</p><p><div class="math display">\[
+e_k(y)=\begin{cases}1,&amp;y=k,\\0,&amp;y\neq k,\end{cases}
+\qquad k=1,\ldots,K.
+\]</div></p><p>The corresponding target vector is</p><p><div class="math display">\[
+\boxed{\mathbf y_i=
+\begin{bmatrix}e_1(y_i)\\e_2(y_i)\\\vdots\\e_K(y_i)\end{bmatrix}
+\in\{0,1\}^{K},
+\qquad\sum_{k=1}^{K}y_{ik}=1.}
+\]</div></p><p>Exactly one entry equals one: the entry identifying the observed category. For <span class="math inline">\(K=5\)</span> and <span class="math inline">\(y_i=4\)</span>,</p><p><div class="math display">\[
+\mathbf y_i=\begin{bmatrix}0\\0\\0\\1\\0\end{bmatrix}.
+\]</div></p><p>Before continuing, we distinguish a valid encoding from an encoding of the correct category:</p><table class="caption-top table">
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Candidate target for a sample with <span class="math inline">\(y_i=4\)</span></th>
+<th style="text-align: left;">Valid one-hot vector?</th>
+<th style="text-align: left;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,0,0,1,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Correctly encodes class 4.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0,1,0,0,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Encodes class 2; incorrect for this sample.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,0,1,1,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Selects two mutually exclusive categories.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0,0,0,0,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Does not select a category.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0.1,0.1,0.1,0.6,0.1)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">A valid probability vector, but not a one-hot target.</td>
+</tr>
+</tbody>
+</table></aside></section><section class="work-slide" id="one-hot-examples"><h2>Which target vectors are valid?</h2><div class="vector-example-content"><p class="vector-example-context">For \(K=5\) and the observed class \(y_i=4\):</p><ol class="vector-candidate-list"><li><span class="math inline">\((0,0,0,1,0)^{\mathsf T}\)</span></li><li><span class="math inline">\((0,1,0,0,0)^{\mathsf T}\)</span></li><li><span class="math inline">\((0,0,1,1,0)^{\mathsf T}\)</span></li><li><span class="math inline">\((0,0,0,0,0)^{\mathsf T}\)</span></li><li><span class="math inline">\((0.1,0.1,0.1,0.6,0.1)^{\mathsf T}\)</span></li></ol></div><aside class="notes"><p>Why do we change the label representation? Our classifier will produce <strong>one probability for each of the <span class="math inline">\(K\)</span> classes</strong>. We therefore want a target with the same structure: one entry per class, indicating which outcome was observed. One-hot encoding provides exactly this representation. The observed class receives an entry of one, and all other entries are zero.</p><p>Treating the category number as a scalar regression target would introduce an artificial numerical meaning. For example, squared error would penalize predicting class 5 for a class-1 sample more strongly than predicting class 2, simply because the identifiers are farther apart. Our regime labels do not justify that ordering or distance. With one-hot targets, every class has its own entry, and categorical cross entropy selects the probability assigned to the observed class.</p><p>One-hot encoding is thus useful for expressing the model and loss in a common vector notation. It is <strong>not necessary to store the labels as vectors</strong>: many implementations accept integer class labels and select the corresponding probability directly, giving the same categorical cross entropy. We use the explicit vectors here to make the connection between targets, predicted probabilities, and the loss visible.</p><p>We define the encoding function for category <span class="math inline">\(k\)</span> by</p><p><div class="math display">\[
+e_k(y)=\begin{cases}1,&amp;y=k,\\0,&amp;y\neq k,\end{cases}
+\qquad k=1,\ldots,K.
+\]</div></p><p>The corresponding target vector is</p><p><div class="math display">\[
+\boxed{\mathbf y_i=
+\begin{bmatrix}e_1(y_i)\\e_2(y_i)\\\vdots\\e_K(y_i)\end{bmatrix}
+\in\{0,1\}^{K},
+\qquad\sum_{k=1}^{K}y_{ik}=1.}
+\]</div></p><p>Exactly one entry equals one: the entry identifying the observed category. For <span class="math inline">\(K=5\)</span> and <span class="math inline">\(y_i=4\)</span>,</p><p><div class="math display">\[
+\mathbf y_i=\begin{bmatrix}0\\0\\0\\1\\0\end{bmatrix}.
+\]</div></p><p>Before continuing, we distinguish a valid encoding from an encoding of the correct category:</p><table class="caption-top table">
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Candidate target for a sample with <span class="math inline">\(y_i=4\)</span></th>
+<th style="text-align: left;">Valid one-hot vector?</th>
+<th style="text-align: left;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,0,0,1,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Correctly encodes class 4.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0,1,0,0,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Encodes class 2; incorrect for this sample.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0,0,1,1,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Selects two mutually exclusive categories.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0,0,0,0,0)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Does not select a category.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0.1,0.1,0.1,0.6,0.1)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">A valid probability vector, but not a one-hot target.</td>
+</tr>
+</tbody>
+</table></aside></section><section class="work-slide" id="softmax-model"><h2>The MLP with a softmax output layer</h2><aside class="notes"><p>We use the layer notation from <a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/../notebooks/ml_intro.html#the-multilayer-perceptron">the previous lecture</a>. We write biases explicitly again, as in the previous lecture. We keep the notation <span class="math inline">\(\mathbf x_i\)</span> for the feature vector, but now include only the two scaled physical features; the constant-one component is no longer needed because the biases appear separately:</p><p><div class="math display">\[
+\mathbf x_i=\begin{bmatrix}\widetilde{Ga}_i\\\widetilde{Eo}_i\end{bmatrix},
+\qquad\mathbf h_i^{(0)}=\mathbf x_i.
+\]</div></p><p>The hidden layers retain the same form:</p><p><div class="math display">\[
+\mathbf h_i^{(\ell)}
+=\phi_\ell\!\left(W^{(\ell)}\mathbf h_i^{(\ell-1)}+\mathbf b^{(\ell)}\right),
+\qquad\ell=1,\ldots,L-1.
+\]</div></p><p>The final affine layer produces <strong><span class="math inline">\(K\)</span> logits</strong>, one score per category:</p><p><div class="math display">\[
+\mathbf z_i=W^{(L)}\mathbf h_i^{(L-1)}+\mathbf b^{(L)}\in\mathbb R^{K}.
+\]</div></p><p>We replace the scalar output sigmoid by <strong>softmax</strong>:</p><p><div class="math display">\[
+\boxed{\widehat{\mathbf y}_i
+=\mathbf y_\theta(\mathbf x_i)
+=\operatorname{softmax}(\mathbf z_i),
+\qquad
+\widehat y_{ik}=\frac{\exp(z_{ik})}{\sum_{j=1}^{K}\exp(z_{ij})}.}
+\]</div></p><p>The vector <span class="math inline">\(\theta\)</span> collects all trainable weights and biases. Each output component models <span class="math inline">\(P_\theta(Y=k\mid\mathbf x_i)\)</span>. Softmax has the following properties:</p><ul>
+<li>every component lies strictly between zero and one for finite logits;</li>
+<li>the components sum to one, so they form a categorical probability vector;</li>
+<li>adding the same constant to all logits leaves the probabilities unchanged;</li>
+<li>the largest logit also has the largest probability.</li>
+</ul><p>For <span class="math inline">\(K=2\)</span>, <span class="math inline">\(\operatorname{softmax}(\mathbf z)_2=\sigma(z_2-z_1)\)</span>, connecting softmax to binary logistic regression. For numerical stability, we subtract <span class="math inline">\(m_i=\max_j z_{ij}\)</span> before exponentiating:</p><p><div class="math display">\[
+\widehat y_{ik}
+=\frac{\exp(z_{ik}-m_i)}{\sum_j\exp(z_{ij}-m_i)}.
+\]</div></p><p>Using <span class="math inline">\(K\)</span> independent sigmoids would not enforce a sum of one. That would be a different output model, appropriate to some multi-label problems, rather than this mutually exclusive regime classification.</p></aside></section><section class="work-slide" id="prediction-vectors"><h2>Which probability predictions are valid?</h2><div class="vector-example-content"><p class="vector-example-context">For the true target \(\mathbf y_i=(0,0,0,1,0)^{\mathsf T}\):</p><ol class="vector-candidate-list"><li><span class="math inline">\((0.01,0.02,0.02,0.93,0.02)^{\mathsf T}\)</span></li><li><span class="math inline">\((0.04,0.80,0.04,0.08,0.04)^{\mathsf T}\)</span></li><li><span class="math inline">\((0.20,0.20,0.20,0.20,0.20)^{\mathsf T}\)</span></li><li><span class="math inline">\((0.10,0.10,0.10,0.90,0.10)^{\mathsf T}\)</span></li><li><span class="math inline">\((0.10,-0.10,0.10,0.80,0.10)^{\mathsf T}\)</span></li></ol></div><aside class="notes"><p>For a true class-4 target <span class="math inline">\(\mathbf y_i=(0,0,0,1,0)^{\mathsf T}\)</span>, we compare:</p><table class="caption-top table">
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Candidate prediction <span class="math inline">\(\widehat{\mathbf y}_i\)</span></th>
+<th style="text-align: left;">Valid probability vector?</th>
+<th style="text-align: left;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0.01,0.02,0.02,0.93,0.02)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">High probability for the observed class.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0.04,0.80,0.04,0.08,0.04)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Confident prediction of the wrong class.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0.20,0.20,0.20,0.20,0.20)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">No preference among classes; all entries tie.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\((0.10,0.10,0.10,0.90,0.10)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Components sum to 1.3.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\((0.10,-0.10,0.10,0.80,0.10)^{\mathsf T}\)</span></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Contains a negative probability.</td>
+</tr>
+</tbody>
+</table><p>The model’s primary output is the probability vector. We convert it to a categorical prediction using</p><p><div class="math display">\[
+\boxed{\widehat c_i=\operatorname*{arg\,max}_{k\in\{1,\ldots,K\}}\widehat y_{ik}.}
+\]</div></p><p>We use a deterministic convention for ties: our implementation chooses the lowest category index among tied maxima. The decision-region plots use this <strong>argmax rule</strong>, rather than thresholding each class independently at probability one half. With five classes, a class can win with probability below one half. Boundaries occur where the maximizing category changes, with the tied categories at least as probable as all others.</p></aside></section><section class="work-slide" id="categorical-cross-entropy"><h2>Categorical cross entropy</h2><aside class="notes"><p>The probability assigned to an observed label is</p><p><div class="math display">\[
+P_\theta(Y=y_i\mid\mathbf x_i)
+=\prod_{k=1}^{K}\widehat y_{ik}^{\,y_{ik}}.
+\]</div></p><p>Only the component selected by the one-hot target contributes. Under the same conditional-independence model as before, maximizing the product over training samples is equivalent to minimizing the mean <strong>categorical cross entropy</strong>:</p><p><div class="math display">\[
+\boxed{\mathcal L_{\mathrm{train}}(\theta)
+=-\frac{1}{N_{\mathrm{train}}}
+\sum_{i\in\mathcal T}\sum_{k=1}^{K}y_{ik}\log(\widehat y_{ik})
+=-\frac{1}{N_{\mathrm{train}}}\sum_{i\in\mathcal T}\log(\widehat y_{i,y_i}).}
+\]</div></p><p>With <span class="math inline">\(\ell_{\mathrm{CE},i}=-\sum_{k=1}^{K}y_{ik}\log(\widehat y_{ik})\)</span>, softmax and cross entropy give the particularly simple per-sample logit derivative</p><p><div class="math display">\[
+\nabla_{\mathbf z_i}\ell_{\mathrm{CE},i}=\widehat{\mathbf y}_i-\mathbf y_i.
+\]</div></p><p>Backpropagation applies the chain rule through the remaining layers, and a gradient-based optimizer updates <span class="math inline">\(\theta\)</span>. Stable implementations combine log-softmax and cross entropy, using log-sum-exp rather than taking the logarithm of probabilities that may have rounded to zero.</p></aside></section><section class="work-slide" id="training-snapshots"><h2>One training trajectory, several snapshots</h2><img alt="One training trajectory, several snapshots" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-multiclass-snapshots-dark.svg"/><aside class="notes"><p>To examine learning and possible overfitting, we use <strong>one fixed training–validation split</strong>, one initialization, and one uninterrupted training trajectory. We record both losses and save model states at selected epochs. A snapshot comparison then changes only how far the same training run has progressed; it does not mix independently trained models or different data splits.</p><p>The worked example uses all 104 digitized observations, stratified by class into <strong>84 training</strong> and <strong>20 validation</strong> samples. The respective training/validation counts are I: 16/4, II: 10/2, III: 22/5, IV: 13/3, and V: 23/6. The split and initialization use separate random generators with seed 42. We fit a <strong>2–32–32–5 MLP</strong> with two hyperbolic-tangent hidden layers, <span class="math inline">\(\phi(z)=\tanh(z)\)</span>, and a softmax output. We train for <strong>10,000 full-batch epochs</strong> using Adam, a gradient-based optimizer, with learning rate <span class="math inline">\(0.01\)</span>, momentum coefficients <span class="math inline">\(0.9\)</span> and <span class="math inline">\(0.999\)</span>, and numerical offset <span class="math inline">\(10^{-8}\)</span>. In this full-batch run, one epoch is one parameter update. The saved states include predefined checkpoints and the validation-selected checkpoint.</p><p>Only training examples contribute to the gradient. Validation examples are excluded from weight updates and from fitting the logarithmic min–max scaling. The same training-fitted scaler is reused for validation; some validation features may consequently lie outside <span class="math inline">\([-1,1]\)</span>. There is <strong>no test set</strong> in this small-data demonstration.</p><p>We compute the validation loss using the same cross-entropy definition, averaged over validation samples. It monitors predictions on observations that were not used in the parameter updates. If training loss continues to fall while validation loss rises, that is evidence of <strong>overfitting in this particular split</strong>. Classification error and cross entropy can behave differently: a model can become more confidently wrong on a validation point without changing its predicted category.</p><p> </p><p>The three displayed snapshots are <strong>epoch 10</strong>, the <strong>best-validation checkpoint at epoch 57</strong>, and <strong>epoch 10,000</strong>. These epochs were chosen to illustrate early learning, the validation minimum, and late fitting along the recorded trajectory. At these snapshots, training cross entropy is approximately <span class="math inline">\(0.6966\)</span>, <span class="math inline">\(0.2487\)</span>, and <span class="math inline">\(7.23\times10^{-7}\)</span>, while validation cross entropy is <span class="math inline">\(0.7331\)</span>, <span class="math inline">\(0.3835\)</span>, and <span class="math inline">\(2.4449\)</span>. Training errors decrease from 22 to 8 to 0 out of 84 samples. Validation errors are 4, 2, and 2 out of 20. The late model thus has the same number of validation mistakes as the selected model, yet much worse validation cross entropy: the probability assignments, not only the argmax labels, matter.</p><p>Changes in regions far from observed markers should be interpreted cautiously. The decision map includes feature combinations unsupported by nearby training data; a visually smooth or elaborate boundary is not by itself evidence of physical accuracy.</p></aside></section><section class="work-slide" id="early-stopping"><h2>Validation-based early stopping</h2><img alt="Validation-based early stopping" class="lecture-figure" data-rwe-kind="image" src="public/media/lecture_04/bubble-multiclass-early-stopping-dark.svg"/><aside class="notes"><p>Early stopping uses validation performance to select a model before further fitting degrades that performance. We keep a saved copy of the parameters when the validation loss improves. If it fails to improve sufficiently for a specified number of epochs, we stop and <strong>restore the selected checkpoint</strong>, rather than returning the weights from the last epoch.</p><p>For this example, an improvement means a <strong>strictly smaller validation cross entropy</strong>, with no additional minimum-change threshold. With <strong>patience 500</strong>, the last improvement at epoch 57 is followed by 500 epochs without a new minimum. Early stopping would therefore trigger at <strong>epoch 557</strong> and restore <strong>epoch 57</strong>. The restored model has training/validation cross entropy approximately <span class="math inline">\(0.2487/0.3835\)</span>, and 8/2 classification errors on the 84/20 samples. The figure distinguishes the selected checkpoint from the later stopping trigger.</p><p> </p><p>The long trajectory is intentionally continued beyond the stopping point to make the later behavior visible. An operational early-stopping run would terminate at the stated trigger and restore its stored checkpoint. This reduces unnecessary fitting in this example; it does not guarantee that all overfitting is prevented.</p><p>Validation data are now part of model selection. Their score is not an independent final test score, and a small validation set gives a noisy estimate. Repeatedly changing the architecture or other choices to improve this same validation score can also overfit the validation set. Here the aim is to make the relationship between training duration, validation loss, and the changing decision boundary visible with a reproducible example.</p></aside></section>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="plugin/chalkboard/style.css">
-	<link rel="stylesheet" href="plugin/customcontrols/style.css">
-	<link rel="stylesheet" href="dist/reset.css">
-	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
-	<link rel="stylesheet" href="dist/plugin/highlight/monokai.css">
-</head>
-
-<body>
-
-	<div class="reveal">
-
-		<!-- Any section element inside of this container is displayed as a slide -->
-		<div class="slides">
-			<section>
-				<h3><span style="color: red;">Surrogate models for discrete predictions</span></h3>
-				<p>
-					Andre Weiner<br>
-					<small>TU Dresden, Institute of fluid mechanics, <a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm">PSM</a></small>
-					<small>
-						<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
-								alt="Creative Commons License" style="border-width:0"
-								src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />These slides and most
-						of the linked resources are licensed under a<br /> <a rel="license"
-							href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
-							International License</a>.
-					</small>
-				</p>
-
-				<style>
-					.row_logo {
-						display: table;
-					}
-
-					.column_logo {
-						display: table-cell;
-						vertical-align: middle;
-						text-align: center;
-						width: 50%;
-					}
-
-					.content_logo {
-						display: inline-block;
-					}
-				</style>
-				<div class="row_logo">
-					<div class="column_logo">
-						<div class="content_logo">
-							<img src="images/logos/TUD_white.png" alt="tud_logo"
-								style="background:none; border:none; box-shadow:none;">
-						</div>
-					</div>
-					<div class="column_logo">
-						<div class="content_logo">
-							<table>
-								<tr>
-									<td style="border: 0; padding-right: 5px;">&#9993;</th>
-									<td style="border: 0; padding-right: 20px;"><a
-											href="mailto:andre.weiner@tu-dresden.de">Mail</a></th>
-									<td style="border: 0; padding-right: 5px;">&#9741;</td>
-									<td style="border: 0; padding-right: 0px;"><a
-											href="https://www.linkedin.com/in/andre-weiner-a79752133/">LinkedIn</a></td>
-								</tr>
-								<tr>
-									<td style="border: 0; padding-right: 5px;">&#9997;</td>
-									<td style="border: 0; padding-right: 20px;"><a href="https://ml-cfd.com/">Blog</a>
-									</td>
-									<td style="border: 0; padding-right: 5px;">&#10026;</td>
-									<td style="border: 0; padding-right: 0px;"><a
-											href="https://github.com/AndreWeiner">Github</a></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<section>
-				<h2>Last lecture</h2>
-				<p>Deep learning</p>
-					<ul>
-						<li>test case overview</li>
-						<li>simple feed-forward networks</li>
-						<li>preparing the datasets</li>
-						<li>generic training loop</li>
-						<li>more building blocks</li>
-						<li>dealing with uncertainty</li>
-						<li>visualizing prediction errors</li>
-					</ul>
-			</section>
-			<section>
-				<h2>Outline</h2>
-				<p>Predicting the stability regime of rising bubbles</p>
-				<ul>
-					<li>Scale-up approach</li>
-					<li>Forces acting on rising bubbles</li>
-					<li>Loading, inspecting, and preparing the data</li>
-					<li>Binary classification</li>
-					<li>Multi-class classification</li>
-				</ul>
-			</section>
-
-			<section>
-				<section>
-					<h2>Scale-up approach</h2>
-				</section>
-				<section>
-					<h3>Gas-liquid reactors</h3>
-					<div class="r-hstack justify-around">
-						<div style="width: 33%;">
-							<img src="videos/taylor_bubble_copper.gif" alt="taylor_bubble" height="400"
-								style="background:none; border:none; box-shadow:none;">
-							<p>
-								<small>
-									<b>micro reactor</b><br>
-									size: millimeter<br>
-									source: <a href="http://www.dfg-spp1740.de/">SPP 1740</a>
-								</small>
-							</p>
-						</div>
-						<div style="width: 33%;">
-							<p>
-								<b style="color: red;">prediction</b> of
-							</p>
-							<ul>
-								<li>mass transfer</li>
-								<li>enhancement</li>
-								<li>mixing</li>
-								<li>conversion</li>
-								<li>selectivity</li>
-								<li>yield</li>
-								<li>...</li>
-							</ul>
-						</div>
-						<div style="width: 33%;">
-							<img src="images/bubble_path/eni_fischer_tropsch.png" alt="bubble_column" height="300"
-								style="background:none; border:none; box-shadow:none;">
-							<p>
-								<small>
-									<b>bubble column reactor</b><br>
-									size: meter<br>
-									source: <a href="https://tel.archives-ouvertes.fr/tel-01267349/document">R. M.
-										Raimundo, ENI</a>
-								</small>
-							</p>
-						</div>
-					</div>
-				</section>
-				<section>
-					<p>Scale-up modeling approach for bubble columns:</p>
-					<ul>
-						<li>below continuum scale ...</li>
-						<li>boundary layers at bubbles ($\mu m$)</li>
-						<li>resolved individual bubbles ($mm$)</li>
-						<li>bubbles as point particles ($cm$)</li>
-						<li>gas-liquid mixture ($m$)</li>
-					</ul>
-					<p>How to transfer information between scales?</p>
-				</section>
-				<section>
-					<style>
-						.row_video {
-							display: table;
-							width: 100%;
-						}
-
-						.column_video {
-							display: table-cell;
-							text-align: center;
-							width: 50%;
-						}
-
-						.content_video {
-							display: inline-block;
-						}
-					</style>
-					<div class="row_video">
-						<div class="column_video">
-							<div class="content_video">
-								<small>water/air: $d_{eq}=3~mm$</small>
-								<video height="500" controls mute autoplay loop data-lazy-loaded preload="auto">
-									<source data-src="videos/b8_mesh_plic.mp4">
-								</video>
-							</div>
-						</div>
-						<div class="column_video">
-							<div class="content_video">
-								<small>water/air: $d_{eq}=5~mm$</small>
-								<video height="500" controls mute autoplay loop data-lazy-loaded preload="auto">
-									<source data-src="videos/b10_mesh_plic.mp4">
-								</video>
-							</div>
-						</div>
-					</div>
-				</section>
-				<section>
-					<img src="images/bubble_path/path_regimes.png" alt="path_regimes" width="700"
-						style="background:none; border:none; box-shadow:none;">
-					<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
-						figure 1.</p>
-				</section>
-				<section>
-					<p>Potential issues:</p>
-					<ul>
-						<li>Criterion for the boundaries?</li>
-						<li>How to deploy?</li>
-						<li>Higher dimensions?</li>
-						<li>...</li>
-					</ul>
-				</section>
-				<section>
-					<h3>Potential solution:<br> <span style="color: red;">supervised learning</span></h3>
-				</section>
-			</section>
-
-			<section>
-				<section>
-					<h2>Forces acting on a rising bubble</h2>
-				</section>
-				<section>
-					<p>Why does a bubble rise?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">surface tension forces</li>
-						<li style="list-style-type: upper-latin;">viscous forces</li>
-						<li style="list-style-type: upper-latin;">buoyancy forces</li>
-						<li style="list-style-type: upper-latin;">inertia forces</li>
-						<li style="list-style-type: upper-latin;">more than one force</li>
-					</ol>
-				</section>
-				<section>
-					<p>What limits the rise velocity?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">surface tension forces</li>
-						<li style="list-style-type: upper-latin;">viscous forces</li>
-						<li style="list-style-type: upper-latin;">buoyancy forces</li>
-						<li style="list-style-type: upper-latin;">inertia forces</li>
-						<li style="list-style-type: upper-latin;">more than one force</li>
-					</ol>
-				</section>
-				<section>
-					<p>Why are "small" bubbles spherical/ellipsoidal?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">surface tension forces</li>
-						<li style="list-style-type: upper-latin;">viscous forces</li>
-						<li style="list-style-type: upper-latin;">buoyancy forces</li>
-						<li style="list-style-type: upper-latin;">inertia forces</li>
-						<li style="list-style-type: upper-latin;">more than one force</li>
-					</ol>
-				</section>
-				<section>
-					<h3>Eötvös or Bond number</h3>
-					<p>
-						$$
-						Eo = \frac{\text{buoyancy force}}{\text{surface tension force}} = \frac{g\rho_l d_b^2}{\sigma}
-						$$
-					</p>
-					<p>$\rho_l$ - density liquid, $g$ - gravity, $d_b$ - diameter, $\sigma$ - surface tension</p>
-					<p>Tells us how strong the deformation is going to be.</p>
-				</section>
-				<section>
-					<h3>Galilei number</h3>
-					<p>
-						$$
-						Ga = \frac{\text{inertia force}}{\text{viscous force}}\times\sqrt{\frac{\text{buoyancy
-						force}}{\text{inertia force}}}
-						= \frac{\sqrt{gd_b^3}}{\nu_l}
-						$$
-					</p>
-					<p>$\nu_l$ - kinematic liquid viscosity</p>
-					<p>Tells us how stable/unstable the rise is going to be.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/path_regimes.png" alt="path_regimes" width="700"
-						style="background:none; border:none; box-shadow:none;">
-					<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
-						figure 1.</p>
-				</section>
-			</section>
-
-			<section>
-				<section>
-					<h2>Loading, inspecting, and preparing the data</h2>
-				</section>
-				<section>
-					<img src="images/bubble_path/path_regimes.png" alt="path_regimes" width="700"
-						style="background:none; border:none; box-shadow:none;">
-					<p>Source: <a href="https://www.nature.com/articles/ncomms7268">M. K. Tripathi et al. 2015,</a>
-						figure 1.</p>
-				</section>
-				<section>
-					<p>Data extraction with <a href="http://markummitchell.github.io/engauge-digitizer/">Engauge
-							Digitizer</a></p>
-					<ul>
-						<li>take screenshot of graph/figure</li>
-						<li>load screenshot in digitizer</li>
-						<li>set origin, axes, and scale</li>
-						<li>select markers or lines</li>
-						<li>extract to (csv) file</li>
-					</ul>
-				</section>
-				<section>
-					<h3>Publish your data (if you can)!</h3>
-				</section>
-				<section>
-					<p>Loading and processing the data.</p>
-					<pre class="python"><code data-line-numbers="1-4|5-6|7-15">data_path = "../datasets/path_shape_regimes/"
-regimes = ["I", "II", "III", "IV", "V"]
-raw_data_files = [f"regime_{regime}.csv" for regime in regimes]
-files = [pd.read_csv(data_path + file_name, header=0, names=["Ga", "Eo"]) for file_name in raw_data_files]
-for data, regime in zip(files, regimes):
-    data["regime"] = regime
-data = pd.concat(files, ignore_index=True)
-data.sample(5)
-# output
-Ga	Eo	regime
-22.6060	40.557	III
-50.0910	39.896	V
-6.9836	51.882	III
-518.2900	19.694	V
-101.0630	19.373	IV
-						</code></pre>
-				</section>
-				<section>
-					<img src="images/bubble_path/ga_eo_data_raw.svg" alt="raw"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>Raw extracted data.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/ga_eo_raw_histogram.svg" alt="raw_hist"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>$Ga$ and $Eo$ histograms of raw data.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/ga_eo_log.svg" alt="log_data"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Data transformed using logarithm and $[-1, 1]$ scaling.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/ga_eo_log_histogram.svg" alt="log_hist"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>$\tilde{Ga}$ and $\tilde{Eo}$ histograms of transformed data.</p>
-				</section>
-				<section>
-					<p>Adding an ordinal label representation.</p>
-					<pre class="python"><code>
-# creating an ordinal representation
-logData["ordinal"] = 0.0
-for i, r in enumerate(regimes):
-    logData.ordinal.mask(logData.regime == r, float(i), inplace=True)
-						</code></pre>
-				</section>
-			</section>
-
-			<section>
-				<section>
-					<h2>Binary classification</h2>
-				</section>
-				<section>
-					<img src="images/bubble_path/ga_eo_log.svg" alt="log_data"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Goal: distinguish between region I and II.</p>
-				</section>
-				<section>
-					<h3>Only regions I and II</h3>
-					<p>$ \tilde{Ga} = \mathrm{scale}(log(Ga)) $, $ \tilde{Eo} = \mathrm{scale}(log(Eo)) $</p>
-					<p>$$ z(\tilde{Ga}, \tilde{Eo}) = w_1\tilde{Ga} + w_2\tilde{Eo} + b $$</p>
-					<p>
-						$$
-						H(z (\tilde{Ga}, \tilde{Eo})) = \left\{\begin{array}{lr}
-						0, & \text{if } z \leq 0\\
-						1, & \text{if } z \gt 0
-						\end{array}\right.
-						$$
-					</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/weighted_sum_ga_var.svg" alt="gavar"
-						style="background:white; border:none; box-shadow:none; width: 100%">
-					<p>Variation of weight for $\tilde{Ga}$.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/weighted_sum_eo_var.svg" alt="eovar"
-						style="background:white; border:none; box-shadow:none; width: 100%">
-					<p>Variation of weight for $\tilde{Eo}$.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/weighted_sum_bias_var.svg" alt="bvar"
-						style="background:white; border:none; box-shadow:none; width: 100%">
-					<p>Variation of weight for bias $b$.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/heaviside_prediction.svg" alt="H"
-						style="background:white; border:none; box-shadow:none; width: 100%">
-					<p>Heaviside function applied to $z(\tilde{Ga} , \tilde{Eo})$.</p>
-				</section>
-				<section>
-					<h3>Compact notation</h3>
-					<p>Linearly weighted inputs
-						$$
-						z_i=z(\mathrm{x}_i)=\sum\limits_{j=1}^{N_f}w_jx_{ij}
-						$$
-					</p>
-					<p>with
-						$$
-						\mathbf{x}_i = \left[ \tilde{Ga}_i, \tilde{Eo}_i, 1 \right],\quad \mathbf{w} = \left[ w_1, w_2, b
-						\right]^T
-						$$
-					</p>
-				</section>
-				<section>
-					<h3>Binary encoding</h3>
-					<p>True label:
-						$$
-						y_i = \left\{\begin{array}{lr}
-						0, & \text{for region I }\\
-						1, & \text{for region II}
-						\end{array}\right.
-						$$
-					</p>
-					<p>Predicted label:
-						$$
-						\hat{y}_i = H(z_i) = \left\{\begin{array}{lr}
-						0, & \text{if } z_i \leq 0\\
-						1, & \text{if } z_i \gt 0
-						\end{array}\right.
-						$$
-					</p>
-				</section>
-				<section>
-					<h3>Loss function</h3>
-					$$
-					L(\mathbf{w}) = \frac{1}{2}\sum\limits_{i=1}^N \left(y_i - \hat{y}_i\right)^2
-					$$
-					</p>
-					<p>The term in parenthesis can take on the values<br>$1$, $0$, or $-1$.</p>
-				</section>
-				<section>
-					<h3>Gradient decent</h3>
-					<p>Simple update rule for the weights <small>
-							$$
-							\mathbf{w}^{n+1} = \mathbf{w}^n - l_r \frac{\partial L(\mathbf{w})}{\partial \mathbf{w}} =
-							\begin{pmatrix}w_1^n\\
-							w_2^n\\
-							b^n
-							\end{pmatrix} + l_r
-							\sum\limits_{i=1}^N \left(y_i - \hat{y}_i^n \right)
-							\begin{pmatrix}\tilde{Ga}_i\\
-							\tilde{Eo}_i\\
-							1
-							\end{pmatrix}
-							$$</small>
-					</p>
-					<p>$n$ - current iteration, $l_r$ - learning rate</p>
-				</section>
-				<section>
-					<p>Implementation of the perceptron algorithm.</p>
-					<pre class="python"><code data-line-numbers="1-3|5-6|8-10|12-23|25-27">class Perceptron(object):
-    def __init__(self, n_weights: int):
-        self._p = pt.rand(n_weights)*2.0 - 1.0
-
-    def _loss(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
-        return 0.5 * pt.sum((y - self.predict(X))**2)
-
-    def _loss_gradient(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
-        delta = y - self.predict(X)
-        return -pt.cat((X, pt.ones(X.shape[0]).unsqueeze(-1)), dim=-1).T.mv(delta)
-
-    def train(self, X: pt.Tensor, y: pt.Tensor, epochs: int=500,
-              lr: float=0.01, tol: float=1.0e-6) -> List[float]:
-        loss = []
-        for e in range(epochs):
-            self._p -= lr*self._loss_gradient(X, y)
-            loss.append(self._loss(X, y).item())
-            if loss[-1] < tol:
-                print(f"Converged after {e+1} epochs.")
-                return loss
-        print(f"Training did not converge within {epochs} epochs")
-        print(f"Final loss: {loss[-1]:2.3f}")
-        return loss
-
-    def predict(self, X: pt.Tensor):
-        weighted_sum = X.mv(self._p[:-1]) + self._p[-1]
-        return pt.heaviside(weighted_sum, pt.tensor(0.0))
-						</code></pre>
-				</section>
-				<section>
-					<img src="images/bubble_path/perceptron_loss.svg" alt="perceptron_loss"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Perceptron learning rule - loss over epochs.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/perceptron_prediction.svg" alt="perceptron_pred"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>Perceptron algorithm - weighted sum of inputs and prediction.</p>
-				</section>
-				<section>
-					<p>Guaranteed convergence (zero loss)?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">yes</li>
-						<li style="list-style-type: upper-latin;">no</li>
-						<li style="list-style-type: upper-latin;">data dependent</li>
-					</ol>
-				</section>
-				<section>
-					<h3>Conditional probabilities</h3>
-					$$ p(y=1 | \mathrm{x}) $$
-					<p>speak: probability $p$ of the event $y=1$ given $\mathrm{x}$</p>
-					$$ \hat{y} = f_{\mathbf{w}}(\mathrm{x}) = p(y=1 | \mathrm{x})$$
-					<p>model predicts <span style="color: red">class probability</span> instead of class!</p>
-				</section>
-				<section>
-					<p>What is the expected value of $p(y=1 | \mathrm{x})$ for points far in <span
-							style="color: red">region II</span>?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">close to zero</li>
-						<li style="list-style-type: upper-latin;">about 0.5</li>
-						<li style="list-style-type: upper-latin;">close to one</li>
-					</ol>
-				</section>
-				<section>
-					<p>What is the expected value of $p(y=1 | \mathrm{x})$ for points far in <span
-							style="color: red">region I</span>?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">close to zero</li>
-						<li style="list-style-type: upper-latin;">about 0.5</li>
-						<li style="list-style-type: upper-latin;">close to one</li>
-					</ol>
-				</section>
-				<section>
-					<p>What is the expected value of $p(y=1 | \mathrm{x})$ for points close to the decision boundary?
-					</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">close to zero</li>
-						<li style="list-style-type: upper-latin;">about 0.5</li>
-						<li style="list-style-type: upper-latin;">close to one</li>
-					</ol>
-				</section>
-				<section>
-					<p>What is the expected value of <span style="color: red">$p(y=0 | \mathrm{x})$</span> for points
-						far in region I</span>?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">close to zero</li>
-						<li style="list-style-type: upper-latin;">about 0.5</li>
-						<li style="list-style-type: upper-latin;">close to one</li>
-					</ol>
-				</section>
-				<section>
-					<p>How to convert $z(\mathrm{x})$ to a probability?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">sinus: $\mathrm{sin}(z)$</li>
-						<li style="list-style-type: upper-latin;">hyperbolic tangents: $\mathrm{tanh}(z)$</li>
-						<li style="list-style-type: upper-latin;">sigmoid: $\sigma(z)$</li>
-					</ol>
-				</section>
-				<section>
-					<img src="images/bubble_path/sigmoid_prob.svg" alt="sigmoid"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>Sigmoid function $\sigma = 1 / (1+\mathrm{exp}(-z))$.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/binary_proabilities.svg" alt="probs"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>Probabilities $p(II|\tilde{Ga},\tilde{Eo}) = \sigma (z(\tilde{Ga},\tilde{Eo}))$.</p>
-				</section>
-				<section>
-					<h3>Joint probabilities - likelihood function</h3>
-					$$ l(\mathbf{w}) = \prod\limits_i^{N_s} p_i(y_i | \mathbf{x}_i) $$
-					<p>principle of maximum likelihood</p>
-					$$ \mathbf{w}^* = \underset{\mathbf{w}}{\mathrm{argmax}}\ l(\mathbf{w}). $$
-				</section>
-				<section>
-					<p>Which of the following is equivalent to $l(\mathbf{w}) = \prod\limits_i^{N_s} p_i(y_i |
-						\mathbf{x}_i)$?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">$$ \prod\limits_i^{N_s} \left[ y_i^{\hat{y}_i}
-							(1-y_i)^{(1-\hat{y}_i)}\right] $$</li>
-						<li style="list-style-type: upper-latin;">$$ \prod\limits_i^{N_s} \left[ \hat{y}_i^{y_i}
-							(1-\hat{y}_i)^{(1-y_i)}\right] $$</li>
-					</ol>
-				</section>
-				<section>
-					<h3>Log-likelihood and binary cross entropy</h3>
-
-					<p>
-						$$
-						\mathrm{ln}(l(\mathbf{w})) = \sum\limits_{i=1}^{N_s} y_i \mathrm{ln}(\hat{y}_i) + (1-y_i)
-						\mathrm{ln}(1-\hat{y}_i)
-						$$
-					</p>
-					<p>
-						$$
-						L(\mathbf{w}) = -\frac{1}{N_s}\sum\limits_{i=1}^{N_s} y_i \mathrm{ln}(\hat{y}_i) + (1-y_i)
-						\mathrm{ln}(1-\hat{y}_i)
-						$$
-					</p>
-				</section>
-				<section>
-					<p>Implementation of logistic regression.</p>
-					<pre class="python"><code data-line-numbers="1-3|5-8|10-13|15-18|23-25|27-28">class LogisticRegression(object):
-    def __init__(self, n_weights):
-        self._p = pt.rand(n_weights)*2.0 - 1.0
-
-    def _joint_probability(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
-        probs = self.probability(X)
-        joint = pt.pow(probs, y) * pt.pow(1.0-probs, 1-y)
-        return pt.prod(joint)
-
-    def _loss(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
-        probs = self.probability(X)
-        entropy = y*pt.log(probs+1.0e-6) + (1-y)*pt.log(1.0-probs+1.0e-6)
-        return -entropy.mean()
-
-    def _loss_gradient(self, X: pt.Tensor, y: pt.Tensor) -> pt.Tensor:
-        delta = y - self.probability(X)
-        grad = pt.cat((X, pt.ones(X.shape[0]).unsqueeze(-1)), dim=-1) * delta.unsqueeze(-1)
-        return -grad.mean(dim=0)
-
-    def train(self, X: pt.Tensor, y: pt.Tensor, epochs: int=10000,
-        # snip - see perceptron
-
-    def probability(self, X: pt.Tensor) -> pt.Tensor:
-        weighted_sum = X.mv(self._p[:-1]) + self._p[-1]
-        return pt.sigmoid(weighted_sum)
-
-    def predict(self, X: pt.Tensor) -> pt.Tensor:
-        return pt.heaviside(self.probability(X)-0.5, pt.tensor(0.0))
-						</code></pre>
-				</section>
-				<section>
-					<img src="images/bubble_path/log_regression_loss.svg" alt="log_loss"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Binary cross entropy vs. epochs.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/entropy_loss_landscape.svg" alt="entropy"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>Landscape around the optima of binary cross entropy and joint probability.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/log_regression_prediction.svg" alt="logreg"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>Probability and prediction with logistic regression.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/ga_eo_log.svg" alt="log_data"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>New goal: separate regime I from II and III.</p>
-				</section>
-				<section>
-					<img src="images/bubble_path/log_regression_I_II_II.svg" alt="logcomb"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Logistic regression classifiers separating regions I-II and I-III.</p>
-				</section>
-				<section>
-					<p>Training of two logistic regressors.</p>
-					<pre class="python"><code>
-	combined_prob = pt.sigmoid(
-	  0.9*model_I_II.probability(pt.stack((xx.flatten(), yy.flatten())).T)
-	+ 0.9*model_I_III.probability(pt.stack((xx.flatten(), yy.flatten())).T)
-	- 0.5
-	)
-	combined_prediction = pt.heaviside(combined_prob - 0.5, pt.tensor(0.0))
-						</code></pre>
-				</section>
-				<section>
-					<img src="images/bubble_path/log_combined_prob.svg" alt="logcomb"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Combination of two logistic regression classifiers.</p>
-				</section>
-				<section>
-					<img src="images/ml_intro/example_nn.png" alt="nn_example"
-						style="background:white; border:none; box-shadow:none; width: 50%">
-					<p>Generic neural network with fully connected layers.</p>
-				</section>
-			</section>
-			<section>
-				<section>
-					<h2>Multi-class classification</h2>
-				</section>
-				<section>
-					<img src="images/bubble_path/one_hot_encoding.png" alt="encoding"
-						style="background:white; border:none; box-shadow:none; width: 80%">
-					<p>One hot encoding of path regimes.</p>
-				</section>
-				<section>
-					<p>What is the length of the label vector if we have 10 classes (regimes)?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">1</li>
-						<li style="list-style-type: upper-latin;">2</li>
-						<li style="list-style-type: upper-latin;">5</li>
-						<li style="list-style-type: upper-latin;">10</li>
-					</ol>
-				</section>
-				<section>
-					<p>What does the label vector look like if we have 4 classes and the true label is class 3 / regime
-						3 (start counting from 1)?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0, 1, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 1, 0, 1, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\mathbf{y}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
-					</ol>
-				</section>
-				<section>
-					<p><b>Softmax function</b> and <b>categorical cross entropy</b> for $K$ classes:</p>
-					<p>
-						$$ p(y_{j}=1 | \mathbf{x}) = \frac{e^{z_{j}}}{\sum_{j=0}^{K-1} e^{z_{j}}} $$
-					</p>
-					<p>
-						$$ L(\mathbf{w}) = -\frac{1}{N} \sum\limits_{i=1}^{N_s}\sum\limits_{j=0}^{K-1} y_{ij}
-						\mathrm{ln}\left( \hat{y}_{ij} \right) $$
-					</p>
-				</section>
-				<section>
-					<p>What is a likely/possible prediction if the true class is 3 (start counting from 1)?</p>
-					<ol>
-						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 0.1, 0, 0.9, 0.1 \right]^T$
-						</li>
-						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 1, 0, 0, 0 \right]^T$</li>
-						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 0, 0.02, 0.95, 0.03 \right]^T$
-						</li>
-						<li style="list-style-type: upper-latin;">$\hat{\mathbf{y}}_i = \left[ 0, 0, 3, 0 \right]^T$</li>
-					</ol>
-				</section>
-				<section>
-					<p>Neural network classification model.</p>
-					<pre class="python"><code>
-n_features, n_classes, n_neurons = 2, 5, 50
-regime_model = pt.nn.Sequential(
-    pt.nn.Linear(n_features, n_neurons),
-    pt.nn.Tanh(),
-    pt.nn.Linear(n_neurons, n_neurons),
-    pt.nn.Tanh(),
-    pt.nn.Linear(n_neurons, n_classes)
-)
-						</code></pre>
-				</section>
-				<section>
-					<p>Training loop definition.</p>
-					<pre class="python"><code data-line-numbers="1-4|5-9|11-12">dataset = pt.utils.data.TensorDataset(
-    pt.tensor(logData[["Ga", "Eo"]].values, dtype=pt.float32),
-    pt.tensor(logData.ordinal.values, dtype=pt.int64)
-)
-train_size = int(0.9*len(dataset))
-val_size = len(dataset) - train_size
-train_dataset, val_dataset = pt.utils.data.random_split(dataset, (train_size, val_size))
-train_loader = pt.utils.data.DataLoader(train_dataset, batch_size=len(train_dataset), shuffle=True)
-val_loader = pt.utils.data.DataLoader(val_dataset, batch_size=len(val_dataset))
-
-results = train_model(regime_model, pt.nn.CrossEntropyLoss(), train_loader, val_loader,
-                      epochs=1000, optimizer=optimizer)
-						</code></pre>
-				</section>
-				<section>
-					<img src="images/bubble_path/network_classification_loss.svg" alt="network_loss"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Categorical cross entropy vs. epochs.</p>
-				</section>
-				<section>
-					<img src="images/intro/network_multiclass_prediction.svg" alt="multi"
-						style="background:white; border:none; box-shadow:none; width: 70%">
-					<p>Prediction of classification network.</p>
-				</section>
-			</section>
-		</div>
-
-	</div>
-
-	<script src="dist/reveal.js"></script>
-	<script src="dist/plugin/zoom.js"></script>
-	<script src="dist/plugin/notes.js"></script>
-	<script src="dist/plugin/search.js"></script>
-	<script src="dist/plugin/markdown.js"></script>
-	<script src="dist/plugin/highlight.js"></script>
-	<script src="dist/plugin/math.js"></script>
-	<script src="plugin/chalkboard/plugin.js"></script>
-	<script src="plugin/customcontrols/plugin.js"></script>
-	<script>
-
-		// Also available as an ES module, see:
-		// https://revealjs.com/initialization/
-		Reveal.initialize({
-			hash: true,
-			progress: true,
-			slideNumber: "c",
-			chalkboard: {
-				boardmarkerWidth: 4,
-				chalkWidth: 4,
-				chalkEffect: 0.01,
-				theme: "chalkboard",
-				background: ['rgba(127,127,127,.1)', path + 'img/blackboard.png'],
-				grid: { color: 'rgb(50,50,10,0.5)', distance: 80, width: 2 },
-				eraser: { src: path + 'img/sponge.png', radius: 20 },
-				boardmarkers: [
-					{ color: 'rgba(255,255,255,1)', cursor: 'url(' + path + 'img/boardmarker-black.png), auto' },
-					{ color: 'rgba(30,144,255, 1)', cursor: 'url(' + path + 'img/boardmarker-blue.png), auto' },
-					{ color: 'rgba(220,20,60,1)', cursor: 'url(' + path + 'img/boardmarker-red.png), auto' },
-					{ color: 'rgba(50,205,50,1)', cursor: 'url(' + path + 'img/boardmarker-green.png), auto' },
-					{ color: 'rgba(255,140,0,1)', cursor: 'url(' + path + 'img/boardmarker-orange.png), auto' },
-					{ color: 'rgba(150,0,20150,1)', cursor: 'url(' + path + 'img/boardmarker-purple.png), auto' },
-					{ color: 'rgba(255,220,0,1)', cursor: 'url(' + path + 'img/boardmarker-yellow.png), auto' }
-				],
-				chalks: [
-					{ color: 'rgba(255,255,255, 0.5)', cursor: 'url(' + path + 'img/chalk-white.png), auto' },
-					{ color: 'rgba(96, 154, 244, 0.5)', cursor: 'url(' + path + 'img/chalk-blue.png), auto' },
-					{ color: 'rgba(237, 20, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-red.png), auto' },
-					{ color: 'rgba(20, 237, 28, 0.5)', cursor: 'url(' + path + 'img/chalk-green.png), auto' },
-					{ color: 'rgba(220, 133, 41, 0.5)', cursor: 'url(' + path + 'img/chalk-orange.png), auto' },
-					{ color: 'rgba(220,0,220,0.5)', cursor: 'url(' + path + 'img/chalk-purple.png), auto' },
-					{ color: 'rgba(255,220,0,0.5)', cursor: 'url(' + path + 'img/chalk-yellow.png), auto' }
-				],
-			},
-			customcontrols: {
-				controls: [
-					{
-						icon: '<i class="fa fa-pencil-square" style="font-size:36px"></i>',
-						title: 'Toggle chalkboard (B)',
-						action: 'RevealChalkboard.toggleChalkboard();'
-					},
-					{
-						icon: '<i class="fa fa-pencil" style="font-size:36px"></i>',
-						title: 'Toggle notes canvas (C)',
-						action: 'RevealChalkboard.toggleNotesCanvas();'
-					}
-				]
-			},
-
-			// Learn about plugins: https://revealjs.com/plugins/
-			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealChalkboard, RevealCustomControls]
-		});
-
-	</script>
-	<style type="text/css">
-		.reveal .slide-number {
-			font-size: 1em;
-			color: #42affa;
-			right: auto;
-			width: 1.5em;
-			height: 1.5em;
-			background-color: #191919;
-			display: grid !important;
-			place-items: center;
-		}
-	</style>
-
-</body>
-
-</html>
+</section>
+<section class="work-slide review-slide" data-flashcards="" id="lecture-4-review"><h2>Review — Lecture 4</h2><div data-card-id="ml4-scales" data-flashcard=""><div data-question="">Why does a reactor model need information from smaller scales?</div><div data-solution="">It cannot resolve every bubble interface, boundary layer and molecular process. Detailed investigations inform closures used at larger scales; the assumptions and uncertainty of those closures remain relevant.</div></div><div data-card-id="ml4-eo" data-flashcard=""><div data-question="">What does the Eötvös number compare, and which length is used here?</div><div data-solution="">Buoyancy relative to surface tension. We use the initial radius: \(Eo=\rho_l gR^2/\sigma\), following the light-gas convention of the reference study.</div></div><div data-card-id="ml4-ga" data-flashcard=""><div data-question="">How does the Galilei number differ from a Reynolds number based on measured rise velocity?</div><div data-solution="">It uses a gravitational velocity scale, \(\sqrt{gR}\), rather than the unknown rise velocity. Here \(Ga=\rho_l\sqrt{gR^3}/\mu_l\).</div></div><div data-card-id="ml4-map" data-flashcard=""><div data-question="">Why can we not directly use the paper’s hand-drawn boundaries as a classifier?</div><div data-solution="">A picture does not provide an evaluable input–label function. Drawing boundaries also involves subjective judgment; a fitted model gives an explicit rule and quantitative criteria for comparing it with data.</div></div><div data-card-id="ml4-features" data-flashcard=""><div data-question="">Why do we take logarithms before min–max scaling?</div><div data-solution="">The dimensionless inputs span wide ranges. Logarithms spread small values and compress large ones. Min–max scaling then sets a common range; neither transformation creates samples or guarantees uniform coverage.</div></div><div data-card-id="ml4-scaler" data-flashcard=""><div data-question="">Which samples determine the min–max scaling for the validation example?</div><div data-solution="">Only training samples. The same extrema are applied to validation samples, which can consequently fall outside the training interval.</div></div><div data-card-id="ml4-linear" data-flashcard=""><div data-question="">What defines the decision boundary of the linear binary model?</div><div data-solution="">The zero-score line \(z=\mathbf w^{\mathsf T}\mathbf x=0\). The Heaviside rule predicts one for positive scores and zero otherwise.</div></div><div data-card-id="ml4-perceptron" data-flashcard=""><div data-question="">How does the perceptron correct a wrong prediction?</div><div data-solution="">It applies \(\mathbf w\leftarrow\mathbf w+\eta(y_i-\widehat y_i)\mathbf x_i\). A missed positive raises its score; a false positive lowers it. Correct predictions cause no update.</div></div><div data-card-id="ml4-monotonicity" data-flashcard=""><div data-question="">Does a perceptron correction always lower the total classification error?</div><div data-solution="">No. It moves the current sample’s score in the desired direction but can change predictions at other samples. Finite convergence requires separable data with a positive margin.</div></div><div data-card-id="ml4-probability" data-flashcard=""><div data-question="">What is the difference between the predicted class-one probability and the probability of the observed label?</div><div data-solution="">The model predicts \(\widehat y_i=P_{\mathbf w}(Y=1\mid\mathbf x_i)\). The observed-label probability is \(\widehat y_i\) if the target is one and \(1-\widehat y_i\) if it is zero.</div></div><div data-card-id="ml4-sigmoid" data-flashcard=""><div data-question="">How do we turn a linear score into a probability?</div><div data-solution="">We apply \(\sigma(z)=1/(1+\exp(-z))\). Its value is between zero and one for finite scores; its half-probability boundary is the zero-score line.</div></div><div data-card-id="ml4-likelihood" data-flashcard=""><div data-question="">Why do likelihood and log-likelihood have the same maximizing weights?</div><div data-solution="">The natural logarithm is strictly increasing. It preserves the ordering of positive likelihood values while turning the probability product into a sum.</div></div><div data-card-id="ml4-bce" data-flashcard=""><div data-question="">How does binary cross entropy relate to maximum likelihood?</div><div data-solution="">It is the negative log-likelihood averaged over samples. We minimize BCE instead of maximizing the likelihood product. A stable implementation evaluates the loss from scores.</div></div><div data-card-id="ml4-finite-mle" data-flashcard=""><div data-question="">Does zero training error imply finite maximum-likelihood weights in unregularized logistic regression?</div><div data-solution="">No. For these separable samples, increasing the magnitude along a separating direction keeps improving the likelihood without a finite maximizing weight vector.</div></div><div data-card-id="ml4-nonlinear" data-flashcard=""><div data-question="">Why do two sigmoid component models allow a nonlinear combined boundary?</div><div data-solution="">Their sigmoid outputs are nonlinear features for the next layer. Combining only their raw affine scores would still give an affine score and a straight boundary.</div></div><div data-card-id="ml4-one-hot" data-flashcard=""><div data-question="">Why do we use one-hot targets for mutually exclusive classes?</div><div data-solution="">They provide one entry per class, matching the predicted probability vector, without imposing a numerical distance between class identifiers. Integer targets can implement the same loss implicitly.</div></div><div data-card-id="ml4-softmax" data-flashcard=""><div data-question="">What properties make softmax suitable for K mutually exclusive classes?</div><div data-solution="">Its components are positive and sum to one. Adding the same constant to all logits leaves them unchanged, and the largest logit has the largest probability.</div></div><div data-card-id="ml4-argmax" data-flashcard=""><div data-question="">How is the categorical prediction obtained from softmax probabilities?</div><div data-solution="">We select the class with the largest probability, using a stated tie convention. With more than two classes, the winning probability need not exceed one half.</div></div><div data-card-id="ml4-overfitting" data-flashcard=""><div data-question="">How can validation cross entropy worsen while the number of validation errors stays unchanged?</div><div data-solution="">Cross entropy also measures confidence in the observed labels. A model can become more confidently wrong without changing which class wins.</div></div><div data-card-id="ml4-early-stop" data-flashcard=""><div data-question="">What state does early stopping return, and why is validation not an independent test score?</div><div data-solution="">It restores the checkpoint selected by validation loss, rather than the last state. Because validation guided model selection, it does not provide an independent final test score.</div></div></section></div></div>
+<script src="public/libs/reveal/6.0.2/reveal.js"></script><script src="public/libs/reveal/6.0.2/plugin/notes.js"></script><script src="public/libs/reveal/6.0.2/plugin/math.js"></script>
+<script src="plugin/ink/v0.3.9/ink.js"></script><script src="plugin/flashcards/v0.1.2/flashcards.js"></script><script src="public/ml-lecture-04-runtime.js"></script>
+<script data-rwe-runtime src="editor-assets/rwe-655f8fe933e4.js"></script></body></html>
