@@ -1,3 +1,4 @@
+import { createMobileMediaRecovery } from '../utils/mobile-media-recovery.js';
 import { extend, queryAll, closest, getMimeTypeFromFile, encodeRFC3986URI } from '../utils/util'
 import { isMobile } from '../utils/device'
 
@@ -18,7 +19,7 @@ export default class SlideContent {
 		this.startEmbeddedMedia = this.startEmbeddedMedia.bind( this );
 		this.startEmbeddedIframe = this.startEmbeddedIframe.bind( this );
 		this.preventIframeAutoFocus = this.preventIframeAutoFocus.bind( this );
-		this.ensureMobileMediaPlaying = this.ensureMobileMediaPlaying.bind( this );
+		this.ensureMobileMediaPlaying = createMobileMediaRecovery();
 
 		this.failedAudioPlaybackTargets = new Set();
 		this.failedVideoPlaybackTargets = new Set();
@@ -399,40 +400,6 @@ export default class SlideContent {
 			}
 
 		}
-
-	}
-
-	/**
-	 * Ensure that an HTMLMediaElement is playing on mobile devices.
-	 *
-	 * This is a workaround for a bug in mobile Safari where
-	 * the media fails to display if many videos are started
-	 * at the same moment. When this happens, Mobile Safari
-	 * reports the video is playing, and the current time
-	 * advances, but nothing is visible.
-	 *
-	 * @param {Event} event
-	 */
-	ensureMobileMediaPlaying( event ) {
-
-		const el = event.target;
-
-		// Ignore this check incompatible browsers
-		if( typeof el.getVideoPlaybackQuality !== 'function' ) {
-			return;
-		}
-
-		setTimeout( () => {
-
-			const playing = el.paused === false;
-			const totalFrames = el.getVideoPlaybackQuality().totalVideoFrames;
-
-			if( playing && totalFrames === 0 ) {
-				el.load();
-				el.play();
-			}
-
-		}, 1000 );
 
 	}
 

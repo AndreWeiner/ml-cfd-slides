@@ -3,6 +3,7 @@
   const RevealClass = window.Reveal;
   const editor = Boolean(window.__editorInitialize);
   const deck = new RevealClass({
+    viewDistance: 3, mobileViewDistance: 2,
     width: 960, height: 700, center: false, hash: true, progress: true,
     slideNumber: 'c', navigationMode: 'default',
     katex: { local: 'public/libs/katex' },

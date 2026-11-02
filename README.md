@@ -53,3 +53,9 @@ The final review slide contains 20 Lecture 2 flashcards with revealable answers 
 GitHub Pages URL: https://andreweiner.github.io/ml-cfd-slides/ml_intro.html
 
 Figures are copied from `ml-cfd-lecture/notebooks/media/` into `public/media/lecture_02/`; regenerate them with that course repository’s `notebooks/lecture_02_figures.py` before refreshing the copies.
+
+### Mobile video recovery
+
+Safari can report zero decoded frames while playback is advancing. The player now checks time progress, coalesces pending checks, and permits only one recovery reload per video element. A rejected recovery play request restores native controls. Autoplay and looping settings are preserved. Run `node test/mobile-media-recovery.mjs` to check recovery behavior. Rebuild the player after changing the helper (`npm run build:runtime && npm run build` for CFD; `npm run build` for ML). The ML Lecture 2 vendored player in `public/libs/reveal/6.0.2/reveal.js` must also be refreshed from `dist/reveal.js`.
+
+Course videos use `preload="auto"` with lazy `data-src` sources. Reveal loads nearby slides (desktop view distance 3, mobile 2); distant sources remain unset. The `data-lazy-loaded` video marker also lets Reveal release child sources when a slide leaves that range. Browsers control actual buffering and may retain cached data.
