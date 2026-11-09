@@ -93,7 +93,17 @@
   <h2>A radius for each polar angle</h2>
   <img class="lecture-figure" src="public/media/lecture_05/bubble-interface-coordinates-dark.svg" alt="Axisymmetric bubble coordinates, normal and tangential velocity directions.">
   <aside class="notes">We assume a star-shaped, straight-rising axisymmetric bubble without swirl. Each ray from the center intersects the surface once. The polar angle starts at the top. The normal points into liquid and the tangent toward increasing polar angle.</aside>
+</section><section class="work-slide" id="cartesian-samples" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  <h2>Interface samples in Cartesian coordinates</h2>
+  <img class="lecture-figure" src="public/media/lecture_05/bubble-data-cartesian-dark.svg" alt="Interface positions and liquid velocities before and after translation into the bubble frame">
+  <aside class="notes">Compare laboratory-frame and bubble-frame positions and velocities.</aside>
+</section><section class="work-slide " id="sampled-data" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  <h2>Interface samples in polar coordinates</h2>
+  <img class="lecture-figure" src="public/media/lecture_05/bubble-data-polar-dark.svg" alt="Raw radius and normal and tangential velocity profiles at three VOF times.">
+  <aside class="notes">The points come from the compact Basilisk dataset. The panels show startup, acceleration, and late rise. The pointwise normal component is noisy. The deployed case uses the normal velocity from mesh motion. In these worked plots θ is the same polar angle as ϑ in the lecture.</aside>
 </section>
+
+
 
 </section>
 
@@ -101,33 +111,27 @@
 
 <section class="work-slide " id="ansatz" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
   <h2>Regression forms that enforce known structure</h2>
+  <img class="lecture-figure" src="public/media/lecture_05/bubble-time-factors-dark.svg" alt="Normalized time and startup factor with their formulas, alongside sine and cosine across the angular boundaries.">
   <aside class="notes">The last available snapshot time is T. The output scales are set from training targets. These are the same equations as the lecture and implementation. The squared startup factor enforces the initial radius and zero deformation speed. The cosine feature makes the radius even in the signed angle; the sine factor makes tangential velocity odd and zero at the poles. Positive radius and constant volume still need checking.</aside>
 </section>
+<section class="work-slide " id="liquid-boundary-conditions" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  <h2 style="height: auto; white-space: normal; width: 910px;" data-rwe-text-layout="auto-height">Inflow condition</h2>
+  <aside class="notes">The pressure treatment is a closure for this liquid-only velocity-driven solve. Pressure can still vary along the interface, and the exact normal momentum equation can require a nonzero gradient. The original two-phase stress balance influences the transferred data. Frame acceleration must be treated consistently in the pressure/momentum formulation.</aside>
+</section>
 <section class="work-slide " id="symmetry" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-  <h2>Angular symmetry and the poles</h2>
+  <h2 style="height: auto; white-space: normal; width: 910px;" data-rwe-text-layout="auto-height">Deformation</h2>
   <aside class="notes">On the full meridian the model is 2π-periodic. The top and bottom need not be identical. Their cosine features differ. Use the schematic profile in the workflow to sketch both extensions.</aside>
 </section>
 <section class="work-slide " id="mesh-motion" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-  <h2>From the learned radius to mesh motion and normal velocity</h2>
+  <h2 style="height: auto; white-space: normal; width: 910px;" data-rwe-text-layout="auto-height">Interface velocity</h2>
   <aside class="notes">Differentiate r at fixed angle. The product rule gives S_r times the sum of 2 s s′ f_r and s² q′ ∂_q f_r. The derivatives are s′=1/(1+t)² and q′=1/[(1+t) log(1+T)]. The OpenFOAM implementation uses the discrete mesh flux for the normal velocity. This matches the volume swept by the actual moving faces.</aside>
 </section>
-<section class="work-slide " id="liquid-boundary-conditions" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-  <h2>Inflow and transient species transport</h2>
-  <aside class="notes">The pressure treatment is a closure for this liquid-only velocity-driven solve. Pressure can still vary along the interface, and the exact normal momentum equation can require a nonzero gradient. The original two-phase stress balance influences the transferred data. Frame acceleration must be treated consistently in the pressure/momentum formulation.</aside>
-</section>
+
 </section>
 
 <section id="worked-example">
-<section class="work-slide" id="cartesian-samples" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-  <h2>Interface samples in Cartesian coordinates</h2>
-  <img class="lecture-figure" src="public/media/lecture_05/bubble-data-cartesian-dark.svg" alt="Interface positions and liquid velocities before and after translation into the bubble frame">
-  <aside class="notes">Compare laboratory-frame and bubble-frame positions and velocities.</aside>
-</section>
-<section class="work-slide " id="sampled-data" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-  <h2>Interface samples in polar coordinates</h2>
-  <img class="lecture-figure" src="public/media/lecture_05/bubble-data-polar-dark.svg" alt="Raw radius and normal and tangential velocity profiles at three VOF times.">
-  <aside class="notes">The points come from the compact Basilisk dataset. The panels show startup, acceleration, and late rise. The pointwise normal component is noisy. The deployed case uses the normal velocity from mesh motion. In these worked plots θ is the same polar angle as ϑ in the lecture.</aside>
-</section>
+
+
 <section class="work-slide " id="fit-diagnostics" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
   <h2>Checking the fits before deployment</h2>
   <img class="lecture-figure" src="public/media/lecture_05/bubble-regression-diagnostics-dark.svg" alt="Rise speed, validation histories and held-out angular profiles.">
@@ -135,6 +139,7 @@
 </section>
 <section class="work-slide " id="deployment" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
   <h2>From PyTorch to OpenFOAM</h2>
+  <img class="lecture-figure" src="public/media/lecture_05/pytorch-to-cpp-dark.svg" alt="Three paths from PyTorch to C++: AOTInductor, TorchScript, and ONNX.">
   <aside class="notes">The worked example uses CPU float64 contiguous inputs, one time column for rise speed and time plus angle for the other two models. AOTInductor compiles for the target platform. The worked notebook gives the compiler and runtime versions, export checks, and the TorchScript and ONNX alternatives.</aside>
 </section>
 </section>
