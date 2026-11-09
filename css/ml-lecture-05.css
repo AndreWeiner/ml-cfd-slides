@@ -1,0 +1,19 @@
+/* Lecture 5 uses the shared 960 × 700 lecture canvas. */
+.reveal .work-slide .lecture-five-video {
+  top: 125px;
+  height: 505px;
+}
+.reveal .slides section[data-rwe-canvas] {
+  --rwe-canvas-width: 960px;
+  --rwe-canvas-height: 700px;
+}
+
+.reveal #mesh-animation .lecture-five-video { height: 450px; }
+.reveal #mesh-animation .resolution-note {
+  position: absolute;
+  top: 581px;
+  left: 60px;
+  width: 840px;
+  margin: 0;
+  font-size: 22px;
+}

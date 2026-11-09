@@ -1,0 +1,46 @@
+{
+  "lecture": 5,
+  "sources_sha256": {
+    "notebooks/mass_transfer_regression.py": "9eeaeacaec0b7573c5fb8b631df30b30a4640c5002e7d853ca606458e7a79f9a",
+    "notebooks/mass_transfer_regression_code.py": "11dd308c68176b138864fe9741277b94d76f9f4b68d851d5662b67e298492508",
+    "notebooks/mass_transfer_regression_exercise.py": "1023fc1ebfe74d1de017708effce19f1e1e77f856ab441843ca6f34bcac1c1a8"
+  },
+  "assets_sha256": {
+    "TUD-white.svg": "634b92d293115a15548b2e209afc04d2983f690e2663af6d473a4ddc6ade236d",
+    "bubble-concentration-dark.mp4": "9266add6f3db931e5a5a249404490bcb56a74db1e80d2f1c2737b6790bfdb8aa",
+    "bubble-concentration-dark.png": "4ba1c3f47f691cde0784e18052ce447d9c6b4df5ce951b45b32893dad8cfbf62",
+    "bubble-concentration-light.mp4": "4121264a5522c59868b465c017f6162b5993f1d0bea0aad25cc7a553557c19c0",
+    "bubble-concentration-light.png": "494d8e8e5273125ab349eb4bde973e8792342be08d6c7a32ea6e13ee934a2862",
+    "bubble-data-cartesian-dark.svg": "de16af143acce678b954aaa3d300e95baf7129da967de738b36806f7b75af86f",
+    "bubble-data-cartesian-light.svg": "0245e036c9ffc395833869560c93d42f5e01d6ab5902f3d97c2c74167d545895",
+    "bubble-data-polar-dark.svg": "f185b6e670912e51309ab27855b6bcbba83339d9cb0b819ffdef35ba190be3b0",
+    "bubble-data-polar-light.svg": "fa4d03165282af18d2dce8bcb6824f12dd94f5bbd4e4707579930991f3cd1065",
+    "bubble-hybrid-workflow-dark.svg": "95a920f281ff5fe9b3d48a5002c16eb561c40c2ef1aa37378049ccc7a3ac42b2",
+    "bubble-hybrid-workflow-light.svg": "c347b4c7f112f1c11999269603651c3b9de05f0fba877b4e56e5fb3189124653",
+    "bubble-interface-coordinates-dark.svg": "6631a1ec204498d61ea5d512412634f9cf62132ee5a8f4c86af2d2b328568e77",
+    "bubble-interface-coordinates-light.svg": "948e930175220b69af9b4bab9796359d8f72490aea971192d222584f80548f2c",
+    "bubble-mesh-dark.mp4": "ffa6d2a97137d7b72bb96a7c27ffdfae396a983dbeed60d44634eb2879066689",
+    "bubble-mesh-dark.png": "c401f193ba977843b2cdbe6546f7683a01cdb313a6f86d2ffb8f0a40c62561a2",
+    "bubble-mesh-light.mp4": "06964dbe8d58042544b9989f5bcd386d6fb65a14251dd15f6c8ebfcc14544d1b",
+    "bubble-mesh-light.png": "37bf007916d89db27b7812615fe8857dd5b40b845dd0a6ffd0d4f647ca379c02",
+    "bubble-regression-diagnostics-dark.svg": "3b6efbd5453378d7eaee2b3bfc83ba7153a71d68605e434d42dbd4fb8dde75e2",
+    "bubble-regression-diagnostics-light.svg": "5334863b40acb47dfbfd1f5d3354bbe3d035ef89ea1a2b9fc49f32cc686d509f",
+    "bubble-schmidt-layers-dark.svg": "4582c374cc0d929ccd227d7396fc1663baa64f8180be93103aac9208817146df",
+    "bubble-schmidt-layers-light.svg": "9653a7254d82f85fdd4e15656f07fba5b8f4ffa2b447399d7778fbe1ab298e57",
+    "fitted-interface-dark.svg": "d9ba36de9f07f3f60a20252dbecc0ff4518fc4eff44cb45d6d28cec3a805deb4",
+    "fitted-interface-light.svg": "d158e7d1ab877575d98126899587ac12fe2d6b420a60c16fe10d5017a6503e8d",
+    "sharp-interface-dark.svg": "5959f0a45ed1dd702ae18272a4bba910f3a8723c5938021b21c855055198ca2c",
+    "sharp-interface-light.svg": "0037c218caf770cd4500123c7f11c01b1a0655e981bf42cbcce482f9555dc22e",
+    "vof-interface-dark.svg": "2d2d09f8b7d0a77c9c00ca68c6cbdcea25f9f4c20ef97b798bf31d7eef8fd2df",
+    "vof-interface-light.svg": "27e45701864accf083286ff4e839ac59187be6a03060d35f80595a6600007c4c",
+    "bubble-local-sherwood-t10-light.svg": "3a4ab2f07333925f0a6d1ff8a66a38af08fa4e1519dcdf8c29f4ea249e114031",
+    "bubble-local-sherwood-t10-dark.svg": "c40eb1ccfa5b3d700df423f560edf2547c6f475c41f3885f7cf330935752e439",
+    "../lecture_04/reactive-oxygen-taylor-bubble-tuhh-horizontal.gif": "94bb5e798c862139ce1d75a7a686309005e4b8182c4652c8972f0ccd8791880b"
+  },
+  "review_flashcards": 20,
+  "simulation_time_range": [
+    0.05,
+    10
+  ],
+  "simulation_snapshots": 200
+}
