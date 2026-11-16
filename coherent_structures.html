@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Machine Learning in Fluid Mechanics — Lecture 6</title>
+  <meta name="description" content="Coherent structures, POD and Fourier analysis of a measured cylinder wake">
+  <meta name="author" content="Andre Weiner">
+  <link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
+  <link rel="stylesheet" href="public/libs/reveal/6.0.2/reset.css">
+  <link rel="stylesheet" href="public/libs/reveal/6.0.2/reveal.css">
+  <link rel="stylesheet" href="css/ml-lecture-02-theme.css">
+  <link rel="stylesheet" href="css/lecture.css">
+  <link rel="stylesheet" href="css/ml-intro.css">
+  <link rel="stylesheet" href="plugin/ink/v0.3.9/ink.css">
+  
+<style>
+.reveal .slides section[data-rwe-canvas] {
+  --rwe-canvas-width: 960px;
+  --rwe-canvas-height: 700px;
+}
+</style>
+
+<script defer src="public/plausible.js"></script>
+<link data-rwe-runtime rel="stylesheet" href="editor-assets/rwe-655f8fe933e4.css"></head>
+<body>
+<div class="reveal"><div class="slides">
+<section class="title-slide" id="title" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" style="width:960px;height:700px;padding:0">
+  <h1 style="position:absolute;left:0;top:85px;width:100%;margin:0">Machine Learning<br>in Fluid Mechanics</h1>
+  <h2 style="position:absolute;left:0;top:230px;width:100%;margin:0">Lecture 6 — Analysis of coherent structures</h2>
+  <p style="position:absolute;left:0;top:312px;width:100%;margin:0">Andre Weiner</p>
+  <small style="position:absolute;left:0;top:356px;width:100%;margin:0">Chair of Fluid Mechanics</small>
+  <img class="university-logo" src="public/media/lecture_06/TUD-white.svg" alt="TU Dresden" style="position:absolute;left:180px;top:406px;width:600px;height:200px;margin:0">
+  <aside class="notes">Follow the <a href="https://andreweiner.github.io/ml-cfd-lecture/notebooks/coherent_structures.html">lecture notes</a>. This deck is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</aside>
+</section>
+<section id="motivation">
+  <section class="work-slide" id="why-coherent-structures" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Why look for coherent structures?</h2>
+  </section>
+  <section class="work-slide" id="shock-buffet" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Transonic shock buffet on an airfoil</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-buffet-dark.svg" alt="Conceptual sketch of transonic shock buffet. Dashed lines pair the upstream shock with the larger separated region. Solid lines pair the downstream shock with the smaller separated region. A wavy line runs between the counter-rotating vortices downstream of the trailing edge.">
+  </section>
+</section>
+
+<section id="measured-wake">
+  
+  <section class="work-slide" id="wake-animation" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>The measured cylinder wake</h2>
+    <video class="lecture-figure" controls muted playsinline loop preload="metadata" data-autoplay poster="public/media/lecture_06/coherent-piv-dark.png" aria-label="Measured streamwise and transverse velocity in the cylinder wake">
+      <source src="public/media/lecture_06/coherent-piv-dark.mp4" type="video/mp4">
+    </video>
+    <p style="position:absolute;left:30px;top:632px;width:900px;margin:0;font-size:19px;text-align:center">Data: <a href="https://zenodo.org/records/20765567">Shang &amp; Tu (Zenodo)</a> · Experiment: <a href="https://doi.org/10.1007/s00348-014-1805-6">Tu et al. (2014)</a></p>
+  </section>
+  <section class="work-slide" id="wake-statistics" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Temporal mean and standard deviation</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-statistics-dark.svg" alt="Temporal means and sample standard deviations of both measured velocity components.">
+  </section><section class="work-slide" id="wake-probe-locations" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Probe locations in the cylinder wake</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-cylinder-dark.svg" alt="Streamwise velocity standard deviation with the lower and upper probe locations in the measured wake.">
+  </section><section class="work-slide" id="probe-time-series" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Fluctuations at the two probes</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-signals-dark.svg" alt="Time series of the measured streamwise velocity fluctuations. Peaks at one probe roughly coincide with troughs at the other.">
+  </section><section class="work-slide" id="probe-coordinates" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Paired samples in probe coordinates</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-scatter-dark.svg" alt="Scatter plot and hexagonal counts for the same paired probe fluctuations and reference axes.">
+  </section>
+<section class="work-slide" id="probe-moments" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Mean, fluctuations, variance, and covariance</h2>
+  </section><section class="work-slide" id="snapshots-and-projection" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Snapshots and projection</h2>
+  </section><section class="work-slide" id="principal-axes" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Finding the principal axes</h2>
+  </section><section class="work-slide" id="probe-pca" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>What PCA finds in the probe data</h2>
+  </section>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+<section id="svd">
+  <section class="work-slide" id="economy-svd" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Economy singular value decomposition</h2>
+  </section>
+  <section class="work-slide" id="full-and-economy-svd" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Full and economy SVD</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-svd-dark.svg" alt="Economy and full SVD matrix shapes. The full left factor has extra columns, and the full singular-value matrix has extra zero rows. Every diagonal position in the shared square block is marked.">
+  </section>
+  <section class="work-slide" id="svd-inversion" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Inversion with singular values</h2>
+  </section>
+  <section class="work-slide" id="svd-modes" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Spatial modes and time coefficients</h2>
+  </section>
+</section>
+
+<section id="snapshots">
+  <section class="work-slide" id="method-of-snapshots" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Method of snapshots</h2>
+  </section>
+</section>
+
+<section id="wake-pod">
+  <section class="work-slide" id="pod-of-the-wake" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>POD of the measured cylinder wake</h2>
+  </section>
+  <section class="work-slide" id="variance-decay" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>How quickly does the variance decay?</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-spectrum-dark.svg" alt="Individual and cumulative variance fractions for the leading 20 wake POD modes.">
+  </section>
+  <section class="work-slide" id="mode-components" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Components of the spatial modes</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-mode-components-dark.svg" alt="Streamwise and transverse components of POD modes 1, 3, and 4 on a shared signed color scale.">
+  </section>
+  <section class="work-slide" id="mode-streamlines" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Streamlines of the mean and the spatial modes</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-mode-vectors-dark.svg" alt="Four streamline panels showing the mean flow and POD modes 1, 3, and 4.">
+  </section>
+  <section class="work-slide" id="time-coefficients" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Time coefficients of the leading POD modes</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-scores-dark.svg" alt="Temporal coefficients grouped as modes 1 and 2, mode 3, and modes 4 and 5.">
+  </section>
+  <section class="work-slide" id="coefficient-spectra" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Spectra of individual POD time coefficients</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-coefficient-spectra-dark.svg" alt="One-sided spectra of the POD time coefficients for modes 1, 3, 4, and 6.">
+  </section>
+  <section class="work-slide" id="wake-reconstruction" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Reconstructing the wake with up to five modes</h2>
+  </section>
+  <section class="work-slide" id="reconstruction-u" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Reconstruction of streamwise velocity</h2>
+    <video class="lecture-figure" controls muted playsinline loop preload="metadata" data-autoplay poster="public/media/lecture_06/coherent-piv-reconstruction-u-dark.png" aria-label="Streamwise velocity for the mean, modes 1 and 2 at actual amplitude, and amplified mode 3 and modes 4 and 5">
+      <source src="public/media/lecture_06/coherent-piv-reconstruction-u-dark.mp4" type="video/mp4">
+    </video>
+  </section>
+  <section class="work-slide" id="reconstruction-v" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Reconstruction of transverse velocity</h2>
+    <video class="lecture-figure" controls muted playsinline loop preload="metadata" data-autoplay poster="public/media/lecture_06/coherent-piv-reconstruction-v-dark.png" aria-label="Transverse velocity for the mean, modes 1 and 2 at actual amplitude, and amplified mode 3 and modes 4 and 5">
+      <source src="public/media/lecture_06/coherent-piv-reconstruction-v-dark.mp4" type="video/mp4">
+    </video>
+  </section>
+</section>
+
+
+
+<section id="fourier-analysis">
+  <section class="work-slide" id="discrete-fourier-transform" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Discrete Fourier transform</h2>
+  </section>
+  
+  <section class="work-slide" id="fourier-matrix" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Fourier matrix and POD projection</h2>
+  </section>
+  <section class="work-slide" id="wake-fourier-spectrum" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Fourier spectrum of the cylinder wake</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-fourier-spectrum-dark.svg" alt="One-sided projected Fourier spectrum of the cylinder wake with three selected peaks.">
+  </section>
+  <section class="work-slide" id="wake-fourier-modes" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Selected Fourier modes of the cylinder wake</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-fourier-modes-dark.svg" alt="Streamwise and transverse components of three phase-aligned complex Fourier modes.">
+  </section>
+  <section class="work-slide" id="leading-fourier-mode" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>One cycle of the leading Fourier mode</h2>
+    <video class="lecture-figure" controls muted playsinline loop preload="metadata" data-autoplay poster="public/media/lecture_06/coherent-piv-fourier-leading-dark.png" aria-label="One phase cycle of the leading Fourier mode, showing both velocity components">
+      <source src="public/media/lecture_06/coherent-piv-fourier-leading-dark.mp4" type="video/mp4">
+    </video>
+  </section>
+</section>
+</div></div>
+<script src="public/libs/reveal/6.0.2/reveal.js"></script>
+<script src="public/libs/reveal/6.0.2/plugin/notes.js"></script>
+<script src="public/libs/reveal/6.0.2/plugin/math.js"></script>
+<script src="plugin/ink/v0.3.9/ink.js"></script>
+<script src="public/ml-lecture-06-runtime.js"></script>
+
+<script data-rwe-runtime src="editor-assets/rwe-655f8fe933e4.js"></script></body>
+</html>

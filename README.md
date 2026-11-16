@@ -80,3 +80,12 @@ CSV and its notes are also included. Original simulation data are not claimed.
 Open `bubble_path_classification.html` directly in Firefox, or serve this folder
 locally. All player, math, Ink, review and editor dependencies are local. The deployment URL is
 https://andreweiner.github.io/ml-cfd-slides/bubble_path_classification.html.
+
+## Lecture 6 — Analysis of coherent structures
+
+`coherent_structures.html` follows the current lecture manuscript with editable
+960 × 700 canvases, vertical topic stacks, and the manuscript's sketches,
+measured cylinder-wake plots and animations. The paired media and source hashes
+are in `public/media/lecture_06/`.
+
+Open the deck directly in Firefox, or serve this folder locally. The GitHub Pages URL is https://andreweiner.github.io/ml-cfd-slides/coherent_structures.html.
