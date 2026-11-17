@@ -22,7 +22,9 @@
 </style>
 
 <script defer src="public/plausible.js"></script>
-<link data-rwe-runtime rel="stylesheet" href="editor-assets/rwe-655f8fe933e4.css"></head>
+<link data-rwe-runtime rel="stylesheet" href="editor-assets/rwe-655f8fe933e4.css">
+  <link rel="stylesheet" href="plugin/flashcards/v0.1.2/flashcards.css">
+</head>
 <body>
 <div class="reveal"><div class="slides">
 <section class="title-slide" id="title" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960" style="width:960px;height:700px;padding:0">
@@ -93,67 +95,67 @@
 
 
 <section id="svd">
-  <section class="work-slide" id="economy-svd" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>Economy singular value decomposition</h2>
-  </section>
-  <section class="work-slide" id="full-and-economy-svd" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>Full and economy SVD</h2>
-    <img class="lecture-figure" src="public/media/lecture_06/coherent-svd-dark.svg" alt="Economy and full SVD matrix shapes. The full left factor has extra columns, and the full singular-value matrix has extra zero rows. Every diagonal position in the shared square block is marked.">
-  </section>
-  <section class="work-slide" id="svd-inversion" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>Inversion with singular values</h2>
-  </section>
-  <section class="work-slide" id="svd-modes" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>Spatial modes and time coefficients</h2>
-  </section>
-</section>
-
-<section id="snapshots">
-  <section class="work-slide" id="method-of-snapshots" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>Method of snapshots</h2>
-  </section>
-</section>
-
-<section id="wake-pod">
+  
   <section class="work-slide" id="pod-of-the-wake" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>POD of the measured cylinder wake</h2>
-  </section>
-  <section class="work-slide" id="variance-decay" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2 style="height: auto; white-space: normal; width: 910px;" data-rwe-text-layout="auto-height">What if we use all points?</h2>
+  </section><section class="work-slide" id="variance-decay" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>How quickly does the variance decay?</h2>
     <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-spectrum-dark.svg" alt="Individual and cumulative variance fractions for the leading 20 wake POD modes.">
-  </section>
-  <section class="work-slide" id="mode-components" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  </section><section class="work-slide" id="mode-components" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>Components of the spatial modes</h2>
     <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-mode-components-dark.svg" alt="Streamwise and transverse components of POD modes 1, 3, and 4 on a shared signed color scale.">
-  </section>
-  <section class="work-slide" id="mode-streamlines" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  </section><section class="work-slide" id="mode-streamlines" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>Streamlines of the mean and the spatial modes</h2>
     <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-mode-vectors-dark.svg" alt="Four streamline panels showing the mean flow and POD modes 1, 3, and 4.">
-  </section>
-  <section class="work-slide" id="time-coefficients" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  </section><section class="work-slide" id="time-coefficients" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>Time coefficients of the leading POD modes</h2>
     <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-scores-dark.svg" alt="Temporal coefficients grouped as modes 1 and 2, mode 3, and modes 4 and 5.">
-  </section>
-  <section class="work-slide" id="coefficient-spectra" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  </section><section class="work-slide" id="coefficient-spectra" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>Spectra of individual POD time coefficients</h2>
     <img class="lecture-figure" src="public/media/lecture_06/coherent-piv-coefficient-spectra-dark.svg" alt="One-sided spectra of the POD time coefficients for modes 1, 3, 4, and 6.">
-  </section>
-  <section class="work-slide" id="wake-reconstruction" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
-    <h2>Reconstructing the wake with up to five modes</h2>
-  </section>
-  <section class="work-slide" id="reconstruction-u" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  </section><section class="work-slide" id="reconstruction-u" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>Reconstruction of streamwise velocity</h2>
     <video class="lecture-figure" controls muted playsinline loop preload="metadata" data-autoplay poster="public/media/lecture_06/coherent-piv-reconstruction-u-dark.png" aria-label="Streamwise velocity for the mean, modes 1 and 2 at actual amplitude, and amplified mode 3 and modes 4 and 5">
       <source src="public/media/lecture_06/coherent-piv-reconstruction-u-dark.mp4" type="video/mp4">
     </video>
-  </section>
-  <section class="work-slide" id="reconstruction-v" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  </section><section class="work-slide" id="reconstruction-v" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
     <h2>Reconstruction of transverse velocity</h2>
     <video class="lecture-figure" controls muted playsinline loop preload="metadata" data-autoplay poster="public/media/lecture_06/coherent-piv-reconstruction-v-dark.png" aria-label="Transverse velocity for the mean, modes 1 and 2 at actual amplitude, and amplified mode 3 and modes 4 and 5">
       <source src="public/media/lecture_06/coherent-piv-reconstruction-v-dark.mp4" type="video/mp4">
     </video>
   </section>
+
+
+
+
+
+
+
+
+  
+  
 </section>
+
+<section id="snapshots">
+  <section class="work-slide" id="economy-svd" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Economy singular value decomposition</h2>
+  </section>
+<section class="work-slide" id="full-and-economy-svd" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Full and economy SVD</h2>
+    <img class="lecture-figure" src="public/media/lecture_06/coherent-svd-dark.svg" alt="Economy and full SVD matrix shapes. The full left factor has extra columns, and the full singular-value matrix has extra zero rows. Every diagonal position in the shared square block is marked.">
+  </section>
+<section class="work-slide" id="svd-inversion" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Inversion with singular values</h2>
+  </section>
+<section class="work-slide" id="svd-modes" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Spatial modes and time coefficients</h2>
+  </section>
+<section class="work-slide" id="method-of-snapshots" data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+    <h2>Method of snapshots</h2>
+  </section>
+</section>
+
+
 
 
 
@@ -180,11 +182,35 @@
     </video>
   </section>
 </section>
+<section class="work-slide review-slide" id="lecture-6-review" data-flashcards data-rwe-canvas="true" data-rwe-canvas-height="700" data-rwe-canvas-width="960">
+  <h2>Lecture 6 review</h2>
+  <div data-card-id="ml6-01" data-flashcard><div data-question>What makes a flow structure coherent?</div><div data-solution>Its spatially correlated features evolve together in an organized way. A recurring structure can retain a consistent phase relationship between different locations.</div></div>
+  <div data-card-id="ml6-02" data-flashcard><div data-question>Why look for coherent structures in a complex flow?</div><div data-solution>They can explain a quantity of interest, such as fluctuating lift, and help identify where to measure or apply control.</div></div>
+  <div data-card-id="ml6-03" data-flashcard><div data-question>What sustains transonic shock buffet on an airfoil?</div><div data-solution>Feedback between the shock and the boundary layer sustains shock motion and changes in downstream separation.</div></div>
+  <div data-card-id="ml6-04" data-flashcard><div data-question>How can aerodynamic buffet lead to structural buffeting?</div><div data-solution>Unsteady aerodynamic loads can excite structural modes and produce a strong aeroelastic response.</div></div>
+  <div data-card-id="ml6-05" data-flashcard><div data-question>What does the measured cylinder-wake dataset contain?</div><div data-solution>Planar PIV snapshots of the streamwise and transverse velocity components on a fixed grid. Masked regions are excluded from the analysis.</div></div>
+  <div data-card-id="ml6-06" data-flashcard><div data-question>How do we obtain a velocity fluctuation at a probe?</div><div data-solution>Subtract the temporal sample mean at that probe from each instantaneous measurement.</div></div>
+  <div data-card-id="ml6-07" data-flashcard><div data-question>What does negative covariance between the two wake probes tell us?</div><div data-solution>When one probe is above its mean, the other tends to be below its mean. The paired scatter is elongated along a direction with opposite signs.</div></div>
+  <div data-card-id="ml6-08" data-flashcard><div data-question>How are the snapshots organized in the data matrix?</div><div data-solution>Each column is one time snapshot. Each row represents a spatial degree of freedom, such as a probe or a velocity component at a grid point.</div></div>
+  <div data-card-id="ml6-09" data-flashcard><div data-question>What does the first principal axis maximize?</div><div data-solution>The sample variance of the projected, centered data among all unit directions.</div></div>
+  <div data-card-id="ml6-10" data-flashcard><div data-question>How do we identify a principal axis from the covariance matrix?</div><div data-solution>The stationarity condition gives a covariance eigenproblem. The first axis is an eigenvector for the largest eigenvalue, which equals the variance along that axis.</div></div>
+  <div data-card-id="ml6-11" data-flashcard><div data-question>How do we organize both measured velocity components for full-field POD?</div><div data-solution>Stack the flattened streamwise and transverse fields in each snapshot column. Split the spatial modes at the same index to plot both components.</div></div>
+  <div data-card-id="ml6-12" data-flashcard><div data-question>What is the maximum rank of a centered snapshot matrix with N snapshots?</div><div data-solution>At most N − 1, because the centered snapshot columns sum to zero. The rank is also bounded by the number of spatial degrees of freedom.</div></div>
+  <div data-card-id="ml6-13" data-flashcard><div data-question>What links the economy SVD to the spatial POD of centered data?</div><div data-solution>The left singular vectors give the spatial modes. Each covariance eigenvalue equals the squared singular value divided by N − 1.</div></div>
+  <div data-card-id="ml6-14" data-flashcard><div data-question>Why is projecting onto the economy basis and back exact for the original snapshots?</div><div data-solution>The retained nonzero left singular vectors span the snapshot column space. The projection preserves any vector in that span.</div></div>
+  <div data-card-id="ml6-15" data-flashcard><div data-question>What do the POD time coefficients tell us?</div><div data-solution>They are the coordinates of each snapshot in the spatial POD basis. Their time histories show how the modal amplitudes and signs evolve.</div></div>
+  <div data-card-id="ml6-16" data-flashcard><div data-question>Why use the method of snapshots when there are many more spatial points than snapshots?</div><div data-solution>It solves the eigenproblem in an N × N Gram matrix. Nonzero temporal eigenvectors can then be mapped back to spatial modes.</div></div>
+  <div data-card-id="ml6-17" data-flashcard><div data-question>What changes when we keep the mean before taking the SVD?</div><div data-solution>The decomposition analyzes uncentered second moments. A strong mean can dominate the first mode. Exact alignment also requires the mean direction to be an eigenvector of the centered covariance and to remain leading.</div></div>
+  <div data-card-id="ml6-18" data-flashcard><div data-question>Why can we compute the DFT on POD time coefficients?</div><div data-solution>The DFT acts along time and the POD basis acts along space. With all nonzero POD modes, transforming the coefficients and projecting back recovers the same Fourier field.</div></div>
+  <div data-card-id="ml6-19" data-flashcard><div data-question>What does the phase of a complex Fourier mode tell us?</div><div data-solution>Relative phase across locations shows how the single-frequency pattern progresses in time. Animating one period helps distinguish apparent propagation from nearly simultaneous motion.</div></div>
+  <div data-card-id="ml6-20" data-flashcard><div data-question>What does a Strouhal number near 0.194 represent in this dataset?</div><div data-solution>It is the dominant dimensionless shedding frequency, with St = fD/U∞. A harmonic completes an integer number of cycles during one period of the fundamental.</div></div>
+</section>
 </div></div>
 <script src="public/libs/reveal/6.0.2/reveal.js"></script>
 <script src="public/libs/reveal/6.0.2/plugin/notes.js"></script>
 <script src="public/libs/reveal/6.0.2/plugin/math.js"></script>
 <script src="plugin/ink/v0.3.9/ink.js"></script>
+<script src="plugin/flashcards/v0.1.2/flashcards.js"></script>
 <script src="public/ml-lecture-06-runtime.js"></script>
 
 <script data-rwe-runtime src="editor-assets/rwe-655f8fe933e4.js"></script></body>
